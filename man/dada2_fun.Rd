@@ -14,7 +14,8 @@ dada2_fun(
   r_primer = "TCCTCCGCTTWTTGWTWTGC",
   plot = FALSE,
   compress = FALSE,
-  verbose = 1
+  verbose = 1,
+  returnval = TRUE
 )
 }
 \arguments{

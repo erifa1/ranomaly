@@ -19,7 +19,7 @@
 # DADA2 function
 
 dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_trunclen = 240, r_trunclen = 240,
-                      f_primer = "GCATCGATGAAGAACGCAGC", r_primer = "TCCTCCGCTTWTTGWTWTGC", plot = FALSE, compress = FALSE, verbose = 1){
+                      f_primer = "GCATCGATGAAGAACGCAGC", r_primer = "TCCTCCGCTTWTTGWTWTGC", plot = FALSE, compress = FALSE, verbose = 1, returnval = TRUE){
 
   if(verbose == 3){
     invisible(flog.threshold(DEBUG))
@@ -310,7 +310,8 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
   dada_res$seqtab.nochim = seqtab.nochim
   dada_res$seqtab.export = seqtab.export
   dada_res$otu.table = otu.table
-  return(dada_res)
+
+  if(returnval) {return(dada_res)}
 
 
   flog.info('Saving R objects.')

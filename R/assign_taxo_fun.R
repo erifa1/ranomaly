@@ -15,7 +15,7 @@
 
 
 
-assign_taxo <- function(dada_res = dada_res,  out = "./idtaxa/", id_db = "/home/db/unite/UNITE_idtaxa201706.Rdata", verbose = 1, confidence = 50){
+assign_taxo <- function(dada_res = dada_res,  out = "./idtaxa/", id_db = "/home/db/unite/UNITE_idtaxa201706.Rdata", verbose = 1, confidence = 50, returnval = TRUE){
 
 
   if(verbose == 3){
@@ -220,7 +220,8 @@ assign_taxo <- function(dada_res = dada_res,  out = "./idtaxa/", id_db = "/home/
   save(tax.table,  file=paste(out,'/robjects.Rdata',sep=''))
   flog.info('Finish.')
 
-  return(tax.table)
+  print(returnval)
+  if(returnval){return(tax.table)}
 
 
 
