@@ -9,3 +9,6 @@ Rscript ~/Repository/LRF/ranomaly/scripts/dada2_process.R -p reads -c TRUE -q TR
 # assign_taxo(dada_res = dada_res, id_db = "/home/erifa/bank/silva/SILVA_SSU_r132_March2018.RData")
 
 Rscript ~/Repository/LRF/ranomaly/scripts/assign_taxo.R -r ./dada2_out/robjects.Rdata -i /home/erifa/bank/silva/SILVA_SSU_r132_March2018.RData
+
+
+Rscript ~/Repository/LRF/ranomaly/scripts/generate_tree.R -r ./dada2_out/robjects.Rdata

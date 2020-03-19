@@ -220,7 +220,6 @@ assign_taxo <- function(dada_res = dada_res,  out = "./idtaxa/", id_db = "/home/
   save(tax.table,  file=paste(out,'/robjects.Rdata',sep=''))
   flog.info('Finish.')
 
-  print(returnval)
   if(returnval){return(tax.table)}
 
 

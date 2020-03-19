@@ -38,7 +38,6 @@ if (is.null(opt$rdata)){
   flog.info('Done.')
 }
 
-print(opt$returnval);
 
 suppressMessages(library(ranomaly))
 
