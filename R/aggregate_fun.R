@@ -1,0 +1,300 @@
+#' Aggregate
+#'
+#'
+#' @param dada_res output from dada2_fun
+#'
+#' @return Return raw otu table in phyloseq object.
+#' @import phyloseq
+#' @import VennDiagram
+#' @import ggplot2
+#'
+#' @export
+
+
+# Decontam Function
+
+aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = NULL, output = "./aggregate_diff/",
+                          column1 = NULL, column2 = NULL, verbose = 1, rank = "Species", comp = "", returnval = TRUE){
+
+  invisible(flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger"))
+
+
+
+  if(verbose == 3){
+    invisible(flog.threshold(DEBUG))
+  } else {
+    invisible(flog.threshold(INFO))
+  }
+
+  if(!dir.exists(output)){
+    dir.create(output,recursive=T )
+  }
+  flog.info('Done.')
+
+  # data.glom <- tax_glom(data, taxrank=rank, h=TRUE)
+
+  if(comp == ''){
+    fun <- paste('combinaisons <- combn(na.omit(unique(sample_data(data)$',column1,')),2)',sep='')
+    eval(parse(text=fun))
+  }else{
+    comp_list <- unlist(strsplit(comp,","))
+    combinaisons <- matrix(, nrow = 2, ncol = length(comp_list))
+    for (i in 1:length(comp_list)){
+      tmp <- unlist(strsplit(comp_list[i],"~"))
+      combinaisons[1,i] <- tmp[1]
+      combinaisons[2,i] <- tmp[2]
+    }
+  }
+
+  #Metacoder table
+  otable <- otu_table(data)
+  ttax <- tax_table(data)
+  ssample <- as.matrix(sample_data(data))
+  sseq <- refseq(data)
+  if(file.exists(paste(metacoder))){
+    mcoderTab <- read.table(paste(metacoder), h=TRUE)
+  }
+
+  # save.image("debug.rdata")
+  # quit()
+  TABfinal <- data.frame()
+  for (col in (1:ncol(combinaisons))){
+    flog.info(paste('Combinaison ',combinaisons[1,col], ' ' , combinaisons[2,col],sep=''))
+    comp1 = paste(combinaisons[1,col], '_vs_' , combinaisons[2,col],sep='')
+    flog.info('Deseq2.')
+    if(file.exists(paste(deseq,"/signtab_",column1,"_",combinaisons[1,col],"_vs_",combinaisons[2,col],".csv",sep=""))){
+      deseqT <- read.table(paste(deseq,"/signtab_",column1,"_",combinaisons[1,col],"_vs_",combinaisons[2,col],".csv",sep=""), h=TRUE,sep="\t")
+    } else{
+      flog.warn('File does not exists.')
+      deseqT <- data.frame()
+    }
+    # print(head(deseqT))
+    flog.info('MetagenomeSeq.')
+    if(file.exists(paste(mgseq,"/signtab_",column1,"_",combinaisons[1,col],"_vs_",combinaisons[2,col],".csv",sep=""))){
+      mgseqT <- read.table(paste(mgseq,"/signtab_",column1,"_",combinaisons[1,col],"_vs_",combinaisons[2,col],".csv",sep=""), h=TRUE,sep="\t")
+    } else{
+      if(file.exists(paste(mgseq,"/signtab_",column1,"_",combinaisons[2,col],"_vs_",combinaisons[1,col],".csv",sep=""))){
+        mgseqT <- read.table(paste(mgseq,"/signtab_",column1,"_",combinaisons[1,col],"_vs_",combinaisons[2,col],".csv",sep=""), h=TRUE,sep="\t")
+      }
+      else{
+        flog.warn('File does not exists.')
+        mgseqT <- data.frame()
+      }
+    }
+    # print(head(mgseqT))
+    flog.info('Metacoder.')
+    if(file.exists(paste(metacoder))){
+      mcoderT <- mcoderTab[mcoderTab$treatment_1 == as.character(combinaisons[1,col]) & mcoderTab$treatment_2 == as.character(combinaisons[2,col]),]
+      if(nrow(mcoderT) == 0){
+        flog.warn("Metacoder table empty...")
+        mcoderT <- mcoderTab[mcoderTab$treatment_2 == as.character(combinaisons[1,col]) & mcoderTab$treatment_1 == as.character(combinaisons[2,col]),]
+      }
+      mcoderT$wilcox_p_value[is.na(mcoderT$wilcox_p_value)] = 1
+      mcoderTsignif <- mcoderT[mcoderT$wilcox_p_value <= 0.05,]
+    }else{
+      flog.warn('File does not exists.')
+      mcoderT <- data.frame()
+      mcoderTsignif <- data.frame()
+    }
+    # print(mcoderTsignif)
+
+    flog.info("Retrieving IDS of differential features...")
+    if(length(deseqT) > 0){
+      deseq_ids <- as.character(deseqT[deseqT$padj <= 0.05 & !is.na(deseqT$padj),1])
+    }else{
+      deseq_ids <- NULL
+    }
+    if(length(mgseqT) > 0){
+      mgseq_ids <- as.character(mgseqT[,1])
+    }else{
+      mgseq_ids <- NULL
+    }
+    if(length(mcoderTsignif) > 0){
+      mcoder_ids <- as.character(mcoderTsignif$otu_id)
+    }else{
+      mcoder_ids <- NULL
+    }
+
+    # Unique IDS
+    flog.info('Filtering unique IDS...')
+    ListAllOtu = unique(c(deseq_ids,mgseq_ids,mcoder_ids))
+
+    # flog.info('Deseq2.')
+    # print(deseq_ids)
+    # flog.info('MetagenomeSeq.')
+    # print(mgseq_ids)
+    # flog.info('Metacoder.')
+    # print(mcoder_ids)
+    # flog.info('All.')
+    # print(ListAllOtu)
+
+    #Construction de la table
+    flog.info('Building table...')
+    col_comp = rep(comp1, length(ListAllOtu))
+    if(!is.null(column2)){
+      col_env = rep(unique(ssample[,column2]), length(ListAllOtu))
+      TABf = cbind.data.frame(ListAllOtu,col_env,col_comp)
+    } else {TABf = cbind.data.frame(ListAllOtu, col_comp)}
+
+    TF = list(x1=deseq_ids, x2=mgseq_ids, x3=mcoder_ids)
+    names(TF) <- c("DESeq", "metagenomeSeq", "metacoder")
+    # print(TF)
+    if(length(unlist(TF)) == 0){next}
+
+    # Test si chaque ASV est diff dans les méthdes.
+    for (j in 1:length(TF)){
+      TABtest = TF[[j]]
+      # TABtest=gsub("\\[|\\]", "", TF[[j]]) # cherche les ASVids
+
+      TABtest_signif=rep(0, length(ListAllOtu))
+      for (i in 1:length(ListAllOtu)) {
+        featureI = ListAllOtu[i]
+        res=grep( paste('^',featureI,'$', sep="" ) , TABtest)
+        #print(res)
+        if(length(res)>0){TABtest_signif[i]=length(res)
+        #print(c(featureI, TABtest[res]))
+        }
+      }
+
+      TABf=cbind.data.frame(TABf, TABtest_signif)
+      names(TABf)[ncol(TABf)] = names(TF)[j]
+    }
+
+    TABfbak <- TABf
+
+    # add new columns, sumMethods, DeseqLFC, Mean Relative Abundance (TSS) condition 1 & 2
+    row.names(deseqT) = deseqT[,1]
+    if(nrow(deseqT)==0){
+      TABf <- cbind(TABf, sumMethods = apply(TABf[3:5], 1, sum, na.rm=TRUE),
+                    DESeqLFC = rep(NA, nrow(TABf)),
+                    absDESeqLFC = rep(NA, nrow(TABf)))
+    }else{
+      TABf <- cbind( TABf, sumMethods = apply(TABf[3:5], 1, sum, na.rm=TRUE),
+                     DESeqLFC = deseqT[as.character(TABf[,1]),"log2FoldChange"],
+                     absDESeqLFC = abs(deseqT[as.character(TABf[,1]),"log2FoldChange"]) )
+    }
+    # clr = function(x){log(x+1) - rowMeans(log(x+1))}
+    # otableNORM <- clr(otable)
+    normf = function(x){ x/sum(x) }
+    data.norm <- transform_sample_counts(data, normf)
+    otableNORM <- otu_table(data.norm)
+
+    Gtab <- cbind(as.data.frame(ssample), t(otableNORM))
+    MeanRelAbcond1=NULL
+    for(i in TABf$ListAllOtu){
+      tt=mean(Gtab[Gtab[,column1]==combinaisons[1,col],i], na.rm=TRUE)
+      MeanRelAbcond1=c(MeanRelAbcond1,tt)
+    }
+    MeanRelAbcond2=NULL
+    for(i in TABf$ListAllOtu){
+      tt=mean(Gtab[Gtab[,column1]==combinaisons[2,col],i], na.rm=TRUE)
+      MeanRelAbcond2=c(MeanRelAbcond2,tt)
+    }
+    TABfbak <- TABf <- cbind(TABf, MeanRelAbcond1, MeanRelAbcond2)
+
+    #Adjust table
+    TABf <- TABf[!is.na(TABf$DESeqLFC),]
+    diff1=TABf$MeanRelAbcond1 - TABf$MeanRelAbcond2
+    cbind( sign(diff1), diff1)
+    TABf$DESeqLFC = abs(TABf$DESeqLFC)*sign(diff1)
+    TABf$Condition = rep(NA, nrow(TABf))
+    TABf[diff1>0, "Condition"] = as.character(combinaisons[1,col])
+    TABf[diff1<0, "Condition"] = as.character(combinaisons[2,col])
+    TABf$Condition = factor(TABf$Condition,
+                            levels=c(as.character(combinaisons[1,col]),as.character(combinaisons[2,col])) )
+
+    TABfinal <- rbind(TABfinal,TABf)
+
+    # Barplot
+    ## differentialy abundant features on 2 methods
+    ## Top abs(LogFolchange)
+    ## feature with relative abondance > 0.1% (0.001)
+    TABbar = TABf[TABf$DESeq ==1 | TABf$metagenomeSeq ==1 |  TABf$sumMethods >=2, ]
+    TABbar = TABbar[TABbar$MeanRelAbcond1>=0.001 | TABbar$MeanRelAbcond2>=0.001, ]
+    TABbar = tail(TABbar[order(abs(TABbar$DESeqLFC)),],50)
+
+    if(nrow(TABbar)){
+      TABbar$tax = paste( substr(ttax[as.character(TABbar$ListAllOtu),"Species"],1,20),"...","_", TABbar$ListAllOtu, sep="")
+
+      png(paste(output,'/topDiffbarplot_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.png',sep=''), width=20, height=20, units="cm", res=200)
+      p<-ggplot(data=TABbar, aes(x=reorder(tax, -abs(DESeqLFC)), y=DESeqLFC, fill=Condition ) ) +
+        geom_bar(stat="identity", alpha = 0.7) + ggtitle(paste(combinaisons[,col],collapse="_vs_")) + labs(x='Features') +
+        coord_flip() + theme_bw() +
+        scale_y_continuous(minor_breaks = seq(-1E4 , 1E4, 1), breaks = seq(-1E4, 1E4, 5))
+      print(p)
+      dev.off()
+    }else{flog.info('No ASV to plot...')}
+
+    # Krona ? Diversity of differentialy abundant features.
+
+    ## Venn diag pour chaque comparaison.
+    flog.info('Plotting Venn diagrams...')
+    TF = Filter(length, TF)
+    venn.plot <- venn.diagram(TF, filename = NULL, col = "black",
+                              fill = rainbow(length(TF)), alpha = 0.50,
+                              cex = 2, cat.col = 1, , lty = "blank",
+                              cat.cex = 2.5, cat.fontface = "bold",
+                              margin = 0.07, main=paste(combinaisons[,col],collapse="_vs_"), main.cex=2.5,
+                              fontfamily ="Arial",main.fontfamily="Arial",cat.fontfamily="Arial");
+    png(paste(output,'/venndiag_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.png',sep=''), width=20, height=20, units="cm", res=200)
+    grid.draw(venn.plot)
+    dev.off()
+  }
+
+
+  # print(TABfinal)
+  if(length(TABfinal) > 0){
+    flog.info('Building csv file...')
+
+
+    TAX <- cbind(seqid = rownames(ttax[as.character(TABfinal$ListAllOtu),]),as.data.frame(ttax[as.character(TABfinal$ListAllOtu),]))
+
+    sseq <- cbind(seqid = row.names(as.data.frame(sseq)), as.data.frame(sseq))
+    SEQ <- sseq[as.character(TABfinal$ListAllOtu),]
+
+
+    colnames(TABfinal)[1:2] = c("seqid", "Comparaison")
+    TABfinal = cbind(TABfinal, TAX[,-1], sequence = SEQ[,-1])
+
+    write.table(TABfinal, paste(output,"/aggregate_diff_",column1,'.csv', sep=""), row.names=FALSE, sep="\t", quote = FALSE)
+
+    if(returnval){return(TABfinal)}
+
+    flog.info('Done.')
+
+    # flog.info('Heatmap of significant %s.', rank)
+    # signif_data <- phyloseq::prune_taxa(as.character(TABfinal[,1]), data)
+    # if(rank != 'ASV'){
+    #   signif_data <- tax_glom(signif_data, rank)
+    #   taxa_names(signif_data) <- as.character(tax_table(signif_data)[,rank])
+    # }
+    # clr = function(x){log(x+1) - rowMeans(log(x+1))}
+    # otable <- otu_table(signif_data)
+    # otableCLR <- clr(otable)
+    # data.norm <- signif_data; otu_table(data.norm) <- otableCLR
+    #
+    # hgroup=hclust(dist(otable) , method="ward.D2")
+    # # plot(hgroup)
+    #
+    # #Heatmap
+    # dataF <- data.norm
+    # adf = psmelt(dataF)
+    # adf[,"OTU"] = factor(adf[,"OTU"], levels=hgroup$labels)
+    #
+    # p = ggplot(adf, aes(x = Sample, y = OTU, fill = Abundance)) +
+    #     geom_raster() + facet_grid(as.formula(paste("~",column1)), scales = "free", space = "free") +
+    #     scale_fill_distiller(direction=-1, palette='Spectral') +
+    #     theme(axis.text.x = element_text(angle=90, hjust=1)) + ylab(rank) +
+    #     labs(fill='CLR Normalized\nabundance')
+    # png(paste(output,'/heatmap_signif_',rank,'.png',sep=''), width=30, height=20, units="cm", res=200)
+    # plot(p)
+    # invisible(dev.off())
+    # #Corrplot?
+    # data <- signif_data
+    # save(data, file=paste(output,"/signif_phyloseq.rdata",sep=""))
+    #
+
+  }
+
+
+}
