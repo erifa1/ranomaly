@@ -2,16 +2,20 @@
 % Please edit documentation in R/generate_tree_fun.R
 \name{generate_tree_fun}
 \alias{generate_tree_fun}
-\title{Generate Tree}
+\title{Generate Phylogenetic Tree}
 \usage{
 generate_tree_fun(dada_res = dada_res, output = "./tree", returnval = TRUE)
 }
 \arguments{
-\item{dada_res}{output from dada2_fun}
+\item{dada_res}{Results of dada2_fun()}
+
+\item{output}{Output directory}
+
+\item{returnval}{Boolean to return values in console or not.}
 }
 \value{
-Return raw otu table in phyloseq object.
+Return a formatted tree object ready to use in phyloseq.
 }
 \description{
-Generate Tree
+Generate Phylogenetic Tree
 }

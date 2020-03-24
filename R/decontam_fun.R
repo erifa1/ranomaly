@@ -1,10 +1,28 @@
-#' Decontam Function
+#' Decontam Function using decontam package
 #'
-#' Decontam Function
 #'
-#' @param dada_res output from dada2_fun
+#' @param data output from generate_phyloseq_fun()
+#' @param domain 16S region or ITS region (16S=TRUE; ITS=FALSE).
+#' @param output Output directory
+#' @param number Minimum number of reads per sample.
+#' @param prev Minimum prevalence of an ASV in samples to be keep.
+#' @param freq Minimum ASV frequence on overall samples.
+#' @param column Column name for type of sample (control or sample).
+#' @param ctrl_identifier Idendifier name for controls.
+#' @param spl_identifier Idendifier name for samples.
+#' @param batch Batch column name for independent contaminant identification.
+#' @param plot Plot all test.
+#' @param method Method for contaminant identification. (frequency, prevalence, combined, both, either).
+#' @param threshold Threshold for DECONTAM prevalence filtering.
+#' @param concentration Column name for ADN concentration.
+#' @param verbose Verbose level. (1: quiet, 3: verbal)
+#' @param unassigned Unassigned kingdom or phylum fitering.
+#' @param skip Skip decontam step.
+#' @param manual_cont_rank Rank of taxa to remove, inform 'ASV' to remove ASV.
+#' @param manual_cont List of Genus to remove comma separated (eg. g__Enterococcus,g__Cellulosimicrobium,g__Serratia).
 #'
-#' @return Return raw otu table in phyloseq object.
+#' @return Return a decontaminated phyloseq object.
+#'
 #' @import decontam
 #' @import phyloseq
 #' @import ggplot2
@@ -18,9 +36,9 @@
 
 # Decontam Function
 
-decontam_fun <- function(data = data, output = "./decontam_out/", number = 4000, prev = 2, freq = 0.00005,
+decontam_fun <- function(data = data, domain = TRUE, output = "./decontam_out/", number = 4000, prev = 2, freq = 0.00005,
                          column = "type", ctrl_identifier = "control", spl_identifier = "sample", batch = NULL, plot = FALSE,
-                         method = "prevalence", threshold = 0.1, concentration = NULL, verbose = 1, domain = TRUE, unassigned = FALSE,
+                         method = "prevalence", threshold = 0.1, concentration = NULL, verbose = 1, unassigned = FALSE,
                          skip = FALSE, manual_cont_rank = "Genus", manual_cont = NULL, returnval=TRUE){
 
   invisible(flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger"))

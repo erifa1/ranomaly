@@ -15,11 +15,23 @@ diversity_alpha_fun(
 )
 }
 \arguments{
-\item{dada_res}{output from dada2_fun}
+\item{data}{output from decontam or generate_phyloseq}
+
+\item{output}{Output directory}
+
+\item{column1}{Column name of first factor to test (covariable in ANOVA).}
+
+\item{column2}{Column name of second factor to test (last factor in ANOVA).}
+
+\item{column3}{Column name of subjects in case of repeated mesures (mixed model)}
+
+\item{supcovs}{One or more supplementary covariables to test in anova (provided as vector)}
+
+\item{measures}{Diversity indices (provided as vector)}
 }
 \value{
-Return raw otu table in phyloseq object.
+Export plots and tests in the output directory.
 }
 \description{
-Diversity Alpha
+Provides boxplots with multiples diversity indices and statistical tests like ANOVA with post hoc test and non parametric Wilcoxon tests.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/metacoder_fun.R
 \name{metacoder_fun}
 \alias{metacoder_fun}
-\title{Metacode Analyse Diff}
+\title{Metacoder Differential Analysis function.}
 \usage{
 metacoder_fun(
   data = data,
@@ -17,11 +17,27 @@ metacoder_fun(
 )
 }
 \arguments{
-\item{dada_res}{output from dada2_fun}
+\item{data}{output from decontam or generate_phyloseq}
+
+\item{output}{Output directory}
+
+\item{column1}{Column name of factor to test}
+
+\item{column2}{Column name to split dataset with.}
+
+\item{rank}{Taxonomic rank to agglomerate data (one of rank_names(data) )}
+
+\item{signif}{Plot only significant.}
+
+\item{plottrees}{Plot trees (long treatments).}
+
+\item{min}{Minimum number of reads for a taxa to be represented.}
+
+\item{comp}{Comma separated list of comparison to test. Comparisons are informed with a tilde (A~C,A~B,B~C). If empty, test all combination}
 }
 \value{
-Return raw otu table in phyloseq object.
+Export plots and CSV file listing significant differentialy abundant ASVs.
 }
 \description{
-Metacode Analyse Diff
+Metacoder Differential Analysis function.
 }

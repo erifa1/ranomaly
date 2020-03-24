@@ -1,10 +1,21 @@
-#' DADA2 process
+#' DADA2 process (dada2_fun())
 #'
-#' Processing DADA2 algorithm on raw sequences, return raw otu table in phyloseq object.
+#' Processing DADA2 algorithm on raw sequences, return raw otu table with representative sequence of ASV.
 #'
 #' @param amplicon Choose amplipcon "16S" or "ITS"
+#' @param path Read files folder path
+#' @param outpath output .Rdata file name
+#' @param f_trunclen Forward read tuncate
+#' @param r_trunclen Reverse read tuncate length
+#' @param f_primer Forward primer sequence (only for ITS)
+#' @param r_primer Reverse primer sequence (only for ITS)
+#' @param plot Plot all test or not
+#' @param compress Reads files are compressed (.gz)
+#' @param verbose Verbose level. (1: quiet, 3: verbal)
+#' @param returnval Boolean to return values in console or not.
 #'
-#' @return Return raw otu table in phyloseq object.
+#' @return Return raw otu table in phyloseq object and export it in an Rdata file.
+#'
 #' @import dada2
 #' @import psadd
 #' @import ShortRead

@@ -1,9 +1,16 @@
 #' Diversity Beta
 #'
+#' Provides ordination (PCoA, NMDS) of beta diversity indices (BrayCurtis, UniFrac and WeightedUnifrac) and statistical tests like PERMANOVA and pairwisePERMANOVA.
 #'
-#' @param dada_res output from dada2_fun
+#' @param data output from decontam or generate_phyloseq
+#' @param output Output directory
+#' @param glom Taxonomic rank to agglomerate data (one of rank_names(data) )
+#' @param column1 Column name of main factor to test
+#' @param covar One or more factor name to integrate as covariable in permanova. (for multiple covariable, provide as vector)
+#' @param column2 Column name to split dataset with.
 #'
-#' @return Return raw otu table in phyloseq object.
+#' @return Export plots and tests in the output directory.
+#'
 #' @import phyloseq
 #' @import ggplot2
 #' @import plotly

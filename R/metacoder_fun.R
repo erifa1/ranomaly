@@ -1,9 +1,18 @@
-#' Metacode Analyse Diff
+#' Metacoder Differential Analysis function.
 #'
 #'
-#' @param dada_res output from dada2_fun
+#' @param data output from decontam or generate_phyloseq
+#' @param output Output directory
+#' @param rank Taxonomic rank to agglomerate data (one of rank_names(data) )
+#' @param column1 Column name of factor to test
+#' @param column2 Column name to split dataset with.
+#' @param signif Plot only significant.
+#' @param plottrees Plot trees (long treatments).
+#' @param min Minimum number of reads for a taxa to be represented.
+#' @param comp Comma separated list of comparison to test. Comparisons are informed with a tilde (A~C,A~B,B~C). If empty, test all combination
 #'
-#' @return Return raw otu table in phyloseq object.
+#' @return Export plots and CSV file listing significant differentialy abundant ASVs.
+#'
 #' @import phyloseq
 #' @import ggplot2
 #' @import metacoder

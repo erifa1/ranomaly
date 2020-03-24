@@ -2,7 +2,7 @@
 % Please edit documentation in R/metagenomeseq_fun.R
 \name{metagenomeseq_fun}
 \alias{metagenomeseq_fun}
-\title{MEtagenomeSeq Analyse Diff}
+\title{MEtaGenomeSeq Differential Analysis function.}
 \usage{
 metagenomeseq_fun(
   data = data,
@@ -14,11 +14,21 @@ metagenomeseq_fun(
 )
 }
 \arguments{
-\item{dada_res}{output from dada2_fun}
+\item{data}{output from decontam or generate_phyloseq}
+
+\item{output}{Output directory}
+
+\item{column1}{Column name of factor to test}
+
+\item{verbose}{Verbose level. (1: quiet, 3: verbal)}
+
+\item{rank}{Taxonomic rank to agglomerate data (one of rank_names(data) )}
+
+\item{comp}{Comma separated list of comparison to test. Comparisons are informed with a tilde (A~C,A~B,B~C). If empty, test all combination}
 }
 \value{
-Return raw otu table in phyloseq object.
+Export CSV files with significant differentialy abondant ASV.
 }
 \description{
-MEtagenomeSeq Analyse Diff
+MEtaGenomeSeq Differential Analysis function.
 }

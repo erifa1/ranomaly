@@ -1,9 +1,19 @@
 #' Barplots community
 #'
 #'
-#' @param dada_res output from dada2_fun
+#' @param data output from decontam or generate_phyloseq
+#' @param output Output directory
+#' @param bar Plotting bar plot with raw reads number.
+#' @param compo Plotting with relative composition.
+#' @param column1 Column name of factor used to sort sample
+#' @param column2 Column name of factor used to split barplot
+#' @param sname Change sample.id by the corresponding factor levels in graph.
+#' @param num Number of top taxon to display.
+#' @param rare Column name for splitting rare curves.
+#' @param rank Taxonomic rank name. You can provide multiple ranks seperated by comma.
 #'
-#' @return Return raw otu table in phyloseq object.
+#' @return Export barplots in an html file.
+#'
 #' @import phyloseq
 #' @import ggplot2
 #' @import gridExtra

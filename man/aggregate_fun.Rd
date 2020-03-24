@@ -19,10 +19,28 @@ aggregate_fun(
 )
 }
 \arguments{
-\item{dada_res}{output from dada2_fun}
+\item{data}{output from decontam or generate_phyloseq}
+
+\item{metacoder}{Path to the metacoder CSV file}
+
+\item{deseq}{Path to deseq results folder}
+
+\item{mgseq}{Path to metagenomeseq results folder}
+
+\item{output}{Output directory}
+
+\item{column1}{Column name of factor to test}
+
+\item{column2}{Column name on which table were splitted.}
+
+\item{verbose}{Verbose level. (1: quiet, 3: verbal)}
+
+\item{rank}{Taxonomic rank name, or 'ASV' for ASV level.}
+
+\item{comp}{Comparison to test. Comma separated and comparisons are informed with a tilde (A~C,A~B,B~C). If empty, test all combination.}
 }
 \value{
-Return raw otu table in phyloseq object.
+Export final CSV files, barplot with top significant ASV and Venn Digramm.
 }
 \description{
 Aggregate

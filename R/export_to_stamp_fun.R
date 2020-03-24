@@ -2,9 +2,14 @@
 #'
 #' Export 2 text file to use with STAMP
 #'
-#' @param dada_res output from dada2_fun
+#' @param data output from decontam or generate_phyloseq
+#' @param output Output directory
+#' @param correc If TRUE, correct metadata to replace most common special characters (eg. é -> e), save the new file in meta_stampOK.tsv.
 #'
-#' @return Return raw otu table in phyloseq object.
+#' @return Export 2 text files ready to use with STAMP.
+#'
+#' @references https://beikolab.cs.dal.ca/software/STAMP
+#'
 #' @import phyloseq
 #' @import psadd
 #' @import futile.logger

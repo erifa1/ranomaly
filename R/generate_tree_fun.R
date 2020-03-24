@@ -1,10 +1,13 @@
-#' Generate Tree
+#' Generate Phylogenetic Tree
 #'
-#' Generate Tree
 #'
-#' @param dada_res output from dada2_fun
 #'
-#' @return Return raw otu table in phyloseq object.
+#' @param dada_res Results of dada2_fun()
+#' @param output Output directory
+#' @param returnval Boolean to return values in console or not.
+#'
+#' @return Return a formatted tree object ready to use in phyloseq.
+#'
 #' @import dada2
 #' @import phyloseq
 #' @import DECIPHER

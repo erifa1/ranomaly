@@ -1,10 +1,17 @@
-#' Assign Taxo
+#' ASV taxonomic assignment with DECIPHER::IDTAXA (assign_taxo)
 #'
-#' Processing DADA2 algorithm on raw sequences, return raw otu table in phyloseq object.
 #'
-#' @param amplicon Choose amplipcon "16S" or "ITS"
 #'
-#' @return Return raw otu table in phyloseq object.
+#' @param dada_res Results of dada2_fun()
+#' @param output Output directory
+#' @param id_db List of absolute path to IDTAXA formatted reference database(s) (up to 2 databases, comma separated).
+#' @param verbose Verbose level. (1: quiet, 3: verbal)
+#' @param confidence Bootstrap threshold 0...100
+#' @param returnval Boolean to return values in console or not.
+#'
+#'
+#' @return Return a taxonomy table with multiple ancestor checking and incongruence checking when 2 databases are used.
+#'
 #' @import futile.logger
 #' @import dada2
 #' @import phyloseq
@@ -15,7 +22,7 @@
 
 
 
-assign_taxo <- function(dada_res = dada_res,  out = "./idtaxa/", id_db = "/home/db/unite/UNITE_idtaxa201706.Rdata", verbose = 1, confidence = 50, returnval = TRUE){
+assign_taxo_fun <- function(dada_res = dada_res,  output = "./idtaxa/", id_db = "/PathToDB/UNITE_idtaxa.Rdata", confidence = 50, verbose = 1, returnval = TRUE){
 
 
   if(verbose == 3){
@@ -25,9 +32,9 @@ assign_taxo <- function(dada_res = dada_res,  out = "./idtaxa/", id_db = "/home/
   }
 
 
-  if(!dir.exists(out)){
+  if(!dir.exists(output)){
     flog.debug('Creating output directory...')
-    dir.create(out)
+    dir.create(output)
     flog.debug('Done.')
   }
 
@@ -95,7 +102,7 @@ assign_taxo <- function(dada_res = dada_res,  out = "./idtaxa/", id_db = "/home/
 
 
     colnames(final_tax_table)=c("ASV",db_list[1], db_list[2], "FINAL", "sequences")
-    write.table(final_tax_table, paste(out,"/allDB_tax_table.csv",sep=""), quote = FALSE, sep = "\t", row.names = FALSE)
+    write.table(final_tax_table, paste(output,"/allDB_tax_table.csv",sep=""), quote = FALSE, sep = "\t", row.names = FALSE)
 
     # Keep merged assignment (taxid_list[[3]])
     taxid <- sapply(taxid_list[[3]], function(x) {
@@ -213,11 +220,11 @@ assign_taxo <- function(dada_res = dada_res,  out = "./idtaxa/", id_db = "/home/
   #Output table 2
   Tab2 = apply( as.data.frame(taxid, stringsAsFactors=FALSE) , 1 , paste , collapse = ";" )
   Tab2 <- cbind(Tab2, seq=colnames(dada_res$seqtab.nochim))
-  write.table(Tab2, paste(out,"/final_tax_table.csv",sep=""), quote = FALSE, sep = "\t",
+  write.table(Tab2, paste(output,"/final_tax_table.csv",sep=""), quote = FALSE, sep = "\t",
               col.names = FALSE, row.names = TRUE)
 
   flog.info('Saving R objects.')
-  save(tax.table,  file=paste(out,'/robjects.Rdata',sep=''))
+  save(tax.table,  file=paste(output,'/robjects.Rdata',sep=''))
   flog.info('Finish.')
 
   if(returnval){return(tax.table)}

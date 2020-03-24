@@ -1,10 +1,13 @@
 #' Phyloseq to TSV
 #'
-#' EXPORT otu table with taxonomy and sequences, + metadata in separated file.
+#' Export otu table with taxonomy and sequences, + metadata in separated file.
 #'
-#' @param dada_res output from dada2_fun
+#' @param data output from decontam or generate_phyloseq
+#' @param output Output directory
+#' @param rank Taxonomic rank used to agglomerate otu table.
 #'
-#' @return Return raw otu table in phyloseq object.
+#' @return Export tabulated otu table and metadata
+#'
 #' @import phyloseq
 #'
 #' @export

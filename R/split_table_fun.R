@@ -1,9 +1,11 @@
-#' SPLIT phyloseq object
+#' Split phyloseq object
 #'
 #'
-#' @param dada_res output from dada2_fun
+#' @param data output from decontam or generate_phyloseq
+#' @param output Output directory
+#' @param column1 Column name of factor to split phyloseq object with.
 #'
-#' @return Return raw otu table in phyloseq object.
+#' @return Export new folders with splited phyloseq Robjects
 #' @import phyloseq
 #'
 #' @export
@@ -11,7 +13,7 @@
 
 # Decontam Function
 
-split_table_fun <- function(data = data, output = "./", column1 = "type"){
+split_table_fun <- function(data = data, output = "./", column1 = ""){
 
   print(data)
   vector <- levels(as.factor( data.frame(sample_data(data)[,column1])[,1]) )

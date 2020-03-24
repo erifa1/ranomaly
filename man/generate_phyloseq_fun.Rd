@@ -5,7 +5,7 @@
 \title{Generate Tree}
 \usage{
 generate_phyloseq_fun(
-  otutable = dada_res,
+  dada_res = dada_res,
   taxtable = tax.table,
   tree = tree,
   metadata = "",
@@ -15,7 +15,19 @@ generate_phyloseq_fun(
 )
 }
 \arguments{
-\item{dada_res}{output from dada2_fun}
+\item{dada_res}{Results of dada2_fun()}
+
+\item{taxtable}{Results of assign_taxo_fun()}
+
+\item{tree}{Results of generate_tree_fun()}
+
+\item{metadata}{Path of metadata file (tab separated with header)}
+
+\item{output}{Output directory}
+
+\item{verbose}{Verbose level. (1: quiet, 3: verbal)}
+
+\item{returnval}{Boolean to return values in console or not.}
 }
 \value{
 Return raw otu table in phyloseq object.

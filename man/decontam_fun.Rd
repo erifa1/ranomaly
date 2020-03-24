@@ -2,10 +2,11 @@
 % Please edit documentation in R/decontam_fun.R
 \name{decontam_fun}
 \alias{decontam_fun}
-\title{Decontam Function}
+\title{Decontam Function using decontam package}
 \usage{
 decontam_fun(
   data = data,
+  domain = TRUE,
   output = "./decontam_out/",
   number = 4000,
   prev = 2,
@@ -19,7 +20,6 @@ decontam_fun(
   threshold = 0.1,
   concentration = NULL,
   verbose = 1,
-  domain = TRUE,
   unassigned = FALSE,
   skip = FALSE,
   manual_cont_rank = "Genus",
@@ -28,11 +28,47 @@ decontam_fun(
 )
 }
 \arguments{
-\item{dada_res}{output from dada2_fun}
+\item{data}{output from generate_phyloseq_fun()}
+
+\item{domain}{16S region or ITS region (16S=TRUE; ITS=FALSE).}
+
+\item{output}{Output directory}
+
+\item{number}{Minimum number of reads per sample.}
+
+\item{prev}{Minimum prevalence of an ASV in samples to be keep.}
+
+\item{freq}{Minimum ASV frequence on overall samples.}
+
+\item{column}{Column name for type of sample (control or sample).}
+
+\item{ctrl_identifier}{Idendifier name for controls.}
+
+\item{spl_identifier}{Idendifier name for samples.}
+
+\item{batch}{Batch column name for independent contaminant identification.}
+
+\item{plot}{Plot all test.}
+
+\item{method}{Method for contaminant identification. (frequency, prevalence, combined, both, either).}
+
+\item{threshold}{Threshold for DECONTAM prevalence filtering.}
+
+\item{concentration}{Column name for ADN concentration.}
+
+\item{verbose}{Verbose level. (1: quiet, 3: verbal)}
+
+\item{unassigned}{Unassigned kingdom or phylum fitering.}
+
+\item{skip}{Skip decontam step.}
+
+\item{manual_cont_rank}{Rank of taxa to remove, inform 'ASV' to remove ASV.}
+
+\item{manual_cont}{List of Genus to remove comma separated (eg. g__Enterococcus,g__Cellulosimicrobium,g__Serratia).}
 }
 \value{
-Return raw otu table in phyloseq object.
+Return a decontaminated phyloseq object.
 }
 \description{
-Decontam Function
+Decontam Function using decontam package
 }

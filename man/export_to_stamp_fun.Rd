@@ -7,11 +7,18 @@
 export_to_stamp_fun(data = data, output = "./stamp/", correc = TRUE)
 }
 \arguments{
-\item{dada_res}{output from dada2_fun}
+\item{data}{output from decontam or generate_phyloseq}
+
+\item{output}{Output directory}
+
+\item{correc}{If TRUE, correct metadata to replace most common special characters (eg. é -> e), save the new file in meta_stampOK.tsv.}
 }
 \value{
-Return raw otu table in phyloseq object.
+Export 2 text files ready to use with STAMP.
 }
 \description{
 Export 2 text file to use with STAMP
+}
+\references{
+https://beikolab.cs.dal.ca/software/STAMP
 }

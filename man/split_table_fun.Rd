@@ -2,16 +2,20 @@
 % Please edit documentation in R/split_table_fun.R
 \name{split_table_fun}
 \alias{split_table_fun}
-\title{SPLIT phyloseq object}
+\title{Split phyloseq object}
 \usage{
-split_table_fun(data = data, output = "./", column1 = "type")
+split_table_fun(data = data, output = "./", column1 = "")
 }
 \arguments{
-\item{dada_res}{output from dada2_fun}
+\item{data}{output from decontam or generate_phyloseq}
+
+\item{output}{Output directory}
+
+\item{column1}{Column name of factor to split phyloseq object with.}
 }
 \value{
-Return raw otu table in phyloseq object.
+Export new folders with splited phyloseq Robjects
 }
 \description{
-SPLIT phyloseq object
+Split phyloseq object
 }

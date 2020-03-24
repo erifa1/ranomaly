@@ -1,9 +1,16 @@
-#' DESEQ2 Analyse Diff
+#' DESEQ2 Differential Analysis function.
 #'
 #'
-#' @param dada_res output from dada2_fun
+#' @param data output from decontam or generate_phyloseq
+#' @param output Output directory
+#' @param rank Taxonomic rank to agglomerate data (one of rank_names(data) )
+#' @param column1 Column name of factor to test
+#' @param verbose Verbose level. (1: quiet, 3: verbal)
+#' @param comp Comma separated list of comparison to test. Comparisons are informed with a tilde (A~C,A~B,B~C). If empty, test all combination
 #'
-#' @return Return raw otu table in phyloseq object.
+#'
+#' @return Export CSV files with significant differentialy abondant ASV.
+#'
 #' @import phyloseq
 #' @import ggplot2
 #' @import DESeq2
@@ -16,7 +23,8 @@
 
 # Decontam Function
 
-deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose = 1, rank = "Species", comp = ""){
+deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose = 1,
+                       rank = "Species", comp = ""){
 
 
   if(verbose == 3){

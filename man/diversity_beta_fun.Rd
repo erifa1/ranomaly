@@ -14,11 +14,21 @@ diversity_beta_fun(
 )
 }
 \arguments{
-\item{dada_res}{output from dada2_fun}
+\item{data}{output from decontam or generate_phyloseq}
+
+\item{output}{Output directory}
+
+\item{glom}{Taxonomic rank to agglomerate data (one of rank_names(data) )}
+
+\item{column1}{Column name of main factor to test}
+
+\item{column2}{Column name to split dataset with.}
+
+\item{covar}{One or more factor name to integrate as covariable in permanova. (for multiple covariable, provide as vector)}
 }
 \value{
-Return raw otu table in phyloseq object.
+Export plots and tests in the output directory.
 }
 \description{
-Diversity Beta
+Provides ordination (PCoA, NMDS) of beta diversity indices (BrayCurtis, UniFrac and WeightedUnifrac) and statistical tests like PERMANOVA and pairwisePERMANOVA.
 }

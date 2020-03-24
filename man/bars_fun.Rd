@@ -18,10 +18,28 @@ bars_fun(
 )
 }
 \arguments{
-\item{dada_res}{output from dada2_fun}
+\item{data}{output from decontam or generate_phyloseq}
+
+\item{bar}{Plotting bar plot with raw reads number.}
+
+\item{output}{Output directory}
+
+\item{column1}{Column name of factor used to sort sample}
+
+\item{column2}{Column name of factor used to split barplot}
+
+\item{sname}{Change sample.id by the corresponding factor levels in graph.}
+
+\item{num}{Number of top taxon to display.}
+
+\item{rare}{Column name for splitting rare curves.}
+
+\item{rank}{Taxonomic rank name. You can provide multiple ranks seperated by comma.}
+
+\item{compo}{Plotting with relative composition.}
 }
 \value{
-Return raw otu table in phyloseq object.
+Export barplots in an html file.
 }
 \description{
 Barplots community

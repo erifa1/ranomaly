@@ -2,7 +2,7 @@
 % Please edit documentation in R/dada2_fun.R
 \name{dada2_fun}
 \alias{dada2_fun}
-\title{DADA2 process}
+\title{DADA2 process (dada2_fun())}
 \usage{
 dada2_fun(
   amplicon = "16S",
@@ -20,10 +20,30 @@ dada2_fun(
 }
 \arguments{
 \item{amplicon}{Choose amplipcon "16S" or "ITS"}
+
+\item{path}{Read files folder path}
+
+\item{outpath}{output .Rdata file name}
+
+\item{f_trunclen}{Forward read tuncate}
+
+\item{r_trunclen}{Reverse read tuncate length}
+
+\item{f_primer}{Forward primer sequence (only for ITS)}
+
+\item{r_primer}{Reverse primer sequence (only for ITS)}
+
+\item{plot}{Plot all test or not}
+
+\item{compress}{Reads files are compressed (.gz)}
+
+\item{verbose}{Verbose level. (1: quiet, 3: verbal)}
+
+\item{returnval}{Boolean to return values in console or not.}
 }
 \value{
-Return raw otu table in phyloseq object.
+Return raw otu table in phyloseq object and export it in an Rdata file.
 }
 \description{
-Processing DADA2 algorithm on raw sequences, return raw otu table in phyloseq object.
+Processing DADA2 algorithm on raw sequences, return raw otu table with representative sequence of ASV.
 }

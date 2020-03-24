@@ -7,11 +7,15 @@
 phy2tsv_fun(data = data, output = "./tsv_table/", rank = "ASV")
 }
 \arguments{
-\item{dada_res}{output from dada2_fun}
+\item{data}{output from decontam or generate_phyloseq}
+
+\item{output}{Output directory}
+
+\item{rank}{Taxonomic rank used to agglomerate otu table.}
 }
 \value{
-Return raw otu table in phyloseq object.
+Export tabulated otu table and metadata
 }
 \description{
-EXPORT otu table with taxonomy and sequences, + metadata in separated file.
+Export otu table with taxonomy and sequences, + metadata in separated file.
 }
