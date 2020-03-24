@@ -3,7 +3,7 @@
 #system.file("reads", "", package="ranomaly")  # Reads folder
 #system.file("", "sample-metadata.csv", package="ranomaly") # metadata
 
-#setwd("")
+setwd("/home/erifa/Repository/LRF/00_erifa_bak/ranomaly_test")
 
 dada_res = dada2_fun(path=system.file("reads", "", package="ranomaly"), compress=TRUE, plot=TRUE)
 
@@ -43,3 +43,17 @@ TABF = aggregate_fun(data = data, metacoder = "./metacoder/metacoder_temps_lot_G
                           column1 = "temps_lot", column2 = NULL, verbose = 1, rank = "Genus", comp = "T6_lot1~T6_lot3,T9_lot1~T9_lot3")
 head(TABF)
 
+
+
+#other TOOLS
+ASVenn_fun(data = data, output = "./ASVenn/", rank = "ASV",
+                            column1 = "temps", subset = "", lvls = "", krona = "",
+                            shared = TRUE)
+
+csv2phyloseq_fun(otutable = "00_csv2phyloseqtest/opticum_fro_otutable.csv", taxtable = "00_csv2phyloseqtest/opticum_fro_taxo.csv",
+                             seq = "00_csv2phyloseqtest/opticum_fro_seq.csv", metadata = "00_csv2phyloseqtest/opticum_fro_metadata.csv", output = "./00_csv2phyloseqtest/csv2phyloseq/")
+
+
+update_metadata_fun(data = data, output = "./updated_physeq/", metadata = "./sample-metadata_up1.csv", )
+
+phy2cyto_fun(data = data, output = "./cytoscape/", column1 = "Producteur_Lait", repl = NULL, verbose = 1)

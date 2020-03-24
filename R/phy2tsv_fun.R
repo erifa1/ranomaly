@@ -21,19 +21,6 @@ phy2tsv_fun <- function(data = data, output = "./tsv_table/", rank = "ASV"){
     dir.create(output, recursive=TRUE)
   }
 
-  #Check phyloseq object named data
-  flog.info('Check phyloseq object ...')
-  if(!any(ls()=="data")){
-    for(i in ls()){
-      fun <- paste("cLS <- class(",i,")")
-      eval(parse(text=fun))
-      # print(c(i,cLS))
-      if(cLS == "phyloseq"){
-        fun <- paste("data = ", i)
-        eval(parse(text=fun))
-      }
-    }
-  }
 
   flog.info('Generating table ...')
   stable <- as.data.frame(sample_data(data))
