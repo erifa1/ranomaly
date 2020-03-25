@@ -13,7 +13,7 @@
 #'
 #' @return Export a venn diagram with corresponding tabulated file.
 #'
-#' @import glue
+#' @importFrom glue glue
 #' @export
 
 

@@ -13,7 +13,6 @@
 #'
 #' @import phyloseq
 #' @import ggplot2
-#' @import plotly
 #' @import phyloseq.extended
 #' @import pairwiseAdonis
 #' @import vegan

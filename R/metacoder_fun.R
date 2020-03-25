@@ -15,10 +15,14 @@
 #'
 #' @import phyloseq
 #' @import ggplot2
-#' @import metacoder
-#' @import gridExtra
-#' @import grid
-#' @import taxa
+#' @importFrom metacoder zero_low_counts
+#' @importFrom metacoder calc_taxon_abund
+#' @importFrom metacoder calc_n_samples
+#' @importFrom metacoder compare_groups
+#' @importFrom metacoder parse_phyloseq
+#' @importFrom taxa filter_obs
+#' @importFrom taxa taxon_names
+#' @importFrom gridExtra marrangeGrob
 #'
 #' @export
 
@@ -65,7 +69,7 @@ metacoder_fun <- function(data = data, output = "./metacoder", column1 = "", col
     obj <- parse_phyloseq(psobj, class_regex = "(.*)", class_key = "taxon_name")
     obj$data$otu_table <- zero_low_counts(obj, "otu_table", min_count = min, use_total = TRUE)
     no_reads <- rowSums(obj$data$otu_table[, obj$data$sample_data$sample_id]) == 0
-    obj <- taxa::filter_obs(obj, "otu_table", ! no_reads, drop_taxa = TRUE)
+    obj <- filter_obs(obj, "otu_table", ! no_reads, drop_taxa = TRUE)
     if(nrow(obj$data$otu_table)==0){return(NULL)}
 
     flog.info('Calculating taxon abundance...')

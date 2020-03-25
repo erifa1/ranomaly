@@ -18,11 +18,14 @@
 #' @import ggplot2
 #' @import gridExtra
 #' @import grid
-#' @import microbiome
+#' @importFrom microbiome aggregate_top_taxa
+#' @importFrom microbiome plot_composition
+#' @importFrom microbiome transform
+#' @importFrom ggpubr as_ggplot
+#' @importFrom ggpubr get_legend
+#' @importFrom plotly ggplotly
 #' @import viridis
-#' @import plotly
 #' @import phyloseq.extended
-#' @import plotly
 #'
 #'
 #'
@@ -57,16 +60,16 @@ bars_fun <- function(data = data, bar = TRUE, compo1 = TRUE, output = "./plot_ba
       for(i in 1:length(taxonomy)){
         j <- taxonomy[i]; print(j)
 
-        psobj.top <- microbiome::aggregate_top_taxa(data, j, top = num)
+        psobj.top <- aggregate_top_taxa(data, j, top = num)
         tn = taxa_names(psobj.top)
         tn[tn=="Other"] = tn[length(tn)]
         tn[length(tn)] = "Other"
         if(column1 != '' & column2 == ''){
           flog.info('Plotting bar (%s)...',j)
           if(sname == TRUE){
-            plot.composition.COuntAbun <- microbiome::plot_composition(psobj.top, x.label = column1, sample.sort=column1, otu.sort=tn)
+            plot.composition.COuntAbun <- plot_composition(psobj.top, x.label = column1, sample.sort=column1, otu.sort=tn)
           } else{
-            plot.composition.COuntAbun <- microbiome::plot_composition(psobj.top, x.label = "sample.id", sample.sort=column1, otu.sort=tn)
+            plot.composition.COuntAbun <- plot_composition(psobj.top, x.label = "sample.id", sample.sort=column1, otu.sort=tn)
           }
 
           plot.composition.COuntAbun <- plot.composition.COuntAbun + theme(legend.position = "bottom") +
@@ -92,9 +95,9 @@ bars_fun <- function(data = data, bar = TRUE, compo1 = TRUE, output = "./plot_ba
             tn[tn=="Other"] = tn[length(tn)]
             tn[length(tn)] = "Other"
             if(sname){
-              p1 <- microbiome::plot_composition(ppp, x.label = column1, verbose=TRUE,sample.sort=column1, otu.sort=tn)
+              p1 <- plot_composition(ppp, x.label = column1, verbose=TRUE,sample.sort=column1, otu.sort=tn)
             } else{
-              p1 <- microbiome::plot_composition(ppp, x.label = "sample.id", verbose=TRUE,sample.sort=column1, otu.sort=tn)
+              p1 <- plot_composition(ppp, x.label = "sample.id", verbose=TRUE,sample.sort=column1, otu.sort=tn)
             }
 
 
@@ -143,12 +146,12 @@ bars_fun <- function(data = data, bar = TRUE, compo1 = TRUE, output = "./plot_ba
             fun  <- paste("ppp <- subset_samples(psobj, ",column2," %in% '",LVL,"')",sep="")
             eval(parse(text=fun))
             flog.info('Plotting %s composition (%s)...',var, j)
-            psobj.fam <- microbiome::aggregate_top_taxa(ppp, j, top = num)
-            psobj.rel <-  microbiome::transform(psobj.fam, "compositional")
+            psobj.fam <- aggregate_top_taxa(ppp, j, top = num)
+            psobj.rel <-  transform(psobj.fam, "compositional")
             tn = taxa_names(psobj.rel)
             tn[tn=="Other"] = tn[length(tn)]
             tn[length(tn)] = "Other"
-            p1 <- microbiome::plot_composition(psobj.rel, x.label = column1, sample.sort=column1, otu.sort=tn) +
+            p1 <- plot_composition(psobj.rel, x.label = column1, sample.sort=column1, otu.sort=tn) +
               theme() + theme_bw() + scale_fill_viridis(discrete = TRUE, direction=-1) +
               theme(axis.text.x = element_text(angle = 90), legend.title = element_text(size = 18)) +
               ggtitle(paste("Relative abundance",column2,"=", LVL))
@@ -179,13 +182,13 @@ bars_fun <- function(data = data, bar = TRUE, compo1 = TRUE, output = "./plot_ba
         for(i in 1:length(rankList)){
           j <- rankList[i]
           flog.info('Plotting %s composition (%s)...',var, j)
-          psobj.fam <- microbiome::aggregate_top_taxa(psobj, j, top = num)
-          psobj.rel <-  microbiome::transform(psobj.fam, "compositional")
+          psobj.fam <- aggregate_top_taxa(psobj, j, top = num)
+          psobj.rel <-  transform(psobj.fam, "compositional")
           tn = taxa_names(psobj.rel)
           tn[tn=="Other"] = tn[length(tn)]
           tn[length(tn)] = "Other"
 
-          p1 <- microbiome::plot_composition(psobj.rel, x.label = column1, sample.sort=column1, otu.sort=tn) +
+          p1 <- plot_composition(psobj.rel, x.label = column1, sample.sort=column1, otu.sort=tn) +
             theme() + theme_bw() + scale_fill_viridis(discrete = TRUE, direction=-1) +
             theme(axis.text.x = element_text(angle = 90), legend.title = element_text(size = 18)) +
             ggtitle("Relative abundance")

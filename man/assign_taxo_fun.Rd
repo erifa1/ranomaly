@@ -18,7 +18,7 @@ assign_taxo_fun(
 
 \item{output}{Output directory}
 
-\item{id_db}{List of absolute path to IDTAXA formatted reference database(s) (up to 2 databases, comma separated).}
+\item{id_db}{Vector with list of absolute path to IDTAXA formatted reference database(s) (up to 2 databases).}
 
 \item{confidence}{Bootstrap threshold 0...100}
 

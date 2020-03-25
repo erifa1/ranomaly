@@ -10,12 +10,15 @@
 #'
 #' @import dada2
 #' @import phyloseq
-#' @import DECIPHER
+#' @importFrom DECIPHER AlignSeqs
 #' @import ShortRead
-#' @import Biostrings
+#' @importFrom Biostrings DNAStringSet
 #' @import futile.logger
 #' @import digest
-#' @import phangorn
+#' @importFrom phangorn phyDat
+#' @importFrom phangorn dist.ml
+#' @importFrom phangorn NJ
+#' @importFrom phangorn pml
 #' @export
 
 
