@@ -14,9 +14,7 @@
 #' @import phyloseq
 #' @import ggplot2
 #' @import DESeq2
-#' @import ggpubr
-#' @import gridExtra
-#' @import taxa
+#' @importFrom gridExtra grid.arrange
 #'
 #' @export
 
@@ -171,7 +169,6 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
 
   invisible(dev.off())
 
-
-
+  flog.info('Done...')
 
 }

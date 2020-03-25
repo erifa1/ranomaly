@@ -14,8 +14,7 @@
 #'
 #' @import phyloseq
 #' @import ggplot2
-#' @import plyr
-#' @import nlme
+#' @importFrom nlme lme
 #'
 #' @export
 

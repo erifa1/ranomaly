@@ -13,8 +13,6 @@
 #'
 #' @import phyloseq
 #' @import ggplot2
-#' @import plotly
-#' @import phyloseq.extended
 #' @import pairwiseAdonis
 #' @import vegan
 #'
@@ -25,7 +23,7 @@
 
 diversity_beta_fun <- function(data = data, output = "./plot_div_beta/", glom = "ASV", column1 = "", column2 = "", covar =""){
 
-  suppressMessages(source("https://raw.githubusercontent.com/mahendra-mariadassou/phyloseq-extended/master/load-extra-functions.R"))
+  suppressMessages(source(system.file("supdata", "phyloseq_extended_graphical_methods.R", package="ranomaly")))
 
 
   if(!dir.exists(output)){
