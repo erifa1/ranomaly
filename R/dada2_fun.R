@@ -333,4 +333,3 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
   flog.info('Finish.')
 
 }
-
