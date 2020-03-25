@@ -80,28 +80,31 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
     # Generate all primers orientations
     allOrients <- function(primer) {
       # Create all orientations of the input sequence
-      require(Biostrings)
+      # require(Biostrings)
       dna <- DNAString(primer)  # The Biostrings works w/ DNAString objects rather than character vectors
-      orients <- c(Forward = dna, Complement = complement(dna), Reverse = reverse(dna),
+      orients <- c(Forward = dna, Complement = IRanges::reverse(reverseComplement(dna)), Reverse = IRanges::reverse(dna),  # bug with complement() function
                    RevComp = reverseComplement(dna))
       return(sapply(orients, toString))  # Convert back to character vector
     }
+    flog.info('Primer orientation')
     FWD.orients <- allOrients(FWD)
     REV.orients <- allOrients(REV)
     #FWD.orients
 
+    flog.info('Remove Ns from reads')
     # Remove Ns from reads
     fnFs.filtN <- file.path(path, "filtN", basename(fnFs)) # Put N-filterd files in filtN/ subdirectory
     fnRs.filtN <- file.path(path, "filtN", basename(fnRs))
 
     print(fnFs.filtN)
+    print(fnRs.filtN)
 
     flog.info('filterAndTrim...')
-    if(! dir.exists(paste(path,'/filtN',sep=''))){
-      filterAndTrim(fnFs, fnFs.filtN, fnRs, fnRs.filtN, maxN = 0, multithread = TRUE, verbose=TRUE, rm.phix = TRUE, compress=compress)
-    }else{
-      flog.info('Filtered files exist, skipping...')
-    }
+    # if(! dir.exists(paste(path,'/filtN',sep=''))){
+      filterAndTrim(fwd = fnFs, filt = fnFs.filtN, rev = fnRs, filt.rev = fnRs.filtN, maxN = 0, multithread = TRUE, verbose=TRUE, rm.phix = TRUE, compress=compress)
+    # }else{
+    #   flog.info('Filtered files exist, skipping...')
+    # }
 
     flog.info('Done.')
 

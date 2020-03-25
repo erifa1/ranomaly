@@ -1,13 +1,14 @@
-# Rscript ANOMALY pipeline:
+# Rscript ANOMALY functions:
 
+library(ranomaly)
 #system.file("reads", "", package="ranomaly")  # Reads folder
-#system.file("", "sample-metadata.csv", package="ranomaly") # metadata
+#system.file("supdata", "sample-metadata.csv", package="ranomaly") # metadata
 
 setwd("/home/erifa/Repository/LRF/00_erifa_bak/ranomaly_test")
 
 dada_res = dada2_fun(path=system.file("reads", "", package="ranomaly"), compress=TRUE, plot=TRUE)
 
-tax.table = assign_taxo_fun(dada_res = dada_res, id_db = "/home/erifa/bank/silva/SILVA_SSU_r132_March2018.RData")
+tax.table = assign_taxo_fun(dada_res = dada_res, id_db = "SILVA_SSU_r132_March2018.RData" )
 
 tree = generate_tree_fun(dada_res)
 
@@ -50,10 +51,9 @@ ASVenn_fun(data = data, output = "./ASVenn/", rank = "ASV",
                             column1 = "temps", subset = "", lvls = "", krona = "",
                             shared = TRUE)
 
-csv2phyloseq_fun(otutable = "00_csv2phyloseqtest/opticum_fro_otutable.csv", taxtable = "00_csv2phyloseqtest/opticum_fro_taxo.csv",
-                             seq = "00_csv2phyloseqtest/opticum_fro_seq.csv", metadata = "00_csv2phyloseqtest/opticum_fro_metadata.csv", output = "./00_csv2phyloseqtest/csv2phyloseq/")
-
+csv2phyloseq_fun(otutable = "otutable.csv", taxtable = "taxo.csv",
+                             seq = "seq.csv", metadata = "metadata.csv", output = "./csv2phyloseq/")
 
 update_metadata_fun(data = data, output = "./updated_physeq/", metadata = "./sample-metadata_up1.csv", )
 
-phy2cyto_fun(data = data, output = "./cytoscape/", column1 = "Producteur_Lait", repl = NULL, verbose = 1)
+phy2cyto_fun(data = data, output = "./cytoscape/", column1 = "lot", repl = NULL, verbose = 1)

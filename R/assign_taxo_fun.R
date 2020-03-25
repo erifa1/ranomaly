@@ -4,7 +4,7 @@
 #'
 #' @param dada_res Results of dada2_fun()
 #' @param output Output directory
-#' @param id_db List of absolute path to IDTAXA formatted reference database(s) (up to 2 databases, comma separated).
+#' @param id_db Vector with list of absolute path to IDTAXA formatted reference database(s) (up to 2 databases).
 #' @param verbose Verbose level. (1: quiet, 3: verbal)
 #' @param confidence Bootstrap threshold 0...100
 #' @param returnval Boolean to return values in console or not.
