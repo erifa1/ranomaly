@@ -303,7 +303,3 @@ if('compo' %in% names(rmd_data)){
 
 
   }
-
-
-
-
