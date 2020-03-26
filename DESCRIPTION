@@ -1,7 +1,7 @@
 Package: ranomaly
-Title: An R package grouping ANOMALY worflow functions. 
+Title: An R package grouping ANOMALY worflow functions.
 Version: 0.0.0.9000
-Authors@R: 
+Authors@R:
     person(given = "Etienne",
            family = "Rifa",
            role = c("aut", "cre"),
@@ -12,3 +12,24 @@ License: What license it uses
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.0
+Imports :
+  VennDiagram,
+  digest,
+  futile.logger,
+  ggplot2,
+  grid,
+  gridExtra,
+  vegan,
+  viridis
+Remotes: bioc::3.10/Biostrings,
+  bioc::3.10/DECIPHER,
+  bioc::3.10/ShortRead,
+  bioc::3.10/dada2,
+  bioc::3.10/decontam,
+  bioc::3.10/metagenomeSeq,
+  pmartinezarbizu/pairwiseAdonis,
+  cpauvert/psadd,
+  bioc::3.10/phyloseq,
+  bioc::3.10/phyloseq,
+  bioc::3.10/phyloseq,
+  bioc::3.10/phyloseq,
