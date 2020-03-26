@@ -29,7 +29,4 @@ Remotes: bioc::3.10/Biostrings,
   bioc::3.10/metagenomeSeq,
   pmartinezarbizu/pairwiseAdonis,
   cpauvert/psadd,
-  bioc::3.10/phyloseq,
-  bioc::3.10/phyloseq,
-  bioc::3.10/phyloseq,
-  bioc::3.10/phyloseq,
+  bioc::3.10/phyloseq
