@@ -4,7 +4,7 @@
 \alias{export_to_stamp_fun}
 \title{Export to stamp}
 \usage{
-export_to_stamp_fun(data = data, output = "./stamp/", correc = TRUE)
+export_to_stamp_fun(data = data, output = "./stamp/", correc = FALSE)
 }
 \arguments{
 \item{data}{output from decontam or generate_phyloseq}

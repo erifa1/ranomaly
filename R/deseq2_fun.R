@@ -15,6 +15,9 @@
 #' @import ggplot2
 #' @import DESeq2
 #' @importFrom gridExtra grid.arrange
+#' @importFrom ggpubr ggtexttable
+#' @importFrom ggpubr ttheme
+#' @importFrom ggpubr text_grob
 #'
 #' @export
 

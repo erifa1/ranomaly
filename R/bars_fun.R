@@ -15,6 +15,7 @@
 #' @return Export barplots in an html file.
 #'
 #' @import phyloseq
+#' @import phyloseq.extended
 #' @import ggplot2
 #' @import gridExtra
 #' @import grid
@@ -24,8 +25,8 @@
 #' @importFrom ggpubr as_ggplot
 #' @importFrom ggpubr get_legend
 #' @importFrom plotly ggplotly
+#' @importFrom rmarkdown render
 #' @import viridis
-#' @importFrom phyloseq.extended ggrare
 #'
 #'
 #'
@@ -36,6 +37,7 @@
 
 bars_fun <- function(data = data, bar = TRUE, compo1 = TRUE, output = "./plot_bar/", column1 = "", column2 = "",
                      sname = FALSE, num = 10, rare = NULL, rank = "Genus"){
+  suppressMessages(source(system.file("supdata", "phyloseq_extended_graphical_methods.R", package="ranomaly"))) #ggrare function
 
   out1 <- paste(getwd(),'/',output,'/',sep='')
   if(!dir.exists(output)){
@@ -296,7 +298,7 @@ if('compo' %in% names(rmd_data)){
     sink()
     # cat(paste('## ',",Nplot,",sep=''))
 
-    rmarkdown::render(paste(out1,'/bars2.Rmd', sep=""),params= list('rmd_data' = rmd_data, 'col1' = column1),output_file=paste(out1,'/','bars.html',sep=''))  ## determiner automatiquement le path du md
+    render(paste(out1,'/bars2.Rmd', sep=""),params= list('rmd_data' = rmd_data, 'col1' = column1),output_file=paste(out1,'/','bars.html',sep=''))  ## determiner automatiquement le path du md
     flog.info('Finish.')
 
 

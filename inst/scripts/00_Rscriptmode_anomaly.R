@@ -4,7 +4,7 @@ library(ranomaly)
 #system.file("reads", "", package="ranomaly")  # Reads folder
 #system.file("supdata", "sample-metadata.csv", package="ranomaly") # metadata
 
-setwd("/home/erifa/Repository/LRF/00_erifa_bak/ranomaly_test")
+#setwd("")
 
 dada_res = dada2_fun(path=system.file("reads", "", package="ranomaly"), compress=TRUE, plot=TRUE)
 
@@ -12,7 +12,7 @@ tax.table = assign_taxo_fun(dada_res = dada_res, id_db = "SILVA_SSU_r132_March20
 
 tree = generate_tree_fun(dada_res)
 
-data = generate_phyloseq_fun(dada_res = dada_res, taxtable = tax.table, tree = tree, metadata = system.file("", "sample-metadata.csv", package="ranomaly"))
+data = generate_phyloseq_fun(dada_res = dada_res, taxtable = tax.table, tree = tree, metadata = system.file("supdata", "sample-metadata.csv", package="ranomaly"))
 
 data = decontam_fun(data = data, domain = TRUE, column = "type", ctrl_identifier = "control", spl_identifier = "sample", number = 100)
 
@@ -38,6 +38,7 @@ metacoder_fun(data = data, output = "./metacoder", column1 = "temps_lot", column
 
 deseq2_fun(data = data, output = "./deseq/", column1 = "temps_lot", verbose = 1, rank = "Genus", comp = "T6_lot1~T6_lot3,T9_lot1~T9_lot3")   # BUG
 
+
 metagenomeseq_fun(data = data, output = "./metagenomeseq/", column1 = "temps_lot", verbose = 1, rank = "Genus", comp = "T6_lot1~T6_lot3,T9_lot1~T9_lot3")
 
 TABF = aggregate_fun(data = data, metacoder = "./metacoder/metacoder_temps_lot_Genus.csv", deseq = "./deseq/", mgseq = "./metagenomeSeq/", output = "./aggregate_diff/",
@@ -57,3 +58,7 @@ csv2phyloseq_fun(otutable = "otutable.csv", taxtable = "taxo.csv",
 update_metadata_fun(data = data, output = "./updated_physeq/", metadata = "./sample-metadata_up1.csv", )
 
 phy2cyto_fun(data = data, output = "./cytoscape/", column1 = "lot", repl = NULL, verbose = 1)
+
+
+ttax1 = idtaxa_assign_fun("seqs.fna", id_db = "SILVA_SSU_r132_March2018.RData")
+

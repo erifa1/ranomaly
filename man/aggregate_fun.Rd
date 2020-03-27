@@ -43,5 +43,5 @@ aggregate_fun(
 Export final CSV files, barplot with top significant ASV and Venn Digramm.
 }
 \description{
-Aggregate
+Aggregate results of the tree differential analysis methods in one single file.
 }

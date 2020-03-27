@@ -1,5 +1,6 @@
 #' Aggregate
 #'
+#' Aggregate results of the tree differential analysis methods in one single file.
 #'
 #' @param data output from decontam or generate_phyloseq
 #' @param output Output directory

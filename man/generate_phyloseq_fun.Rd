@@ -2,7 +2,7 @@
 % Please edit documentation in R/generate_phyloseq_fun.R
 \name{generate_phyloseq_fun}
 \alias{generate_phyloseq_fun}
-\title{Generate Tree}
+\title{Generate Phyloseq Object}
 \usage{
 generate_phyloseq_fun(
   dada_res = dada_res,
@@ -33,5 +33,5 @@ generate_phyloseq_fun(
 Return raw otu table in phyloseq object.
 }
 \description{
-Generate Tree
+Generate Phyloseq Object
 }

@@ -1,18 +1,36 @@
 Package: ranomaly
 Title: An R package grouping ANOMALY worflow functions.
 Version: 0.0.0.9000
-Authors@R:
-    person(given = "Etienne",
-           family = "Rifa",
-           role = c("aut", "cre"),
-           email = "etienne.rifa@inrae.fr",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: What license it uses
+Authors@R: c(
+  person(family = "Theil", given = "Sebastien", email = "sebastien.theil@inrae.fr", role = c("aut", "cre")),
+  person(family = "Rifa", given = "Etienne", email = "etienne.rifa@inrae.fr", role = c("aut"))
+  )
+Description:rANOMALY use Amplicon Sequence Variant (ASV from Dada2 package) as taxonomic unit, allowing an easy and relevant sequence tracking between different environments and/or projects. 
+  Decontam package is included for an accurate and consistent detection of contaminant ASV and taxonomic assignment step relies on IDTAXA method. Our workflow is able to merge and check
+  annotations from two taxonomic databases to unravel misannotation, discordance or inconsistency. The well known Phyloseq package provides the most common graphical representation, 
+  with additional statistics to assess significant impact of tested factors on microbial communities. The workflow incorporate multiple differential analyses (DESeq2 etc...) 
+  to reveal thin community contrast between conditions. 
+License: GPL 3.0
+Depends:
+    R (>= 3.6)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.0
-Imports :
+Imports:
+  Biostrings,
+  DECIPHER,
+  ShortRead,
+  dada2,
+  decontam,
+  microbiome,
+  DESeq2,
+  metagenomeSeq,
+  metacoder,
+  ggpubr,
+  pairwiseAdonis,
+  psadd,
+  phyloseq,
+  DESeq2,
   VennDiagram,
   digest,
   futile.logger,
@@ -20,13 +38,21 @@ Imports :
   grid,
   gridExtra,
   vegan,
-  viridis
+  viridis,
+  nlme,
+  phangorn,
+  plotly,
+  taxa,
+  rmarkdown
 Remotes: bioc::3.10/Biostrings,
   bioc::3.10/DECIPHER,
   bioc::3.10/ShortRead,
   bioc::3.10/dada2,
   bioc::3.10/decontam,
   bioc::3.10/metagenomeSeq,
-  pmartinezarbizu/pairwiseAdonis,
-  cpauvert/psadd,
-  bioc::3.10/phyloseq
+  bioc::3.10/phyloseq,
+  bioc::3.10/microbiome,
+  bioc::3.10/DESeq2,
+  github::pmartinezarbizu/pairwiseAdonis/pairwiseAdonis,
+  github::mahendra-mariadassou/phyloseq-extended,
+  github::cpauvert/psadd

@@ -1,6 +1,6 @@
-#' Generate Tree
+#' Generate Phyloseq Object
 #'
-#' Generate Tree
+#'
 #'
 #' @param dada_res Results of dada2_fun()
 #' @param taxtable Results of assign_taxo_fun()

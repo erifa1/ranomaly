@@ -1,6 +1,6 @@
 #' IDTAXA assign
 #'
-#' Processing///
+#' Additionnal function for assign_taxo and assign_fasta function.
 #'
 #' @param amplicon Choose amplipcon "16S" or "ITS"
 #'

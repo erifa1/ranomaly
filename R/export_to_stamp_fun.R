@@ -19,7 +19,7 @@
 
 # Decontam Function
 
-export_to_stamp_fun <- function(data = data, output = "./stamp/", correc = TRUE){
+export_to_stamp_fun <- function(data = data, output = "./stamp/", correc = FALSE){
 
 
   ranknames <- colnames(tax_table(data))

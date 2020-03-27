@@ -20,6 +20,8 @@
 #' @param skip Skip decontam step.
 #' @param manual_cont_rank Rank of taxa to remove, inform 'ASV' to remove ASV.
 #' @param manual_cont List of Genus to remove comma separated (eg. g__Enterococcus,g__Cellulosimicrobium,g__Serratia).
+#' @param krona Export krona plot (not available for windows)
+#' @param returnval Boolean to return values in console or not.
 #'
 #' @return Return a decontaminated phyloseq object.
 #'
@@ -39,7 +41,7 @@
 decontam_fun <- function(data = data, domain = TRUE, output = "./decontam_out/", number = 4000, prev = 2, freq = 0.00005,
                          column = "type", ctrl_identifier = "control", spl_identifier = "sample", batch = NULL, plot = FALSE,
                          method = "prevalence", threshold = 0.1, concentration = NULL, verbose = 1, unassigned = FALSE,
-                         skip = FALSE, manual_cont_rank = "Genus", manual_cont = NULL, returnval=TRUE){
+                         skip = FALSE, manual_cont_rank = "Genus", manual_cont = NULL, krona = FALSE, returnval=TRUE){
 
   invisible(flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger"))
 
@@ -63,9 +65,12 @@ decontam_fun <- function(data = data, domain = TRUE, output = "./decontam_out/",
     ggsave(paste(output,'/lib_size.png',sep=''), plot=p)
     flog.info('Done.')
 
-    flog.info('Generating Krona...')
-    plot_krona(data, paste(output,'/krona_no_filtering',sep=''),'sample.id')
-    flog.info('Done.')
+    if(krona){
+      flog.info('Generating Krona...')
+      plot_krona(data, paste(output,'/krona_no_filtering',sep=''),'sample.id')
+      flog.info('Done.')
+    }
+
   }
 
   # CHECKING CONTROL SAMPLES
@@ -314,10 +319,13 @@ decontam_fun <- function(data = data, domain = TRUE, output = "./decontam_out/",
   flog.info('Saving R objects.')
   save(data, data_rel, file=paste(output,'/robjects.Rdata',sep=''))
 
-  flog.info('Generating Krona.')
-  plot_krona(data, paste(output,'/krona_filtering',sep=""),'sample.id')
-  flog.info('Done.')
-  flog.info('Finish.')
+  if(krona){
+    flog.info('Generating Krona.')
+    plot_krona(data, paste(output,'/krona_filtering',sep=""),'sample.id')
+    flog.info('Done.')
+    flog.info('Finish.')
+  }
+
 
   if(returnval){return(data)}
 

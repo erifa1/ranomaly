@@ -24,6 +24,7 @@ decontam_fun(
   skip = FALSE,
   manual_cont_rank = "Genus",
   manual_cont = NULL,
+  krona = FALSE,
   returnval = TRUE
 )
 }
@@ -65,6 +66,10 @@ decontam_fun(
 \item{manual_cont_rank}{Rank of taxa to remove, inform 'ASV' to remove ASV.}
 
 \item{manual_cont}{List of Genus to remove comma separated (eg. g__Enterococcus,g__Cellulosimicrobium,g__Serratia).}
+
+\item{krona}{Export krona plot (not available for windows)}
+
+\item{returnval}{Boolean to return values in console or not.}
 }
 \value{
 Return a decontaminated phyloseq object.
