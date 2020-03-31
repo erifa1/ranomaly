@@ -273,9 +273,9 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
     derepRs <- derepFastq(filtRs[[sam]], verbose=TRUE)
     flog.info('Done.')
     flog.info('dada2...')
-    dadaFs <- dada(derepFs, err=errF, multithread=TRUE, pool=FALSE, selfConsist=FALSE)
+    dadaFs <- dada(derepFs, err=errF, multithread=TRUE, pool="pseudo", selfConsist=FALSE)
     stockFs <- c(stockFs, getN(dadaFs))
-    dadaRs <- dada(derepRs, err=errR, multithread=TRUE, pool=FALSE, selfConsist=FALSE)
+    dadaRs <- dada(derepRs, err=errR, multithread=TRUE, pool="pseudo", selfConsist=FALSE)
     stockRs <- c(stockRs,getN(dadaRs))
     flog.info('Done.')
     flog.info('Merging pairs...')
@@ -325,11 +325,10 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
   dada_res$seqtab.export = seqtab.export
   dada_res$otu.table = otu.table
 
-  if(returnval) {return(dada_res)}
-
-
   flog.info('Saving R objects.')
   save(dada_res, file=paste(outpath,'/robjects.Rdata',sep=''))
   flog.info('Finish.')
+
+  if(returnval) {return(dada_res)}
 
 }

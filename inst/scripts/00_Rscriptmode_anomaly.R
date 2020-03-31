@@ -8,13 +8,13 @@ library(ranomaly)
 
 dada_res = dada2_fun(path=system.file("reads", "", package="ranomaly"), compress=TRUE, plot=TRUE)
 
-tax.table = assign_taxo_fun(dada_res = dada_res, id_db = "SILVA_SSU_r132_March2018.RData" )
+tax.table = assign_taxo_fun(dada_res = dada_res, id_db = "~/bank/silva/SILVA_SSU_r132_March2018.RData" )
 
 tree = generate_tree_fun(dada_res)
 
 data = generate_phyloseq_fun(dada_res = dada_res, taxtable = tax.table, tree = tree, metadata = system.file("supdata", "sample-metadata.csv", package="ranomaly"))
 
-data = decontam_fun(data = data, domain = TRUE, column = "type", ctrl_identifier = "control", spl_identifier = "sample", number = 100)
+data = decontam_fun(data = data, domain = "Bacteria", column = "type", ctrl_identifier = "control", spl_identifier = "sample", number = 100)
 
 export_to_stamp_fun(data = data)
 

@@ -38,8 +38,9 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
   if(!dir.exists(output)){
     dir.create(output, recursive = TRUE)
   }
-  flog.info('Done.')
+
   if(rank != 'ASV'){
+    flog.info('Glom rank...')
     data.glom <- tax_glom(data, taxrank=rank)
   } else {
     data.glom <- data
@@ -47,9 +48,11 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
 
   # save.image("debug.rdata")
   # quit()
-  if(is.null(comp)){
-    fun <- paste('combinaisons <- combn(na.omit(unique(sample_data(data.glom)$',column1,')),2) ',sep='')
+  flog.info('Defining comparison...')
+  if(comp==""){
+    fun <- paste('combinaisons <- utils::combn(na.omit(unique(sample_data(data.glom)$',column1,')),2) ',sep='')
     eval(parse(text=fun))
+    print(combinaisons)
   }else{
     comp_list <- unlist(strsplit(comp,","))
     # combinaisons <- combn(comp_list,2)
@@ -62,8 +65,8 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
     }
   }
 
+  flog.info('Done...')
   pdf(file=paste(output,'/deseq2_',column1,'.pdf',sep=''),width=15,height=16)
-
 
   '%!in%' <- function(x,y)!('%in%'(x,y))
   for (col in (1:ncol(combinaisons))){
@@ -113,6 +116,7 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
     # }
 
     tmp <- prune_taxa(taxa_sums(tmp) >= 1, tmp)
+    # return(tmp)
 
     flog.info('DESeq2...')
     fun <- paste('deseq <- phyloseq_to_deseq2(tmp, ~ ',column1,')',sep='')
@@ -125,7 +129,13 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
     deseq = estimateSizeFactors(deseq, geoMeans = geoMeans)
 
     flog.info('DESeq2...')
-    deseq = DESeq2::DESeq(deseq, test="Wald", fitType="parametric")
+    print(deseq)
+
+
+
+    deseq = DESeq2::DESeq(deseq, test="Wald", fitType="parametric") ## BUG
+    # Error in model.matrix.formula(design(object), colData(object)) :
+    #   data must be a data.frame
     flog.debug(show(deseq))
 
     res = results(deseq, cooksCutoff = FALSE)

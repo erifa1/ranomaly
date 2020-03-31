@@ -2,12 +2,12 @@
 #'
 #'
 #' @param data output from generate_phyloseq_fun()
-#' @param domain 16S region or ITS region (16S=TRUE; ITS=FALSE).
+#' @param domain 16S region or ITS region (Bacteria or Fungi).
 #' @param output Output directory
 #' @param number Minimum number of reads per sample.
 #' @param prev Minimum prevalence of an ASV in samples to be keep.
 #' @param freq Minimum ASV frequence on overall samples.
-#' @param column Column name for type of sample (control or sample).
+#' @param column Column name for type of sample (control or sample). If informed, function filters control samples.
 #' @param ctrl_identifier Idendifier name for controls.
 #' @param spl_identifier Idendifier name for samples.
 #' @param batch Batch column name for independent contaminant identification.
@@ -39,7 +39,7 @@
 # Decontam Function
 
 decontam_fun <- function(data = data, domain = TRUE, output = "./decontam_out/", number = 4000, prev = 2, freq = 0.00005,
-                         column = "type", ctrl_identifier = "control", spl_identifier = "sample", batch = NULL, plot = FALSE,
+                         column = "", ctrl_identifier = "control", spl_identifier = "sample", batch = NULL, plot = FALSE,
                          method = "prevalence", threshold = 0.1, concentration = NULL, verbose = 1, unassigned = FALSE,
                          skip = FALSE, manual_cont_rank = "Genus", manual_cont = NULL, krona = FALSE, returnval=TRUE){
 
@@ -56,14 +56,18 @@ decontam_fun <- function(data = data, domain = TRUE, output = "./decontam_out/",
   data_no_filtering <- data
 
   if(plot){
-    flog.info('Plotting...')
-    df <- as.data.frame(sample_data(data))
-    df$LibrarySize <- sample_sums(data)
-    df <- df[order(df$LibrarySize),]
-    df$Index <- seq(nrow(df))
-    p <- ggplot(data=df, aes_string(x="Index", y="LibrarySize", color=column)) + geom_point()
-    ggsave(paste(output,'/lib_size.png',sep=''), plot=p)
-    flog.info('Done.')
+
+    if(column != ""){
+      flog.info('Plotting...')
+      df <- as.data.frame(sample_data(data))
+      df$LibrarySize <- sample_sums(data)
+      df <- df[order(df$LibrarySize),]
+      df$Index <- seq(nrow(df))
+      p <- ggplot(data=df, aes_string(x="Index", y="LibrarySize", color=column)) + geom_point()
+      ggsave(paste(output,'/lib_size.png',sep=''), plot=p)
+      flog.info('Done.')
+
+    }
 
     if(krona){
       flog.info('Generating Krona...')
@@ -213,27 +217,31 @@ decontam_fun <- function(data = data, domain = TRUE, output = "./decontam_out/",
   #UNASSIGNED TAXA
   if(unassigned==TRUE){
     flog.info('Filtering unassigned domain...')
-    if(domain==TRUE){
+    if(domain=="Bacteria"){
       k <- "k__Bacteria"
       p <- "p__Bacteria_Phylum"
-    }else{
+    }else if(domain == "Fungi"){
       k <- "k__Fungi"
       p <- "p__Fungi_Phylum"
     }
     flog.debug('Domain : %s ; Phylum : %s',k,p)
 
     taxdf <- as.data.frame(data@tax_table@.Data)
-    taxToKeep3 = row.names(taxdf[taxdf$Domain==k,])
-    taxToDump3 = row.names(taxdf[taxdf$Domain!=k,])
+    taxToKeep4 = row.names(taxdf[taxdf$Domain==k,])
+    taxToDump4 = row.names(taxdf[taxdf$Domain!=k,])
     flog.info('Done.')
 
-    flog.info('Filtering unassigned phylum...')
-    taxToKeep4 = row.names(taxdf[taxdf$Phylum!=p,])
-    taxToDump4 = row.names(taxdf[taxdf$Phylum==p,])
-    flog.info('Done.')
+    # flog.info('Filtering unassigned phylum...')
+    # taxToKeep3 = row.names(taxdf[taxdf$Phylum!=p,])
+    # taxToDump3 = row.names(taxdf[taxdf$Phylum==p,])
+    # flog.info('Done.')
+    #
+    # taxToKeep4 = unique(c(taxToKeep3,taxToKeep4))
+    # taxToDump4 = unique(c(taxToDump3,taxToDump4))
 
-    taxToKeep4 = unique(c(taxToKeep3,taxToKeep4))
-    taxToDump4 = unique(c(taxToDump3,taxToDump4))
+    # print(taxdf[taxToDump4,])
+    # print(nrow(taxdf[taxToDump4,]))
+
 
   }else{
     taxToDump4 = NULL
@@ -249,6 +257,11 @@ decontam_fun <- function(data = data, domain = TRUE, output = "./decontam_out/",
 
   TF = list(decontam=taxToDump0,freq=taxToDump1,prev=taxToDump2,unassigned=taxToDump4)
   TF = Filter(length, TF) #ommit empty field of list TF
+
+  # #DEBUG
+  # TF$taxdf=taxdf
+  # return(TF)
+  # #DEBUG
 
   flog.info('Plotting Venn diagrams...')
   venn.plot <- venn.diagram(TF, filename = NULL, col = "black",
@@ -267,12 +280,9 @@ decontam_fun <- function(data = data, domain = TRUE, output = "./decontam_out/",
   for (j in 1:length(TF)){
     TABtest = TF[[j]]
     TABtest_filt=rep(NA, length(uniqTaxToDump))
-    for (i in 1:length(uniqTaxToDump)) {
-      featureI = uniqTaxToDump[i]
-      res=grep( paste('^',featureI,'$', sep="" ) , TABtest)
-      if(length(res)>0){TABtest_filt[i]=length(res)
-      }
-    }
+    names(TABtest_filt) = uniqTaxToDump
+    TABtest_filt[TABtest] = 1
+
     TABf=cbind.data.frame( TABtest_filt, TABf )
     names(TABf)[1] = names(TF)[j]
   }
@@ -288,7 +298,6 @@ decontam_fun <- function(data = data, domain = TRUE, output = "./decontam_out/",
   flog.info(paste("AFTER FILTERING: ",nsamples(data), "samples and", ntaxa(data),"ASVs in otu table") )
 
 
-  save.image("debug.rdata")
   ##GENUS to remove manually
   if(!is.null(manual_cont)){
     cont_list <- unlist(strsplit(manual_cont,","))
@@ -306,8 +315,11 @@ decontam_fun <- function(data = data, domain = TRUE, output = "./decontam_out/",
   }
 
   ##Remove Control samples for next analysis
-  fun <- paste("data <- subset_samples(data, ",column," %in% '",spl_identifier,"')",sep="")
-  eval(parse(text=fun))
+  if(column != ""){
+    fun <- paste("data <- subset_samples(data, ",column," %in% '",spl_identifier,"')",sep="")
+    eval(parse(text=fun))
+  }
+
 
 
   flog.info('Writing raw tables.')

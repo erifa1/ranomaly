@@ -36,13 +36,13 @@ phy2tsv_fun <- function(data = data, output = "./tsv_table/", rank = "ASV"){
       flog.info(paste('ASV ...'))
       ttable <- data@tax_table@.Data
       otable <- as.data.frame(otu_table(data))
-      # refseq1 <- as.data.frame(refseq(data)); names(refseq1)="seq"
+      refseq1 <- as.data.frame(refseq(data)); names(refseq1)="seq"
 
     }else{flog.info('Choose rank name among:'); print(rank_names(data))}
   }
   if(!any(rownames(ttable) == rownames(otable))){flog.info("Different order in otu table and tax table");quit()}
-  # TT = cbind(otable,ttable,refseq1)
-  TT = cbind(otable,ttable)
+  TT = cbind(otable,ttable,refseq1)
+  # TT = cbind(otable,ttable)
   flog.info(paste('Saving ...'))
   write.table(TT, paste(output,"/otu_table_",rank,".csv",sep=""), sep="\t", quote=FALSE, col.names=NA)
   flog.info(paste('Done ...'))

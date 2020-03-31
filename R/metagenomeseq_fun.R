@@ -27,7 +27,6 @@ metagenomeseq_fun <- function(data = data, output = "./metagenomeseq/", column1 
   if(!dir.exists(output)){
     dir.create(output)
   }
-  flog.info('Done.')
 
   if(rank != 'ASV'){
     data.glom <- tax_glom(data, taxrank=rank)
