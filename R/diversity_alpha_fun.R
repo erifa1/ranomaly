@@ -15,6 +15,7 @@
 #' @import phyloseq
 #' @import ggplot2
 #' @importFrom nlme lme
+#' @importFrom glue glue
 #'
 #' @export
 
@@ -108,17 +109,17 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
         res1 <- summary(anova_res1)
         print(res1)
 
-        # post hoc test
-        cat("############\npost hoc LSD.test\n")
-        if(column2 == ''){
-          fun = glue::glue("lsd1 <- agricolae::LSD.test(anova_res1, '{column1}', p.adj='fdr')")
-          eval(parse(text = fun))
-          print(lsd1)
-        } else {
-          fun = glue::glue("lsd1 <- agricolae::LSD.test(anova_res1, '{column2}', p.adj='fdr')")
-          eval(parse(text = fun))
-          print(lsd1)
-        }
+        # # post hoc test  commented du to conflict between LSD.test() and DESeq() function. #' @importFrom agricolae LSD.test
+        # cat("############\npost hoc LSD.test\n")
+        # if(column2 == ''){
+        #   fun = glue("lsd1 <- LSD.test(anova_res1, '{column1}', p.adj='fdr')")
+        #   eval(parse(text = fun))
+        #   print(lsd1)
+        # } else {
+        #   fun = glue("lsd1 <- LSD.test(anova_res1, '{column2}', p.adj='fdr')")
+        #   eval(parse(text = fun))
+        #   print(lsd1)
+        # }
 
         cat(paste("\n##pvalues of pairwise wilcox test on ", m, " \n"), sep="")
         fun <- paste("wilcox_res1 <- pairwise.wilcox.test(anova_data$",m,", anova_data[,column1], p.adjust.method='fdr')", sep="")

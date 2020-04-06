@@ -5,6 +5,7 @@
 #' @param amplicon Choose amplipcon "16S" or "ITS"
 #' @param path Read files folder path
 #' @param outpath output .Rdata file name
+#' @param pool option for dada function (FALSE, TRUE or "pseudo"), default is "pseudo". See ? dada.
 #' @param f_trunclen Forward read tuncate
 #' @param r_trunclen Reverse read tuncate length
 #' @param f_primer Forward primer sequence (only for ITS)
@@ -29,7 +30,7 @@
 
 # DADA2 function
 
-dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_trunclen = 240, r_trunclen = 240,
+dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_trunclen = 240, r_trunclen = 240, dadapool = "pseudo",
                       f_primer = "GCATCGATGAAGAACGCAGC", r_primer = "TCCTCCGCTTWTTGWTWTGC", plot = FALSE, compress = FALSE, verbose = 1, returnval = TRUE){
 
   if(verbose == 3){
@@ -266,23 +267,22 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
   stockFs=NULL; stockRs=NULL
   getN <- function(x) sum(getUniques(x))
 
-  for(sam in sample.names) {
-    flog.info(paste('Processing sample ',sam))
-    flog.info('Dereplicating fastq...')
-    derepFs <- derepFastq(filtFs[[sam]], verbose=TRUE)
-    derepRs <- derepFastq(filtRs[[sam]], verbose=TRUE)
-    flog.info('Done.')
-    flog.info('dada2...')
-    dadaFs <- dada(derepFs, err=errF, multithread=TRUE, pool="pseudo", selfConsist=FALSE)
-    stockFs <- c(stockFs, getN(dadaFs))
-    dadaRs <- dada(derepRs, err=errR, multithread=TRUE, pool="pseudo", selfConsist=FALSE)
-    stockRs <- c(stockRs,getN(dadaRs))
-    flog.info('Done.')
-    flog.info('Merging pairs...')
-    merger <- mergePairs(dadaFs, derepFs, dadaRs, derepRs, verbose=FALSE)
-    flog.info('Done.')
-    mergers[[sam]] <- merger
-  }
+
+  flog.info('Dereplicating fastq...')
+  derepFs <- derepFastq(filtFs, verbose=TRUE)
+  derepRs <- derepFastq(filtRs, verbose=TRUE)
+
+  flog.info('Done.')
+  flog.info('dada2...')
+  dadaFs <- dada(derepFs, err=errF, multithread=TRUE, pool=dadapool, selfConsist=FALSE)
+  stockFs <- sapply(dadaFs, getN)
+  dadaRs <- dada(derepRs, err=errR, multithread=TRUE, pool=dadapool, selfConsist=FALSE)
+  stockRs <- sapply(dadaRs, getN)
+  flog.info('Done.')
+  flog.info('Merging pairs...')
+  mergers <- mergePairs(dadaFs, derepFs, dadaRs, derepRs, verbose=FALSE)
+  flog.info('Done.')
+
 
   seqtab <- makeSequenceTable(mergers)
 
@@ -292,7 +292,6 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
   flog.debug(sum(seqtab))
 
   flog.debug(sum(seqtab.nochim)/sum(seqtab))
-  # flog.info(sum(seqtab.nochim)/sum(seqtab))
   flog.info('Done.')
 
 
@@ -303,10 +302,6 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
   head(track)
 
   write.table(track, paste(outpath,"/read_tracking.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
-
-  # suppressMessages(library(digest))
-  # suppressMessages(library(phyloseq))
-
 
 
   seqtab.export <- seqtab.nochim

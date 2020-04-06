@@ -6,7 +6,7 @@ library(ranomaly)
 
 #setwd("")
 
-dada_res = dada2_fun(path=system.file("reads", "", package="ranomaly"), compress=TRUE, plot=TRUE)
+dada_res = dada2_fun(path=system.file("reads", "", package="ranomaly"), dadapool = "pseudo", compress=TRUE, plot=FALSE)
 
 tax.table = assign_taxo_fun(dada_res = dada_res, id_db = "~/bank/silva/SILVA_SSU_r132_March2018.RData" )
 
@@ -34,7 +34,7 @@ diversity_alpha_fun(data = data, output = "./plot_div_alpha/", column1 = "temps"
 diversity_beta_fun(data = data, output = "./plot_div_beta/", glom = "ASV", column1 = "temps", column2 = "lot", covar ="")
 
 metacoder_fun(data = data, output = "./metacoder", column1 = "temps_lot", column2 = "", rank = "Genus",
-                          signif = TRUE, plottrees = FALSE, min ="10", comp = "T6_lot1~T6_lot3,T9_lot1~T9_lot3")
+                          signif = TRUE, plottrees = TRUE, min ="10", comp = "T6_lot1~T6_lot3,T9_lot1~T9_lot3")
 
 deseq2_fun(data = data, output = "./deseq/", column1 = "temps_lot", verbose = 1, rank = "Genus", comp = "T6_lot1~T6_lot3,T9_lot1~T9_lot3")   # BUG
 

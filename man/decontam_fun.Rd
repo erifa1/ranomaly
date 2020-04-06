@@ -11,7 +11,7 @@ decontam_fun(
   number = 4000,
   prev = 2,
   freq = 5e-05,
-  column = "type",
+  column = "",
   ctrl_identifier = "control",
   spl_identifier = "sample",
   batch = NULL,
@@ -31,7 +31,7 @@ decontam_fun(
 \arguments{
 \item{data}{output from generate_phyloseq_fun()}
 
-\item{domain}{16S region or ITS region (16S=TRUE; ITS=FALSE).}
+\item{domain}{16S region or ITS region (Bacteria or Fungi).}
 
 \item{output}{Output directory}
 
@@ -41,7 +41,7 @@ decontam_fun(
 
 \item{freq}{Minimum ASV frequence on overall samples.}
 
-\item{column}{Column name for type of sample (control or sample).}
+\item{column}{Column name for type of sample (control or sample). If informed, function filters control samples.}
 
 \item{ctrl_identifier}{Idendifier name for controls.}
 

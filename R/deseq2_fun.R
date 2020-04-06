@@ -11,13 +11,18 @@
 #'
 #' @return Export CSV files with significant differentialy abondant ASV.
 #'
+#' @import futile.logger
 #' @import phyloseq
-#' @import ggplot2
-#' @import DESeq2
+#' @importFrom BiocGenerics estimateSizeFactors
+#' @importFrom DESeq2 DESeq
+#' @importFrom DESeq2 results
+#' @importFrom DESeq2 resultsNames
 #' @importFrom gridExtra grid.arrange
 #' @importFrom ggpubr ggtexttable
 #' @importFrom ggpubr ttheme
 #' @importFrom ggpubr text_grob
+#' @import ggplot2
+
 #'
 #' @export
 
@@ -119,26 +124,22 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
     # return(tmp)
 
     flog.info('DESeq2...')
-    fun <- paste('deseq <- phyloseq_to_deseq2(tmp, ~ ',column1,')',sep='')
+    fun <- paste('dseq <- phyloseq_to_deseq2(tmp, ~ ',column1,')',sep='')
     eval(parse(text = fun))
 
     gm_mean = function(x, na.rm=TRUE){
       exp(sum(log(x[x > 0]), na.rm=na.rm) / length(x))
     }
-    geoMeans = apply(DESeq2::counts(deseq), 1, gm_mean)
-    deseq = estimateSizeFactors(deseq, geoMeans = geoMeans)
+    geoMeans = apply(DESeq2::counts(dseq), 1, gm_mean)
+    dseq2 = estimateSizeFactors(dseq, geoMeans = geoMeans)
 
     flog.info('DESeq2...')
-    print(deseq)
+    print(dseq2)
 
+    dseq3 = DESeq2::DESeq(dseq2, test="Wald", fitType="parametric")
+    flog.debug(show(dseq3))
 
-
-    deseq = DESeq2::DESeq(deseq, test="Wald", fitType="parametric") ## BUG
-    # Error in model.matrix.formula(design(object), colData(object)) :
-    #   data must be a data.frame
-    flog.debug(show(deseq))
-
-    res = results(deseq, cooksCutoff = FALSE)
+    res = results(dseq3, cooksCutoff = FALSE)
     flog.debug(show(res))
     alpha = 0.05
 
@@ -146,7 +147,7 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
       # sigtab = res[which(res$padj < alpha), ]
       sigtab = res
       sigtab = cbind(row.names(sigtab),as(sigtab, "data.frame"), as(tax_table(data)[rownames(sigtab), ], "matrix"))
-      colnames(sigtab)[1]=resultsNames(deseq)[2]
+      colnames(sigtab)[1]=resultsNames(dseq3)[2]
       save.image("debug.rdata")
       write.table(sigtab, file = paste(output,'/signtab_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.csv',sep=''),quote=FALSE,sep="\t", row.names=FALSE)
 
@@ -174,7 +175,7 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
       tab0 = data.frame(matrix(ncol = 14, nrow = 0))
       # print(length(c(resultsNames(deseq)[2], colnames(res), colnames(tax_table(data)))))
       # print(c(resultsNames(deseq)[2], colnames(res), colnames(tax_table(data))))
-      colnames(tab0) <- c(resultsNames(deseq)[2], colnames(res), colnames(tax_table(data)))
+      colnames(tab0) <- c(resultsNames(dseq3)[2], colnames(res), colnames(tax_table(data)))
       write.table(tab0, file = paste(output,'/signtab_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.csv',sep=''),quote=FALSE,sep="\t", row.names=FALSE)
 
     }

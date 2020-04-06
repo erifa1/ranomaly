@@ -10,6 +10,7 @@ dada2_fun(
   outpath = "./dada2_out/",
   f_trunclen = 240,
   r_trunclen = 240,
+  dadapool = "pseudo",
   f_primer = "GCATCGATGAAGAACGCAGC",
   r_primer = "TCCTCCGCTTWTTGWTWTGC",
   plot = FALSE,
@@ -40,6 +41,8 @@ dada2_fun(
 \item{verbose}{Verbose level. (1: quiet, 3: verbal)}
 
 \item{returnval}{Boolean to return values in console or not.}
+
+\item{pool}{option for dada function (FALSE, TRUE or "pseudo"), default is "pseudo". See ? dada.}
 }
 \value{
 Return raw otu table in phyloseq object and export it in an Rdata file.
