@@ -43,3 +43,8 @@ devtools::install_git("https://forgemia.inra.fr/umrf/ranomaly")
 Require [Rtools](https://cran.r-project.org/bin/windows/Rtools/),
 [git](https://git-scm.com/download/win) and run same commands as Linux
 installation.
+
+## Tutorial 
+
+Visit [the rANOMALY wikipage](https://forgemia.inra.fr/umrf/ranomaly/-/wikis/rANOMALY-wiki)
+

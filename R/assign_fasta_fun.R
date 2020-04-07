@@ -26,7 +26,11 @@ idtaxa_assign_fun <- function(fasta, id_db, output = "./assign_fasta/", confiden
   }
 
   flog.info(paste('Taxonomy assignation with IDTAXA',sep=''))
-  dna <- readDNAStringSet(fasta) # or readRNAStringSet
+  if(class(fasta) == "DNAStringSet"){
+    dna = fasta
+  } else {
+    dna <- readDNAStringSet(fasta)
+  }
   dna <- RemoveGaps(dna)
 
   db_list <- unlist(strsplit(id_db,","))

@@ -36,7 +36,7 @@ diversity_beta_fun(data = data, output = "./plot_div_beta/", glom = "ASV", colum
 metacoder_fun(data = data, output = "./metacoder", column1 = "temps_lot", column2 = "", rank = "Genus",
                           signif = TRUE, plottrees = TRUE, min ="10", comp = "T6_lot1~T6_lot3,T9_lot1~T9_lot3")
 
-deseq2_fun(data = data, output = "./deseq/", column1 = "temps_lot", verbose = 1, rank = "Genus", comp = "T6_lot1~T6_lot3,T9_lot1~T9_lot3")   # BUG
+deseq2_fun(data = data, output = "./deseq/", column1 = "temps_lot", verbose = 1, rank = "Genus", comp = "T6_lot1~T6_lot3,T9_lot1~T9_lot3")
 
 
 metagenomeseq_fun(data = data, output = "./metagenomeseq/", column1 = "temps_lot", verbose = 1, rank = "Genus", comp = "T6_lot1~T6_lot3,T9_lot1~T9_lot3")
@@ -49,7 +49,7 @@ head(TABF)
 
 #other TOOLS
 ASVenn_fun(data = data, output = "./ASVenn/", rank = "ASV",
-                            column1 = "temps", subset = "", lvls = "", krona = "",
+                            column1 = "lot", subset = "", lvls = "", krona = "",
                             shared = TRUE)
 
 csv2phyloseq_fun(otutable = "otutable.csv", taxtable = "taxo.csv",
