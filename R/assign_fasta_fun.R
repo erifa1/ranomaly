@@ -2,7 +2,7 @@
 #'
 #' Same function as assign_taxo_fun but use FASTA file as input.
 #'
-#' @param fasta Path to fasta file
+#' @param fasta Path to fasta file, or DNAStringSet object.
 #' @param output Output directory
 #' @param id_db Vector with list of absolute path to IDTAXA formatted reference database(s) (up to 2 databases).
 #' @param verbose Verbose level. (1: quiet, 3: verbal)

@@ -171,19 +171,19 @@ ggrare <- function(physeq, step = 10, label = NULL, color = NULL, plot = TRUE, p
 #   return(p)
 # }
 #
-# correct_levels <- function(physeq, DF, map.var) {
-#   oldLevels <- character(0)
-#   if (any(DF[ , map.var] == "samples", na.rm = TRUE)) {
-#     oldLevels <- unique(tax_table(physeq)[ , map.var])
-#   }
-#   if (any(DF[ , map.var] == "taxa", na.rm = TRUE)) {
-#     oldLevels <- levels(get_variable(physeq, map.var))
-#   }
-#   allLevels <- unique(c(as.character(DF[, map.var]), oldLevels))
-#   allLevels <- allLevels[!is.na(allLevels)]
-#   DF[ , map.var] <- factor(DF[ , map.var], levels = allLevels)
-#   return(DF)
-# }
+correct_levels <- function(physeq, DF, map.var) {
+  oldLevels <- character(0)
+  if (any(DF[ , map.var] == "samples", na.rm = TRUE)) {
+    oldLevels <- unique(tax_table(physeq)[ , map.var])
+  }
+  if (any(DF[ , map.var] == "taxa", na.rm = TRUE)) {
+    oldLevels <- levels(get_variable(physeq, map.var))
+  }
+  allLevels <- unique(c(as.character(DF[, map.var]), oldLevels))
+  allLevels <- allLevels[!is.na(allLevels)]
+  DF[ , map.var] <- factor(DF[ , map.var], levels = allLevels)
+  return(DF)
+}
 
 
 
@@ -258,16 +258,16 @@ ggrare <- function(physeq, step = 10, label = NULL, color = NULL, plot = TRUE, p
 #   return(topCond)
 # }
 #
-# ## Aggregate coordinates by replicate to have "mean" coordinates
-# ## for a given replicate condition.
-# replicate_means <- function(DF, replicate) {
-#   Axis1 <- colnames(DF)[1]
-#   Axis2 <- colnames(DF)[2]
-#   res1 <- aggregate(as.formula(paste(Axis1, "~", replicate)), data = DF, FUN = mean)
-#   res2 <- aggregate(as.formula(paste(Axis2, "~", replicate)), data = DF, FUN = mean)
-#   res <- merge(res1, res2, by.x = replicate, sort = FALSE)
-#   return(res)
-# }
+## Aggregate coordinates by replicate to have "mean" coordinates
+## for a given replicate condition.
+replicate_means <- function(DF, replicate) {
+  Axis1 <- colnames(DF)[1]
+  Axis2 <- colnames(DF)[2]
+  res1 <- aggregate(as.formula(paste(Axis1, "~", replicate)), data = DF, FUN = mean)
+  res2 <- aggregate(as.formula(paste(Axis2, "~", replicate)), data = DF, FUN = mean)
+  res <- merge(res1, res2, by.x = replicate, sort = FALSE)
+  return(res)
+}
 #
 #
 # ## Custom modification of plot_ordination to label outliers species and add mean location

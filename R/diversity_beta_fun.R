@@ -8,6 +8,7 @@
 #' @param column1 Column name of main factor to test
 #' @param covar One or more factor name to integrate as covariable in permanova. (for multiple covariable, provide as vector)
 #' @param column2 Column name to split dataset with.
+#' @param supp Supplementary plot (jaccard indexes + CCA/RDA ordination)
 #'
 #' @return Export plots and tests in the output directory.
 #'
@@ -21,7 +22,7 @@
 
 # Decontam Function
 
-diversity_beta_fun <- function(data = data, output = "./plot_div_beta/", glom = "ASV", column1 = "", column2 = "", covar =""){
+diversity_beta_fun <- function(data = data, output = "./plot_div_beta/", glom = "ASV", column1 = "", column2 = "", covar ="", supp = FALSE){
 
   suppressMessages(source(system.file("supdata", "phyloseq_extended_graphical_methods.R", package="ranomaly")))
 
@@ -125,6 +126,8 @@ diversity_beta_fun <- function(data = data, output = "./plot_div_beta/", glom = 
     sample_data(data_rank) <- mdata
     p1 <- plot_samples(data_rank, ordinate(data_rank, "MDS", "bray"), color = col ) + theme_bw() + ggtitle(paste("MDS + BC")) + stat_ellipse()
     p2 <- plot_samples(data_rank, ordinate(data_rank, "NMDS", "bray"), color = col ) + theme_bw() + ggtitle(paste("NMDS + BC")) + stat_ellipse()
+    p1bis <- plot_samples(data_rank, ordinate(data_rank, "MDS", "jaccard"), color = col ) + theme_bw() + ggtitle(paste("MDS + jaccard")) + stat_ellipse()
+    p2bis <- plot_samples(data_rank, ordinate(data_rank, "NMDS", "jaccard"), color = col ) + theme_bw() + ggtitle(paste("NMDS + jaccard")) + stat_ellipse()
     # mdata1 = sample_data(psobj)
     sample_data(psobj) <- mdata
     if(!is.null(phy_tree(data, errorIfNULL=FALSE))){
@@ -137,32 +140,66 @@ diversity_beta_fun <- function(data = data, output = "./plot_div_beta/", glom = 
 
       flog.info('Saving ...')
       if(var!=''){
-        png(paste(path,'/',var,"_beta.png",sep=''), width=40,height=40, units="cm", res=200)
+        png(paste(path,'/',var,"_beta.png",sep=''), width=40,height=50, units="cm", res=200)
       }else{
-        png(paste(path,"/beta.png",sep=''), width=40,height=40, units="cm", res=200)
+        png(paste(path,"/beta.png",sep=''), width=40,height=50, units="cm", res=200)
       }
       ppp = grid.arrange(p1 +  theme(legend.position = "none"), # + stat_ellipse()
                          p2 + theme(legend.position = "none" ),
+                         p1bis + theme(legend.position = "none" ),
+                         p2bis + theme(legend.position = "none" ),
                          p3 + theme(legend.position = "none"),
                          p4 + theme(legend.position = "none"),
                          p5 + theme(legend.position = "none"),
-                         p6 + theme(legend.position = "none"))
+                         p6 + theme(legend.position = "none"), ncol = 2)
       dev.off()
+    }else{
+      flog.info('No phy_tree ...')
+      ppp = grid.arrange(p1 +  theme(legend.position = "none"), #
+                         p2 +  theme(legend.position = "none"),
+                         p1bis +  theme(legend.position = "none"),
+                         p2bis +  theme(legend.position = "none"), ncol = 2)
+    }
 
-      # #plotly
-      # for(p in c("p1","p2","p3","p4","p5","p6")){
-      #   f=glue::glue('{output}/{p}.html')
-      #   fun = glue::glue( "ppp <- ggplotly({p});
-      #   htmlwidgets::saveWidget(as_widget(ppp), file.path(normalizePath(dirname({f})),basename({f})) )" )
-      #   print(fun)
-      #   eval(parse(text = fun))
-      # }
+      flog.info('Supplement Beta plots ...')
+      if(supp == TRUE){
+        p1 <- plot_samples(data_rank, ordinate(data_rank, "CCA", "bray"), color = col ) + theme_bw() + ggtitle(paste("CCA + BC")) + stat_ellipse()
+        p2 <- plot_samples(data_rank, ordinate(data_rank, "RDA", "bray"), color = col ) + theme_bw() + ggtitle(paste("RDA + BC")) + stat_ellipse()
+        p1bis <- plot_samples(data_rank, ordinate(data_rank, "CCA", "jaccard"), color = col ) + theme_bw() + ggtitle(paste("CCA + jaccard")) + stat_ellipse()
+        p2bis <- plot_samples(data_rank, ordinate(data_rank, "RDA", "jaccard"), color = col ) + theme_bw() + ggtitle(paste("RDA + jaccard")) + stat_ellipse()
+        # mdata1 = sample_data(psobj)
+        sample_data(psobj) <- mdata
+        if(!is.null(phy_tree(data, errorIfNULL=FALSE))){
+          p3 <- plot_samples(psobj, ordinate(psobj, "CCA", "unifrac"), color = col) + theme_bw() + ggtitle(paste("CCA + UF")) + stat_ellipse()
+          p4 <- plot_samples(psobj, ordinate(psobj, "RDA", "unifrac"), color = col) + theme_bw() + ggtitle(paste("RDA + UF")) + stat_ellipse()
+          p5 <- plot_samples(psobj, ordinate(psobj, "CCA", "wunifrac"),color = col) + theme_bw() + ggtitle(paste("CCA + wUF")) + stat_ellipse()
+          p6 <- plot_samples(psobj, ordinate(psobj, "RDA","wunifrac"), color = col) + theme_bw() + ggtitle(paste("RDA + wUF"))+ stat_ellipse()
+          # save(p1,p2,p3,p4,p5,p6, file = "diversity_plots.rdata")
+          flog.info('Done.')
+
+          flog.info('Saving ...')
+          if(var!=''){
+            png(paste(path,'/',var,"_betasupp.png",sep=''), width=40,height=50, units="cm", res=200)
+          }else{
+            png(paste(path,"/betasupp.png",sep=''), width=40,height=50, units="cm", res=200)
+          }
+          ppp = grid.arrange(p1 +  theme(legend.position = "none"), # + stat_ellipse()
+          p2 + theme(legend.position = "none" ),
+          p1bis + theme(legend.position = "none" ),
+          p2bis + theme(legend.position = "none" ),
+          p3 + theme(legend.position = "none"),
+          p4 + theme(legend.position = "none"),
+          p5 + theme(legend.position = "none"),
+          p6 + theme(legend.position = "none"), ncol = 2)
+          dev.off()
 
     }else{
       flog.info('No phy_tree ...')
-      ppp = grid.arrange(p1 + theme_bw() + ggtitle(paste("MDS + BC")) + theme(legend.position = "none") + stat_ellipse(), # + stat_ellipse()
-                         p2 + theme_bw() + ggtitle(paste("NMDS + BC")) + theme(legend.position = "none" ) + stat_ellipse()
-      )
+      ppp = grid.arrange(p1 +  theme(legend.position = "none"), #
+                         p2 +  theme(legend.position = "none"),
+                         p1bis +  theme(legend.position = "none"),
+                         p2bis +  theme(legend.position = "none"), ncol = 2)
+      }
     }
     flog.info('Done.')
   }
