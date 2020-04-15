@@ -23,19 +23,7 @@ with:
 
 ``` r
 install.packages("devtools")
-install.packages("remotes")
-
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-BiocManager::install("biomformat")library(biomformat)
-
-remotes::install_github("mahendra-mariadassou/phyloseq-extended")
 devtools::install_git("https://forgemia.inra.fr/umrf/ranomaly")
-
-
-# if install fails due to dependencies, retry: 
-# remotes::install_github("mahendra-mariadassou/phyloseq-extended")
-# devtools::install_git("https://forgemia.inra.fr/umrf/ranomaly")
 ```
 
 ### Windows
