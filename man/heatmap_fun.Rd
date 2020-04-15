@@ -7,8 +7,9 @@
 heatmap_fun(
   data = data,
   column1 = "",
+  top = 20,
   output = "./plot_heatmap/",
-  rank = "Genus"
+  rank = "Species"
 )
 }
 \arguments{
@@ -16,13 +17,15 @@ heatmap_fun(
 
 \item{column1}{Column name of factor to plot with.}
 
+\item{top}{Number of top features to plot.}
+
 \item{output}{Output directory}
 
 \item{rank}{Taxonomic rank name.}
 }
 \value{
-Export plots and tests in the output directory.
+Generate an heatmap with top taxa (html plotly version in output directory)
 }
 \description{
-Heatmap generator
+Generate an heatmap with top taxa.
 }

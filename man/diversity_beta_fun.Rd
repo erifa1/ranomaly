@@ -10,7 +10,8 @@ diversity_beta_fun(
   glom = "ASV",
   column1 = "",
   column2 = "",
-  covar = ""
+  covar = "",
+  supp = FALSE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ diversity_beta_fun(
 \item{column2}{Column name to split dataset with.}
 
 \item{covar}{One or more factor name to integrate as covariable in permanova. (for multiple covariable, provide as vector)}
+
+\item{supp}{Supplementary plot (jaccard indexes + CCA/RDA ordination)}
 }
 \value{
 Export plots and tests in the output directory.

@@ -2,9 +2,9 @@
 
 ## Set of graphical methods for phyloseq objects (mainly related to ordination,
 ## and library size after normalisation)
-require(ggplot2)
-require(scales)
-require(reshape2)
+#' @import ggplot2
+#' @import scales
+#' @import reshape2
 #
 # rarecurve2 <- function (x, step = 1, sample, xlab = "Sample Size", ylab = "Species", label = TRUE, col = "black", ...)
 #   ## See documentation for vegan rarecurve, col is now used to define

@@ -15,7 +15,6 @@
 #' @return Export barplots in an html file.
 #'
 #' @import phyloseq
-#' @import phyloseq.extended
 #' @import ggplot2
 #' @import gridExtra
 #' @import grid
@@ -37,7 +36,7 @@
 
 bars_fun <- function(data = data, bar = TRUE, compo1 = TRUE, output = "./plot_bar/", column1 = "", column2 = "",
                      sname = FALSE, num = 10, rare = NULL, rank = "Genus"){
-  suppressMessages(source(system.file("supdata", "phyloseq_extended_graphical_methods.R", package="ranomaly"))) #ggrare function
+  # suppressMessages(source(system.file("supdata", "phyloseq_extended_graphical_methods.R", package="ranomaly"))) #ggrare function
 
   out1 <- paste(getwd(),'/',output,'/',sep='')
   if(!dir.exists(output)){

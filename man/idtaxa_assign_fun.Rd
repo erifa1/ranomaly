@@ -14,7 +14,7 @@ idtaxa_assign_fun(
 )
 }
 \arguments{
-\item{fasta}{Path to fasta file}
+\item{fasta}{Path to fasta file, or DNAStringSet object.}
 
 \item{id_db}{Vector with list of absolute path to IDTAXA formatted reference database(s) (up to 2 databases).}
 
