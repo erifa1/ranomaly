@@ -32,7 +32,12 @@ Require [Rtools](https://cran.r-project.org/bin/windows/Rtools/),
 [git](https://git-scm.com/download/win) and run same commands as Linux
 installation.
 
-## Tutorial 
+## Tutorial
 
-Visit [the rANOMALY wikipage](https://forgemia.inra.fr/umrf/ranomaly/-/wikis/rANOMALY-wiki)
+Visit [the rANOMALY
+wikipage](https://forgemia.inra.fr/umrf/ranomaly/-/wikis/rANOMALY-wiki)
 
+## Ressources
+  
+IDTAXA formatted references databases for 16S and ITS are [available
+here](https://frama.link/anomaly_idtaxa_dbs).

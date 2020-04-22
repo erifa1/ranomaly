@@ -62,3 +62,24 @@ phy2cyto_fun(data = data, output = "./cytoscape/", column1 = "lot", repl = NULL,
 
 ttax1 = idtaxa_assign_fun("seqs.fna", id_db = "SILVA_SSU_r132_March2018.RData")
 
+
+
+# IDTAXA database formatting
+
+taxtable <- read.table(system.file("supdata", "gtdb_1k.tax", package="ranomaly"), sep="\t", stringsAsFactors=FALSE, h = TRUE)
+taxtable[taxtable == ""] = NA
+row.names(taxtable) = taxtable[,1]	#rownames must be unique
+ttable_ok = taxtable[,-1]
+
+#Fill tax table
+filltable = fill_tax_fun(ttable_ok)
+#Check tax table
+check1 = check_tax_fun(filltable, output = NULL)
+#Generate taxid
+taxid <- taxid_fun(taxtable = check1, output = NULL)
+
+#Train IDTAXA db
+idtaxa_traindb(taxtable = check1, taxid = taxid, seqs = system.file("supdata", "gtdb_1k.fna", package="ranomaly"), prunedb = NULL, outputDIR = "./", outputDBname = "newDB.rdata", returnval = FALSE)
+
+
+
