@@ -65,7 +65,7 @@ fill_tax_fun <- function(taxtable = taxtable, prefix = TRUE){
 
 
 check_tax_fun <- function(taxtable = taxtable, output = NULL, verbose=3, returnval = TRUE){
-
+  RANKS = c("_domain","_phylum","_class","_order","_family","_genus","_species")
   print("Check taxonomy consistency...")
   # Check for multiple ancestors at each rank, choose first occurence for each problematic taxon
   for(rank in 6:2){
@@ -89,9 +89,16 @@ check_tax_fun <- function(taxtable = taxtable, output = NULL, verbose=3, returnv
                       print(uniqTax[res]);
 
           tax2 <- apply(taxtable[taxtable[,rank]==i,1:rank], 1, function(x){paste(x, collapse = ";")})
-          uniqTax2 <- table(tax2)
+          #Taxonomy with no filltax function annotation are chosen first.
+          nofill = !grepl(paste(RANKS, collapse = "|"), tax2, ignore.case = FALSE, perl = FALSE, fixed = FALSE)
+          if(all(nofill == FALSE)){
+            uniqTax2 <- table(tax2)
+          }else{
+            uniqTax2 <- table(tax2[nofill])
+          }
           ftax <- names(uniqTax2[order(uniqTax2,decreasing=TRUE)])[1]
           ftax <- unlist(strsplit(ftax,";"))
+
           cat( glue::glue( "CORRECTED :
                       {paste(ftax, collapse = ';')}" )
           ); cat("\n")
