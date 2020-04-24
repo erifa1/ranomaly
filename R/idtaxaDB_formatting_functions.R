@@ -3,8 +3,7 @@
 #'
 #'
 #' @param taxtable Taxonomy table in tabulated format.
-
-#'
+#' @param prefix TRUE if there are prefix like c("k__","p__","c__","o__","f__","g__","s__")
 #'
 #' @return Return the same taxonomy without empty field, last known ranks are informed.
 #'
@@ -12,11 +11,16 @@
 #' @import DECIPHER
 #' @export
 
-fill_tax_fun <- function(taxtable = taxtable){
+fill_tax_fun <- function(taxtable = taxtable, prefix = TRUE){
 
   fill_tax_table = function(x){
     RANKS = c("domain","phylum","class","order","family","genus","species")
-    PREFIX = c("k__","p__","c__","o__","f__","g__","s__")
+    if(prefix){
+      PREFIX = c("k__","p__","c__","o__","f__","g__","s__")
+    }else{
+      PREFIX = c("","","","","","","")
+    }
+
     TAX = x
 
     if(length(na.omit(TAX))==0){
@@ -40,7 +44,7 @@ fill_tax_fun <- function(taxtable = taxtable){
 
   filltable <- tt2 <- as.data.frame( t(apply(taxtable, 1, fill_tax_table)) ,stringsAsFactors = FALSE )
   names(filltable) = c("Domain","Phylum","Class","Order","Family","Genus","Species")
-  rownames(filltable) =  rownames(ttable_ok)
+  rownames(filltable) =  rownames(taxtable)
 
   return(filltable)
 
@@ -81,12 +85,16 @@ check_tax_fun <- function(taxtable = taxtable, output = NULL, verbose=3, returnv
         stockLres = c(stockLres,length(res))
         #If multiple tax for one taxon...
         if(length(res)>1){
-          cat("\n\n");print(i);print(uniqTax[res]);
+          cat("\n");print(i);
+                      print(uniqTax[res]);
+
           tax2 <- apply(taxtable[taxtable[,rank]==i,1:rank], 1, function(x){paste(x, collapse = ";")})
           uniqTax2 <- table(tax2)
           ftax <- names(uniqTax2[order(uniqTax2,decreasing=TRUE)])[1]
           ftax <- unlist(strsplit(ftax,";"))
-          print(ftax)
+          cat( glue::glue( "CORRECTED :
+                      {paste(ftax, collapse = ';')}" )
+          ); cat("\n")
           #Change taxonomy with final ftax. the most common in taxtable
           for(j in row.names(taxtable[taxtable[,rank]==i,])){
             taxtable[j,] = c(ftax, taxtable[j,(rank+1):ncol(taxtable)])

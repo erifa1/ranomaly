@@ -25,7 +25,7 @@
 #' @importFrom ggpubr get_legend
 #' @importFrom plotly ggplotly
 #' @importFrom rmarkdown render
-#' @import viridis
+#' @importFrom viridis scale_fill_viridis
 #'
 #'
 #'
