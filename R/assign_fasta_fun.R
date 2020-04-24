@@ -41,7 +41,7 @@ idtaxa_assign_fun <- function(fasta, id_db, output = "./assign_fasta/", confiden
   }
 
   if(verbose == 3){
-    save.image("./annot_debug.rdata")
+    save(taxid_list, file = "./annot_taxid_list_debug.rdata")
   }
 
   if(length(db_list)>1){
@@ -133,83 +133,32 @@ idtaxa_assign_fun <- function(fasta, id_db, output = "./assign_fasta/", confiden
       taxid[[nn]] = taxid[[nn]][1:7]
     }
   }
-  taxid <- as.data.frame(taxid)
+  taxid <- t(as.data.frame(taxid))
   flog.info('Done.')
 
-
+  if(verbose == 3){
+    save(taxid, file = "./annot_taxid_debug.rdata")
+  }
 
   # Filling taxonomy with last assigned rank.
-  row.names(taxid) <- c("Domain", "Phylum", "Class", "Order", "Family", "Genus", "Species")
-
-  fill_tax_table = function(x){
-    RANKS = c("domain","phylum","class","order","family","genus","species")
-    PREFIX = c("k__","p__","c__","o__","f__","g__","s__")
-    TAX = na.omit(as.character(x))
-    lastRank = length(TAX)
-    if(length(TAX)==0){
-      TAX=c("unassigned")
-      lastRank = 1
-    }
-    for( i in 1:7){
-      if(i <= lastRank){
-        if(grepl(PREFIX[i], TAX[i], ignore.case = FALSE, perl = FALSE, fixed = TRUE)){
-          TAX[i] <- sub(PREFIX[i],'',TAX[i])
-        }
-        x[i] = paste(PREFIX[i],TAX[i], sep="")
-      } else {
-        if(grepl(PREFIX[lastRank], TAX[lastRank], ignore.case = FALSE, perl = FALSE, fixed = TRUE)){
-          TAX[lastRank] <- sub(PREFIX[lastRank],'',TAX[lastRank])
-        }
-        x[i] = paste(PREFIX[i],TAX[lastRank],'_', RANKS[i], sep="")
-      }
-    }
-    return(x)
-  }
-
+  names(taxid) <- c("Domain", "Phylum", "Class", "Order", "Family", "Genus", "Species")
   flog.info("Filling missing taxonomy ranks...")
-  taxid <- t(apply(taxid, 2, fill_tax_table))
+  taxid = fill_tax_fun(taxid, prefix = FALSE)
+  PREFIX = c("k__","p__","c__","o__","f__","g__","s__")
+  taxid = as.data.frame( t(apply(taxid, 1, function(x){ paste(PREFIX, x, sep="")})), stringAsFactors = FALSE)
   flog.info('Done.')
 
+  names(taxid) <- c("Domain", "Phylum", "Class", "Order", "Family", "Genus", "Species")
   tax.table <- tax_table(as.matrix(taxid))
 
+
   flog.info("Check taxonomy consistency...")
-  # Check for multiple ancestors at each rank, choose first occurence for each problematic taxon
-  for(rank in 6:2){
-    if(verbose==3){flog.info(paste(colnames(tax.table)[rank],".",sep=""))}
-
-    stockLres = 100; nloop=1
-    while(max(stockLres)>1){
-      if(verbose==3){flog.info(paste("Loop",nloop,".",sep=""))}
-      stockLres = NULL
-      allTax = apply(tax.table[,1:rank] ,1, function(x){paste(x, collapse = ";")})
-      uniqTax <- unique(allTax)
-
-      #Test if unique Genus has unique taxonomy.
-      for (i in unique(tax.table[,rank])){
-        res=grep( paste(';',i,'$', sep="" ) , uniqTax)
-        stockLres = c(stockLres,length(res))
-        #If multiple tax for one taxon...
-        if(length(res)>1){
-          cat("\n\n");print(i);print(uniqTax[res]);
-          tax2 <- apply(tax.table[tax.table[,rank]==i,1:rank], 1, function(x){paste(x, collapse = ";")})
-          uniqTax2 <- table(tax2)
-          ftax <- names(uniqTax2[order(uniqTax2,decreasing=TRUE)])[1]
-          ftax <- unlist(strsplit(ftax,";"))
-          print(ftax)
-          #Change taxonomy with final ftax. the most common in tax.table
-          for(j in row.names(tax.table[tax.table[,rank]==i,])){
-            tax.table[j,] = c(ftax, tax.table[j,(rank+1):ncol(tax.table)])
-          }
-        }
-      }
-      nloop = nloop + 1
-    }
-  }
+  tax.table = check_tax_fun(tax.table, output = NULL)
   flog.info("Done.")
 
   #Output table 2
-  Tab2 = apply( as.data.frame(taxid, stringsAsFactors=FALSE) , 1 , paste , collapse = ";" )
-  Tab2 <- cbind(Tab2, seq=names(dna))
+  Tab2 = apply( as.data.frame(tax.table, stringsAsFactors=FALSE) , 1 , paste , collapse = ";" )
+  Tab2 <- cbind(Tab2, seq=as.character(dna))
   write.table(Tab2, paste(output,"/final_tax_table.csv",sep=""), quote = FALSE, sep = "\t",
               col.names = FALSE, row.names = TRUE)
 
