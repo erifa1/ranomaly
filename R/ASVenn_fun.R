@@ -111,7 +111,7 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
 
 
   flog.info('Plotting ...')
-  VENNFUN <- function(mode = 1){
+  VENNFUN <- function(TF = TF, mode = 1){
     if(mode==1){
       venn.plot <- venn.diagram(TF, filename = NULL, col = "black",
                                 fill = rainbow(length(TF)), alpha = 0.50,
@@ -225,14 +225,14 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
     if(lvls == ""){
       flog.info('Selecting 5 first levels ...')
       # TF <- TF[c(1:5)]
-      VENNFUN(mode=2)
+      VENNFUN(TF = TF, mode=2)
     }else{
       flog.info(glue('Selecting {lvls} ...'))
       LVLs <- unlist(strsplit(lvls,","))
       TF <- TF[LVLs]
     }
   } else {
-    VENNFUN()
+    VENNFUN(TF = TF)
   }
 
   flog.info('Done ...')

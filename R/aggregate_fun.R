@@ -228,7 +228,7 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
       TABbar$tax = paste( substr(ttax[as.character(TABbar$ListAllOtu),"Species"],1,20),"...","_", TABbar$ListAllOtu, sep="")
 
       png(paste(output,'/topDiffbarplot_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.png',sep=''), width=20, height=20, units="cm", res=200)
-      p<-ggplot(data=TABbar, aes(x=reorder(tax, -abs(DESeqLFC)), y=DESeqLFC, fill=Condition ) ) +
+      pbarplot <- p <-ggplot(data=TABbar, aes(x=reorder(tax, -abs(DESeqLFC)), y=DESeqLFC, fill=Condition ) ) +
         geom_bar(stat="identity", alpha = 0.7) + ggtitle(paste(combinaisons[,col],collapse="_vs_")) + labs(x='Features') +
         coord_flip() + theme_bw() +
         scale_y_continuous(minor_breaks = seq(-1E4 , 1E4, 1), breaks = seq(-1E4, 1E4, 5))
@@ -239,17 +239,19 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
     # Krona ? Diversity of differentialy abundant features.
 
     ## Venn diag pour chaque comparaison.
-    flog.info('Plotting Venn diagrams...')
-    TF = Filter(length, TF)
-    venn.plot <- venn.diagram(TF, filename = NULL, col = "black",
-                              fill = rainbow(length(TF)), alpha = 0.50,
-                              cex = 2, cat.col = 1, , lty = "blank",
-                              cat.cex = 2.5, cat.fontface = "bold",
-                              margin = 0.07, main=paste(combinaisons[,col],collapse="_vs_"), main.cex=2.5,
-                              fontfamily ="Arial",main.fontfamily="Arial",cat.fontfamily="Arial");
-    png(paste(output,'/venndiag_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.png',sep=''), width=20, height=20, units="cm", res=200)
-    grid.draw(venn.plot)
-    dev.off()
+    # flog.info('Plotting Venn diagrams...')
+    # TF = Filter(length, TF)
+    # venn.plot <- venn.diagram(TF, filename = NULL, col = "black",
+    #                           fill = rainbow(length(TF)), alpha = 0.50,
+    #                           cex = 2, cat.col = 1, , lty = "blank",
+    #                           cat.cex = 2.5, cat.fontface = "bold",
+    #                           margin = 0.07, main=paste(combinaisons[,col],collapse="_vs_"), main.cex=2.5,
+    #                           fontfamily ="Arial",main.fontfamily="Arial",cat.fontfamily="Arial");
+    # png(paste(output,'/venndiag_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.png',sep=''), width=20, height=20, units="cm", res=200)
+    # grid.draw(venn.plot)
+    # dev.off()
+
+    # grid.draw(venn.plot)
   }
 
 
@@ -269,7 +271,11 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
 
     write.table(TABfinal, paste(output,"/aggregate_diff_",column1,'.csv', sep=""), row.names=FALSE, sep="\t", quote = FALSE)
 
-    if(returnval){return(TABfinal)}
+
+    outlist = list()
+    outlist$table = TABfinal
+    outlist$barplot = pbarplot
+    if(returnval){return(outlist)}
 
     flog.info('Done.')
 

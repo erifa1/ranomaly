@@ -125,6 +125,8 @@ check_tax_fun <- function(taxtable = taxtable, output = NULL, verbose=3, returnv
 
 #' Taxid processing (idtaxa training functions)
 #'
+#' Provided by DECIPHER authors.
+#'
 #' @param taxtable Output from check_tax_fun function.
 #' @param output output path
 

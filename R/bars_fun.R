@@ -12,7 +12,13 @@
 #' @param rare Column name for splitting rare curves.
 #' @param rank Taxonomic rank name. You can provide multiple ranks seperated by comma.
 #'
-#' @return Export barplots in an html file.
+#' @return Exports barplots in an html file and returns plot in list object:
+#' \itemize{
+#' \item $bars: raw abundance barplot
+#' \item $compo: relative abundnce barplot
+#' \item $rare: rarefaction curves
+#' }
+#'
 #'
 #' @import phyloseq
 #' @import ggplot2
@@ -35,8 +41,13 @@
 # Decontam Function
 
 bars_fun <- function(data = data, bar = TRUE, compo1 = TRUE, output = "./plot_bar/", column1 = "", column2 = "",
-                     sname = FALSE, num = 10, rare = NULL, rank = "Genus"){
+                     sname = FALSE, num = 10, rare = NULL, rank = "Genus", verbose = TRUE){
   # suppressMessages(source(system.file("supdata", "phyloseq_extended_graphical_methods.R", package="ranomaly"))) #ggrare function
+
+  if(verbose==FALSE){
+    flog.threshold(ERROR)
+    print(flog.threshold())
+  }
 
   out1 <- paste(getwd(),'/',output,'/',sep='')
   if(!dir.exists(output)){
@@ -59,7 +70,7 @@ bars_fun <- function(data = data, bar = TRUE, compo1 = TRUE, output = "./plot_ba
     if(bar==TRUE){
 
       for(i in 1:length(taxonomy)){
-        j <- taxonomy[i]; print(j)
+        j <- taxonomy[i]; #print(j) #ranks
 
         psobj.top <- aggregate_top_taxa(data, j, top = num)
         tn = taxa_names(psobj.top)
@@ -224,6 +235,8 @@ bars_fun <- function(data = data, bar = TRUE, compo1 = TRUE, output = "./plot_ba
     }
 
 
+
+
     # Generating rmd template for report
     # PATHanomaly="/home/erifa/Repository/LRF/anomaly/"
     sink(paste(out1,'/bars2.Rmd', sep=""))
@@ -299,6 +312,9 @@ if('compo' %in% names(rmd_data)){
 
     render(paste(out1,'/bars2.Rmd', sep=""),params= list('rmd_data' = rmd_data, 'col1' = column1),output_file=paste(out1,'/','bars.html',sep=''))  ## determiner automatiquement le path du md
     flog.info('Finish.')
+
+    flog.info('Return values.')
+    return(rmd_data)
 
 
 

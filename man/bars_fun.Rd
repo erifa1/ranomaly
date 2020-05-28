@@ -39,7 +39,12 @@ bars_fun(
 \item{compo}{Plotting with relative composition.}
 }
 \value{
-Export barplots in an html file.
+Export barplots in an html file and returns plot in list object:
+\itemize{
+\item $bars: raw abundance barplot
+\item $compo: relative abundnce barplot
+\item $rare: rarefaction curves
+}
 }
 \description{
 Barplots community

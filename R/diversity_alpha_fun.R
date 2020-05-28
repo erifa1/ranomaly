@@ -70,6 +70,7 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
       return(p)
     }
     p <- alphaPlot()
+    plot(p)
     ggsave(paste(output,'/alpha_diversity.png',sep=''), plot=p, height = 15, width = 30, units="cm")
 
 
@@ -78,7 +79,7 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
     if(length(levels(as.factor(anova_data[,column1])))>1){
       flog.info('ANOVA ...')
       # variables <- paste(sep=" + ", "Depth", var1)
-      sink(paste(output,'/all_ANOVA.txt', sep=''))
+      sink(paste(output,'/all_ANOVA.txt', sep=''), split = TRUE)
       for (m in measures){
 
         cat(paste("\n\n############\n",m,"\n############\n"))

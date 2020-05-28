@@ -33,6 +33,10 @@ diversity_alpha_fun(data = data, output = "./plot_div_alpha/", column1 = "temps"
 
 diversity_beta_fun(data = data, output = "./plot_div_beta/", glom = "ASV", column1 = "temps", column2 = "lot", covar ="")
 
+
+diversity_beta_light(psobj = data, rank = "ASV", col = "temps", cov="lot", dist0 = "unifrac", ord = "MDS")
+
+
 metacoder_fun(data = data, output = "./metacoder", column1 = "temps_lot", column2 = "", rank = "Genus",
                           signif = TRUE, plottrees = TRUE, min ="10", comp = "T6_lot1~T6_lot3,T9_lot1~T9_lot3")
 
@@ -41,7 +45,7 @@ deseq2_fun(data = data, output = "./deseq/", column1 = "temps_lot", verbose = 1,
 
 metagenomeseq_fun(data = data, output = "./metagenomeseq/", column1 = "temps_lot", verbose = 1, rank = "Genus", comp = "T6_lot1~T6_lot3,T9_lot1~T9_lot3")
 
-TABF = aggregate_fun(data = data, metacoder = "./metacoder/metacoder_temps_lot_Genus.csv", deseq = "./deseq/", mgseq = "./metagenomeSeq/", output = "./aggregate_diff/",
+TABF = aggregate_fun(data = data, metacoder = "./metacoder/metacoder_signif_Genus.csv", deseq = "./deseq/", mgseq = "./metagenomeseq/", output = "./aggregate_diff/",
                           column1 = "temps_lot", column2 = NULL, verbose = 1, rank = "Genus", comp = "T6_lot1~T6_lot3,T9_lot1~T9_lot3")
 head(TABF)
 
