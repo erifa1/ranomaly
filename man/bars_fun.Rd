@@ -14,7 +14,8 @@ bars_fun(
   sname = FALSE,
   num = 10,
   rare = NULL,
-  rank = "Genus"
+  rank = "Genus",
+  verbose = TRUE
 )
 }
 \arguments{
@@ -39,7 +40,7 @@ bars_fun(
 \item{compo}{Plotting with relative composition.}
 }
 \value{
-Export barplots in an html file and returns plot in list object:
+Exports barplots in an html file and returns plot in list object:
 \itemize{
 \item $bars: raw abundance barplot
 \item $compo: relative abundnce barplot

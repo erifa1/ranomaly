@@ -122,19 +122,19 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
         #   print(lsd1)
         # }
 
-        cat(paste("\n##pvalues of pairwise wilcox test on ", m, " \n"), sep="")
+        cat(paste("\n##pvalues of pairwise wilcox test on ", m, "with FDR correction \n"), sep="")
         fun <- paste("wilcox_res1 <- pairwise.wilcox.test(anova_data$",m,", anova_data[,column1], p.adjust.method='fdr')", sep="")
         eval(parse(text = fun))
         print(round(wilcox_res1$p.value,3))
 
         if(column2 != ''){
-          cat(paste("\n##pvalues of pairwise wilcox test on ", m, " \n"), sep="")
+          cat(paste("\n##pvalues of pairwise wilcox test on ", m, "with FDR correction \n"), sep="")
           fun <- paste("wilcox_res1 <- pairwise.wilcox.test(anova_data$",m,", anova_data[,column2], p.adjust.method='fdr')", sep="")
           eval(parse(text = fun))
           print(round(wilcox_res1$p.value,3))
 
           cat("\n\n#######################\n")
-          cat(paste("##pvalues of pairwise wilcox test on ", m, " \n"), sep="")
+          cat(paste("##pvalues of pairwise wilcox test on ", m, " with collapsed factors (no correction)\n"), sep="")
           fun <- paste("wilcox_res <- pairwise.wilcox.test(anova_data$",m,", anova_data$fact1, p.adjust.method='none')", sep="")
           eval(parse(text = fun))
           print(round(wilcox_res$p.value,3))

@@ -16,13 +16,14 @@
 #' @import ggplot2
 #' @import pairwiseAdonis
 #' @import vegan
+#' @importFrom plotly ggplotly
 #'
 #' @export
 
 
 # Decontam Function
 
-diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov=NULL, dist0 = "bray", ord0 = "MDS", output="./plot_div_beta/") {
+diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov=NULL, dist0 = "bray", ord0 = "MDS", output="./plot_div_beta/", tests = TRUE) {
 
   if(!dir.exists(output)){
     dir.create(output, recursive=TRUE)
@@ -31,7 +32,10 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov=NULL, dist
   if( (dist0 == "unifrac" | dist0 == "wunifrac") & is.null(phy_tree(psobj, errorIfNULL=FALSE)) ){return(print("Error: unifrac distances needs phylogenetic tree."))}
 
   print(cov)
-  cov1 = unlist(strsplit(cov, ","))
+  if(!is.null(cov)){
+    cov1 = unlist(strsplit(cov, ","))
+  }
+
   # metrics <- sapply(strsplit(measures,","), '[')
   col1 = unlist(strsplit(col, "[+]"))
   if(length(col1)==1){
@@ -56,7 +60,12 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov=NULL, dist
   mdata$Depth <- sample_sums(data_rank)
   print(table(mdata[,col1]))
   dist1 <<- vegdist(t(otable), distance=dist0)
-  resBC = adonis(as.formula(paste('dist1 ~ Depth +', paste(cov1, collapse="+"), "+", col)), data = mdata, permutations = 1000)
+  if(!is.null(cov)){
+    resBC = adonis(as.formula(paste('dist1 ~ Depth +', paste(cov1, collapse="+"), "+", col)), data = mdata, permutations = 1000)
+  }else{
+    resBC = adonis(as.formula(paste('dist1 ~ Depth +', col)), data = mdata, permutations = 1000)
+  }
+
   #PairwiseAdonis
   # resBC2 = pairwise.adonis2(as.formula( paste('BC.dist ~ ', col,sep="") ), data = mdata)
   if(length(col1)>1){
@@ -69,24 +78,27 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov=NULL, dist
 
   # Figure
   p1 <- plot_samples(data_rank, ordinate(data_rank, ord0, dist0), color = col ) + theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}")) + stat_ellipse()
-  plot(p1)
+  # plot(p1)
 
 
-  ### Print tests
-  sink(paste(output,'/',col,'_permANOVA.txt',sep=''), split = TRUE)
+  if(tests){
+    ### Print tests
+    sink(paste(output,'/',col,'_permANOVA.txt',sep=''), split = TRUE)
     cat("\n#####################\n##PERMANOVA on BrayCurtis distances\n#####################\n")
     print(resBC)
     cat("\n#####################\n##pairwisePERMANOVA on BrayCurtis distances\n#####################\n")
     print(resBC2)
-  sink()
+    sink()
 
-  facts=unlist(strsplit(col,"[+]"))
-  if(length(facts)==2){
-    fact1 = paste(mdata[,facts[1]],mdata[,facts[2]],sep="_")
-    mdata$fact1 <- fact1
-    col <- "fact1"
+    facts=unlist(strsplit(col,"[+]"))
+    if(length(facts)==2){
+      fact1 = paste(mdata[,facts[1]],mdata[,facts[2]],sep="_")
+      mdata$fact1 <- fact1
+      col <- "fact1"
+    }
   }
 
 
 
+  return(p1)
 }
