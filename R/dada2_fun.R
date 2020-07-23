@@ -40,8 +40,6 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
   }
 
   flog.info('Read path :')
-  wd <- getwd()
-  path <- paste0(wd,path)
   flog.info(path)
 
   flog.info("Creating directory.")
