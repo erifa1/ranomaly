@@ -6,7 +6,7 @@ library(ranomaly)
 
 #setwd("")
 
-dada_res = dada2_fun(path=system.file("reads", "", package="ranomaly"), dadapool = "pseudo", compress=TRUE, plot=FALSE)
+dada_res = dada2_fun(path=system.file("../reads", "", package="ranomaly"), dadapool = "pseudo", compress=TRUE, plot=FALSE)
 
 tax.table = assign_taxo_fun(dada_res = dada_res, id_db = "~/bank/silva/SILVA_SSU_r132_March2018.RData" )
 
@@ -80,6 +80,3 @@ taxid <- taxid_fun(taxtable = check1, output = NULL)
 
 #Train IDTAXA db
 idtaxa_traindb(taxtable = check1, taxid = taxid, seqs = system.file("supdata", "gtdb_1k.fna", package="ranomaly"), prunedb = NULL, outputDIR = "./", outputDBname = "newDB.rdata", returnval = FALSE)
-
-
-

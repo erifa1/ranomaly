@@ -39,22 +39,16 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
     invisible(flog.threshold(INFO))
   }
 
-
-
-
-  flog.info('Done.')
+  flog.info('Read path :')
   wd <- getwd()
-
-
+  path <- paste0(wd,path)
+  flog.info(path)
 
   flog.info("Creating directory.")
   if(!dir.exists(outpath)){
     dir.create(outpath)
   }
   flog.info('Done.')
-  ## Reads path
-  # path <- opt$path
-  #list.files(path)
 
   if(compress==TRUE){
     flog.info('Loading compress files...')
