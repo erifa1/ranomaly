@@ -11,7 +11,8 @@ diversity_beta_light(
   cov = NULL,
   dist0 = "bray",
   ord0 = "MDS",
-  output = "./plot_div_beta/"
+  output = "./plot_div_beta/",
+  tests = TRUE
 )
 }
 \arguments{

@@ -89,6 +89,6 @@ idtaxa_traindb(taxtable = check1, taxid = taxid, seqs = system.file("supdata", "
 
 # Test Plotly Compo
 
-bars_fun2(data = updata, Ord1 = "type_fro_temps", Fact1 = "type_fro_temps")
+bars_fun2(data = data, Ord1 = "temps_lot", Fact1 = "temps_lot")
 
 p1 = diversity_beta_light(psobj = data, rank = "ASV", col = "type_fro_temps", dist0 = "unifrac", ord = "MDS")

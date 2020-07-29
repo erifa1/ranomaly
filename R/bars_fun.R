@@ -328,8 +328,8 @@ if('compo' %in% names(rmd_data)){
 #' @param data output from decontam or generate_phyloseq
 #' @param rank Rank to output
 #' @param top Number of top taxa to plot
-#' @param ord1 Variable used to order sample (X axis)
-#' @param fact1 Variable used to change X axis tick labels and color categories
+#' @param Ord1 Variable used to order sample (X axis)
+#' @param Fact1 Variable used to change X axis tick labels and color categories
 #' @param relative Plot relative plot (TRUE, default), raw abundance plot (FALSE)
 #' @param output
 #'

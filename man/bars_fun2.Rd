@@ -8,8 +8,8 @@ bars_fun2(
   data = data,
   rank = "Genus",
   top = 10,
-  ord1 = NULL,
-  fact1 = NULL,
+  Ord1 = NULL,
+  Fact1 = NULL,
   relative = TRUE
 )
 }
@@ -20,9 +20,9 @@ bars_fun2(
 
 \item{top}{Number of top taxa to plot}
 
-\item{ord1}{Variable used to order sample (X axis)}
+\item{Ord1}{Variable used to order sample (X axis)}
 
-\item{fact1}{Variable used to change X axis tick labels and color categories}
+\item{Fact1}{Variable used to change X axis tick labels and color categories}
 
 \item{relative}{Plot relative plot (TRUE, default), raw abundance plot (FALSE)}
 

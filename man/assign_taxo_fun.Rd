@@ -10,6 +10,7 @@ assign_taxo_fun(
   id_db = "/PathToDB/UNITE_idtaxa.Rdata",
   confidence = 50,
   verbose = 1,
+  addprefix = FALSE,
   returnval = TRUE
 )
 }
@@ -23,6 +24,8 @@ assign_taxo_fun(
 \item{confidence}{Bootstrap threshold 0...100}
 
 \item{verbose}{Verbose level. (1: quiet, 3: verbal)}
+
+\item{addprefix}{Add prefix to taxonomy (eg. k__ for kingdom)}
 
 \item{returnval}{Boolean to return values in console or not.}
 }
