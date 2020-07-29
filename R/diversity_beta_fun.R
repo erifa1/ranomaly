@@ -24,7 +24,7 @@
 
 diversity_beta_fun <- function(data = data, output = "./plot_div_beta/", glom = "ASV", column1 = "", column2 = "", covar ="", supp = FALSE){
 
-  suppressMessages(source(system.file("supdata", "phyloseq_extended_graphical_methods.R", package="ranomaly")))
+  # suppressMessages(source(system.file("supdata", "phyloseq_extended_graphical_methods.R", package="ranomaly")))
 
 
   if(!dir.exists(output)){
@@ -97,7 +97,7 @@ diversity_beta_fun <- function(data = data, output = "./plot_div_beta/", glom = 
       }
       flog.info('Done')
     }
-    sink(paste(path,'/',var,'_permANOVA.txt',sep=''))
+    sink(paste(path,'/',var,'_permANOVA.txt',sep=''), split = TRUE)
     cat("\n#####################\n##PERMANOVA on BrayCurtis distances\n#####################\n")
     print(resBC)
     cat("\n#####################\n##pairwisePERMANOVA on BrayCurtis distances\n#####################\n")
@@ -153,12 +153,14 @@ diversity_beta_fun <- function(data = data, output = "./plot_div_beta/", glom = 
                          p5 + theme(legend.position = "none"),
                          p6 + theme(legend.position = "none"), ncol = 2)
       dev.off()
+      plot(ppp)
     }else{
       flog.info('No phy_tree ...')
       ppp = grid.arrange(p1 +  theme(legend.position = "none"), #
                          p2 +  theme(legend.position = "none"),
                          p1bis +  theme(legend.position = "none"),
                          p2bis +  theme(legend.position = "none"), ncol = 2)
+      plot(ppp)
     }
 
       flog.info('Supplement Beta plots ...')
@@ -191,7 +193,9 @@ diversity_beta_fun <- function(data = data, output = "./plot_div_beta/", glom = 
           p4 + theme(legend.position = "none"),
           p5 + theme(legend.position = "none"),
           p6 + theme(legend.position = "none"), ncol = 2)
+
           dev.off()
+          plot(ppp)
 
     }else{
       flog.info('No phy_tree ...')
@@ -199,6 +203,7 @@ diversity_beta_fun <- function(data = data, output = "./plot_div_beta/", glom = 
                          p2 +  theme(legend.position = "none"),
                          p1bis +  theme(legend.position = "none"),
                          p2bis +  theme(legend.position = "none"), ncol = 2)
+      plot(ppp)
       }
     }
     flog.info('Done.')

@@ -111,7 +111,7 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
 
 
   flog.info('Plotting ...')
-  VENNFUN <- function(mode = 1){
+  VENNFUN <- function(TF = TF, mode = 1){
     if(mode==1){
       venn.plot <- venn.diagram(TF, filename = NULL, col = "black",
                                 fill = rainbow(length(TF)), alpha = 0.50,
@@ -167,10 +167,18 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
       }
       yy <- Reduce(intersect, TF)
       Core <- cbind(rep("core", length(yy)), alltax[yy,])
-      Tabf <- rbind(Core, Tabf)
-      write.table(Tabf, paste(output,"/",TITRE,"_venn_table.csv",sep=""), sep="\t", quote=FALSE, row.names=FALSE)
+      TABf <- rbind(Core, Tabf)
+      write.table(TABf, paste(output,"/",TITRE,"_venn_table.csv",sep=""), sep="\t", quote=FALSE, row.names=FALSE)
     }
+
+    LL=list()
+    LL$venn_plot = venn.plot
+    LL$TABf = TABf
+    return(LL)
   }
+# End VENNFUN
+
+
 
   # Specific use to screen taxonomic composition of shared taxa...
   if(krona != ""){
@@ -225,16 +233,17 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
     if(lvls == ""){
       flog.info('Selecting 5 first levels ...')
       # TF <- TF[c(1:5)]
-      VENNFUN(mode=2)
+     res1 = VENNFUN(TF = TF, mode=2)
     }else{
       flog.info(glue('Selecting {lvls} ...'))
       LVLs <- unlist(strsplit(lvls,","))
       TF <- TF[LVLs]
     }
   } else {
-    VENNFUN()
+    res1 = VENNFUN(TF = TF)
   }
 
   flog.info('Done ...')
 
+  return(res1)
 }

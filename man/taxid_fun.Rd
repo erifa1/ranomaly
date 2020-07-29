@@ -15,5 +15,5 @@ taxid_fun(taxtable = taxtable, output = "./taxid.txt")
 Return the taxid object.
 }
 \description{
-Taxid processing (idtaxa training functions)
+Provided by DECIPHER authors.
 }

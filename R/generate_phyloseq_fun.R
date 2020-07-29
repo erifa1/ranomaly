@@ -39,7 +39,7 @@ generate_phyloseq_fun <- function(dada_res = dada_res, taxtable = tax.table, tre
     stop("ERROR: number of samples in metadata differ from otu table.")
   }
 
-
+  flog.info("Sequences..")
   sequences <- getSequences(dada_res$seqtab.nochim)
   names(sequences) <- sapply(sequences,digest,algo='md5')
   data <- phyloseq(dada_res$otu.table, tax.table, sample.metadata, phy_tree(tree), DNAStringSet(sequences))

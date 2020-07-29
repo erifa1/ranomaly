@@ -5,7 +5,7 @@ Authors@R: c(
   person(family = "Theil", given = "Sebastien", email = "sebastien.theil@inrae.fr", role = c("aut", "cre")),
   person(family = "Rifa", given = "Etienne", email = "etienne.rifa@inrae.fr", role = c("aut"))
   )
-Description:rANOMALY use Amplicon Sequence Variant (ASV from Dada2 package) as taxonomic unit, allowing an easy and relevant sequence tracking between different environments and/or projects. 
+Description: rANOMALY use Amplicon Sequence Variant (ASV from Dada2 package) as taxonomic unit, allowing an easy and relevant sequence tracking between different environments and/or projects. 
   Decontam package is included for an accurate and consistent detection of contaminant ASV and taxonomic assignment step relies on IDTAXA method. Our workflow is able to merge and check
   annotations from two taxonomic databases to unravel misannotation, discordance or inconsistency. The well known Phyloseq package provides the most common graphical representation, 
   with additional statistics to assess significant impact of tested factors on microbial communities. The workflow incorporate multiple differential analyses (DESeq2 etc...) 
@@ -15,7 +15,7 @@ Depends:
     R (>= 3.6)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Imports:
   biomformat,
   Biostrings,

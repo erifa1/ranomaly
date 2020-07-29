@@ -7,6 +7,7 @@
 #' @param id_db Vector with list of absolute path to IDTAXA formatted reference database(s) (up to 2 databases).
 #' @param verbose Verbose level. (1: quiet, 3: verbal)
 #' @param confidence Bootstrap threshold 0...100
+#' @param addprefix Add prefix to taxonomy (eg. k__ for kingdom)
 #' @param returnval Boolean to return values in console or not.
 #'
 #'
@@ -22,7 +23,7 @@
 
 
 
-assign_taxo_fun <- function(dada_res = dada_res,  output = "./idtaxa/", id_db = "/PathToDB/UNITE_idtaxa.Rdata", confidence = 50, verbose = 1, returnval = TRUE){
+assign_taxo_fun <- function(dada_res = dada_res,  output = "./idtaxa/", id_db = "/PathToDB/UNITE_idtaxa.Rdata", confidence = 50, verbose = 1, addprefix = FALSE, returnval = TRUE){
 
 
   if(verbose == 3){
@@ -156,7 +157,10 @@ assign_taxo_fun <- function(dada_res = dada_res,  output = "./idtaxa/", id_db = 
   flog.info("Filling missing taxonomy ranks...")
   taxid = fill_tax_fun(taxid, prefix = FALSE)
   PREFIX = c("k__","p__","c__","o__","f__","g__","s__")
-  taxid = as.data.frame( t(apply(taxid, 1, function(x){ paste(PREFIX, x, sep="")})), stringAsFactors = FALSE)
+  if( length(grep("p__",taxid[2,])) == 0 ){
+    taxid = as.data.frame( t(apply(taxid, 1, function(x){ paste(PREFIX, x, sep="")})), stringAsFactors = FALSE)
+  }
+
   flog.info('Done.')
 
   names(taxid) <- c("Domain", "Phylum", "Class", "Order", "Family", "Genus", "Species")

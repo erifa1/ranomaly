@@ -70,6 +70,7 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
       return(p)
     }
     p <- alphaPlot()
+    plot(p)
     ggsave(paste(output,'/alpha_diversity.png',sep=''), plot=p, height = 15, width = 30, units="cm")
 
 
@@ -78,7 +79,7 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
     if(length(levels(as.factor(anova_data[,column1])))>1){
       flog.info('ANOVA ...')
       # variables <- paste(sep=" + ", "Depth", var1)
-      sink(paste(output,'/all_ANOVA.txt', sep=''))
+      sink(paste(output,'/all_ANOVA.txt', sep=''), split = TRUE)
       for (m in measures){
 
         cat(paste("\n\n############\n",m,"\n############\n"))
@@ -121,19 +122,19 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
         #   print(lsd1)
         # }
 
-        cat(paste("\n##pvalues of pairwise wilcox test on ", m, " \n"), sep="")
+        cat(paste("\n##pvalues of pairwise wilcox test on ", m, "with FDR correction \n"), sep="")
         fun <- paste("wilcox_res1 <- pairwise.wilcox.test(anova_data$",m,", anova_data[,column1], p.adjust.method='fdr')", sep="")
         eval(parse(text = fun))
         print(round(wilcox_res1$p.value,3))
 
         if(column2 != ''){
-          cat(paste("\n##pvalues of pairwise wilcox test on ", m, " \n"), sep="")
+          cat(paste("\n##pvalues of pairwise wilcox test on ", m, "with FDR correction \n"), sep="")
           fun <- paste("wilcox_res1 <- pairwise.wilcox.test(anova_data$",m,", anova_data[,column2], p.adjust.method='fdr')", sep="")
           eval(parse(text = fun))
           print(round(wilcox_res1$p.value,3))
 
           cat("\n\n#######################\n")
-          cat(paste("##pvalues of pairwise wilcox test on ", m, " \n"), sep="")
+          cat(paste("##pvalues of pairwise wilcox test on ", m, " with collapsed factors (no correction)\n"), sep="")
           fun <- paste("wilcox_res <- pairwise.wilcox.test(anova_data$",m,", anova_data$fact1, p.adjust.method='none')", sep="")
           eval(parse(text = fun))
           print(round(wilcox_res$p.value,3))

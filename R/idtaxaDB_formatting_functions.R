@@ -125,6 +125,8 @@ check_tax_fun <- function(taxtable = taxtable, output = NULL, verbose=3, returnv
 
 #' Taxid processing (idtaxa training functions)
 #'
+#' Provided by DECIPHER authors.
+#'
 #' @param taxtable Output from check_tax_fun function.
 #' @param output output path
 
@@ -151,8 +153,8 @@ taxid_fun <- function(taxtable = taxtable, output = "./taxid.txt"){
   for (i in seq_along(ranks)) {
     for (j in seq_along(ranks[[i]])) {
       #print(c(i,j))
-      rank_level <- taxa[substring(ranks[[i]][j], 1, 3)]
-      #print(rank_level)
+      rank_level <- taxa[j]  #rank_level <- taxa[substring(ranks[[i]][j], 1, 3)]
+	    #print(rank_level)
       group <- ranks[[i]][j] 			#substring(, 4)#
       #print(group)
       w <- which(groups==group & rank==rank_level)  #Verifie si le groupe est déjà présent
