@@ -1,0 +1,32 @@
+
+#####################
+##PERMANOVA on BrayCurtis distances
+#####################
+
+Call:
+adonis(formula = as.formula(paste("dist1 ~ Depth +", paste(cov1,      collapse = "+"), "+", col)), data = mdata, permutations = 1000) 
+
+Permutation: free
+Number of permutations: 1000
+
+Terms added sequentially (first to last)
+
+          Df SumsOfSqs MeanSqs F.Model      R2   Pr(>F)    
+Depth      1    0.7389 0.73889  7.2239 0.15030 0.000999 ***
+lot        2    0.1466 0.07330  0.7166 0.02982 0.804196    
+temps      3    1.1667 0.38891  3.8023 0.23732 0.000999 ***
+Residuals 28    2.8639 0.10228         0.58256             
+Total     34    4.9162                 1.00000             
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+#####################
+##pairwisePERMANOVA on BrayCurtis distances
+#####################
+     pairs Df SumsOfSqs  F.Model         R2 p.value p.adjusted sig
+1 T1 vs T3  1 0.1271756 1.212201 0.07477092   0.285     0.2850    
+2 T1 vs T6  1 0.2748423 1.847542 0.10351800   0.052     0.0780    
+3 T1 vs T9  1 0.7653653 6.428321 0.28661623   0.001     0.0020   *
+4 T3 vs T6  1 0.1869548 1.620142 0.09748064   0.137     0.1644    
+5 T3 vs T9  1 0.6168523 7.368520 0.32941474   0.001     0.0020   *
+6 T6 vs T9  1 0.5699354 4.421958 0.21652958   0.001     0.0020   *
