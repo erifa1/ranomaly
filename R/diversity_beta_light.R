@@ -23,7 +23,7 @@
 
 # Decontam Function
 
-diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov=NULL, dist0 = "bray", ord0 = "MDS", output="./plot_div_beta/", tests = TRUE) {
+diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, dist0 = "bray", ord0 = "MDS", output="./plot_div_beta/", tests = TRUE) {
 
   if(!dir.exists(output)){
     dir.create(output, recursive=TRUE)
@@ -77,28 +77,27 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov=NULL, dist
 
 
   # Figure
+  resBeta = list()
   p1 <- plot_samples(data_rank, ordinate(data_rank, ord0, dist0), color = col ) + theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}")) + stat_ellipse()
   # plot(p1)
 
+  resBeta$plot = p1
 
   if(tests){
     ### Print tests
-    sink(paste(output,'/',col,'_permANOVA.txt',sep=''), split = TRUE)
+    sink(paste(output,'/',col,'_permANOVA.txt',sep=''), split = FALSE)
     cat("\n#####################\n##PERMANOVA on BrayCurtis distances\n#####################\n")
     print(resBC)
     cat("\n#####################\n##pairwisePERMANOVA on BrayCurtis distances\n#####################\n")
     print(resBC2)
     sink()
 
-    facts=unlist(strsplit(col,"[+]"))
-    if(length(facts)==2){
-      fact1 = paste(mdata[,facts[1]],mdata[,facts[2]],sep="_")
-      mdata$fact1 <- fact1
-      col <- "fact1"
-    }
+    resBeta$permanova = resBC
+    resBeta$pairwisepermanova = resBC2
+
   }
 
 
 
-  return(p1)
+  return(resBeta)
 }
