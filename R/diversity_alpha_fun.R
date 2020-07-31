@@ -48,9 +48,11 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
 
     #alpha diversité tableau
 
+    resAlpha = list()
     flog.info('Alpha diversity tab ...')
-    alpha.diversity <- estimate_richness(data, measures = measures )
+    alpha.diversity <- estimate_richness(data, measures = c("Observed","Shannon","Simpson","InvSimpson") )
     # row.names(alpha.diversity) <- gsub("X","",row.names(alpha.diversity))
+    resAlpha$alphatable = alpha.diversity
     write.table(alpha.diversity,paste(output,'/alphaDiversity_table.csv',sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
     flog.info('Done.')
 
@@ -70,7 +72,12 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
       return(p)
     }
     p <- alphaPlot()
-    plot(p)
+    if(length(measures) == 1){
+      ggplotly(p)
+    }else{
+      plot(p)
+    }
+    resAlpha$plot = p
     ggsave(paste(output,'/alpha_diversity.png',sep=''), plot=p, height = 15, width = 30, units="cm")
 
 
@@ -79,7 +86,7 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
     if(length(levels(as.factor(anova_data[,column1])))>1){
       flog.info('ANOVA ...')
       # variables <- paste(sep=" + ", "Depth", var1)
-      sink(paste(output,'/all_ANOVA.txt', sep=''), split = TRUE)
+      sink(paste(output,'/all_ANOVA.txt', sep=''), split = FALSE)
       for (m in measures){
 
         cat(paste("\n\n############\n",m,"\n############\n"))
@@ -109,6 +116,8 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
         # print(anova_res1)
         res1 <- summary(anova_res1)
         print(res1)
+
+        resAlpha$anova = res1
 
         # # post hoc test  commented du to conflict between LSD.test() and DESeq() function. #' @importFrom agricolae LSD.test
         # cat("############\npost hoc LSD.test\n")
@@ -140,6 +149,8 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
           print(round(wilcox_res$p.value,3))
         }
 
+        resAlpha$wilcox = round(wilcox_res$p.value,3)
+
         if(column3 != ''){
           cat("\n############\nANOVA repeated measures\n")
           print(paste(f,"+ Error(",column3,")"))
@@ -147,12 +158,16 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
           res <- summary(anova_res)
           print(res)
 
+          resAlpha$anovarepeat = res
+
           cat("\n############\nMixed effects models (nlme::lme)\n")
           print(f)
           print(paste("lme1 = anova(lme(as.formula(",f,"), random = ~1 | ",column3,", data = anova_data, method = 'ML') )", sep=""))
           fun <- paste( "lme1 = anova(lme(as.formula(",f,"), random = ~1 | ",column3,", data = anova_data, method = 'ML') ) ", sep="")
           eval(parse(text=fun))
           print(lme1)
+
+          resAlpha$mixedeffect = lme1
         }
 
       }
@@ -166,6 +181,6 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
 
   flog.info('Finish.')
 
-
+  return(resAlpha)
 
 }
