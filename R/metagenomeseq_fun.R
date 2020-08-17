@@ -48,8 +48,10 @@ metagenomeseq_fun <- function(data = data, output = "./metagenomeseq/", column1 
   # save.image("debug.rdata")
   # quit()
 
-  MGdata <- phyloseq_to_metagenomeSeq(data)
+  MGdata <- phyloseq_to_metagenomeSeq(data.glom)
   '%!in%' <- function(x,y)!('%in%'(x,y))
+
+save(list = ls(all.names = TRUE), file = "debug.rdata", envir = environment())
 
   for (col in (1:ncol(combinaisons))){
     fun <- paste('tmp <- sample_data(data)$',column1,sep='')
@@ -107,6 +109,12 @@ metagenomeseq_fun <- function(data = data, output = "./metagenomeseq/", column1 
     colnames(TAB)[1]=paste(combinaisons[,col],collapse="_vs_")
     write.table(na.omit(TAB), paste(output,'/signtab_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.csv',sep=''), row.names=FALSE, quote=FALSE, sep="\t")
 
+    # # Taxons names
+    # na.omit(TAB)[,1]
+    # tax_table(data.glom)[as.character(na.omit(TAB)[,1]),]
+    # data.glom@tax_table@.Data[as.character(na.omit(TAB)[,1]),]
+    # data.glom@tax_table@.Data[c("4b9344cb7f7df3d60b7ee87b9f3fca8d","6afd0b866cd5e22da5e67643a0096c84"),]
+    # data.glom@tax_table@.Data[c("6afd0b866cd5e22da5e67643a0096c84"),]
   }
 
 
