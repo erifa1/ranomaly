@@ -41,8 +41,8 @@ out1 = metacoder_fun(data = data, output = "./metacoder", column1 = "souche_temp
 out2 = deseq2_fun(data = data, output = "./deseq/", column1 = "souche_temps", verbose = 1, rank = "Family", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0")
 
 
-metagenomeseq_fun(data = data, output = "./metagenomeseq/", column1 = "souche_temps", verbose = 1, rank = "Family", comp = "sauvage_t50~mutant_t50")
+out3 = metagenomeseq_fun(data = data, output = "./metagenomeseq/", column1 = "souche_temps", verbose = 1, rank = "Family", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0")
 
-TABF = aggregate_fun(data = data_decontam, metacoder = "./metacoder/metacoder_signif_Genus.csv", deseq = "./deseq/", mgseq = "./metagenomeseq/", output = "./aggregate_diff/",
-                          column1 = "temps_lot", column2 = NULL, verbose = 1, rank = "Genus", comp = "T6_lot1~T6_lot3,T9_lot1~T9_lot3")
-head(TABF)
+outF = aggregate_fun(data = data, metacoder = "./metacoder/metacoder_signif_Family.csv", deseq = "./deseq/", mgseq = "./metagenomeseq/", output = "./aggregate_diff/",
+                          column1 = "souche_temps", column2 = NULL, verbose = 1, rank = "Genus", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0")
+head(outF)

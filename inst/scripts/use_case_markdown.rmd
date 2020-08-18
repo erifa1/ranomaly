@@ -1,0 +1,212 @@
+---
+title: 'ANOMALY: Use Case'
+author: "Etienne Rifa"
+date: "18/08/2020"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+    collapsed: no
+    smooth_scroll: no
+    number_sections: yes
+    code_folding: hide
+  pdf_document:
+    toc: yes
+fig_width: 15
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Barplot des communautés microbiennes
+```{r, message = FALSE,  fig.keep='all', warning=FALSE, echo = TRUE}
+#fig.align='left', fig.width = 20, fig.height = 10
+devtools::load_all("~/home-local-ssd/repository/ranomaly/")
+# library(ranomaly)
+
+load("~/home-local-ssd/projets/anomaly/tests/decontam_out/robjects.Rdata")
+
+p1 = bars_fun2(data = data, Fact1 = "souche_temps", Ord1 = "souche_temps", rank="Genus", relative = FALSE, top = 20)
+
+p2 = bars_fun2(data = data, Fact1 = "souche_temps", Ord1 = "souche_temps", rank="Genus", relative = TRUE, top = 20)
+
+htmltools::tagList(list(p1, p2))
+```
+
+
+# Alpha Diversité
+## Richesse spécifique
+
+```{r,warning = FALSE, message = FALSE, , echo = TRUE, results = 'hide'}
+
+divAlpha = diversity_alpha_fun(data = data, output = "./plot_div_alpha/", column1 = "souche", column2 = "temps",
+                    column3 = "", supcovs = "", measures = c("Observed") )
+```
+- Table des indices de diversité
+```{r,warning = FALSE, message = FALSE, , echo = TRUE}
+DT::datatable(divAlpha$alphatable, filter = "top")
+```
+
+
+- Boxplot
+```{r,warning = FALSE, message = FALSE, , echo = TRUE}
+ggplotly(divAlpha$plot) %>%
+  layout(boxmode = "group")
+```
+
+- ANOVA
+
+```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE}
+divAlpha$anova
+```
+
+
+- Pairwise Wilcox Test p-value
+```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE}
+divAlpha$wilcox
+```
+
+## Shannon index
+
+- Boxplot
+```{r,warning = FALSE, message = FALSE,  fig.keep='all', fig.align='left', echo = TRUE, results = 'hide'}
+divAlpha = diversity_alpha_fun(data = data, output = "./plot_div_alpha/", column1 = "souche", column2 = "temps",
+                    column3 = "", supcovs = "", measures = c("Shannon") )
+
+ggplotly(divAlpha$plot) %>%
+  layout(boxmode = "group")
+
+```
+
+- ANOVA
+
+```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE}
+divAlpha$anova
+```
+
+
+- Pairwise Wilcox Test p-value
+```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE}
+divAlpha$wilcox
+```
+
+
+
+# Beta diversité
+
+## BrayCurtis Distance
+
+- MDS/PCoA ordination:
+```{r,warning = FALSE, message = FALSE,  fig.keep='all', fig.align='left', echo = TRUE, results = 'hide'}
+res1 = diversity_beta_light(data, col = "souche", cov="temps", dist0 = "bray", ord0 = "MDS", output="./plot_div_beta/", tests = TRUE)
+
+res2 = diversity_beta_light(data, col = "souche_temps", dist0 = "bray", ord0 = "MDS", output="./plot_div_beta/", tests = TRUE)
+```
+```{r,warning = FALSE, message = FALSE,  fig.keep='all', fig.align='left', echo = TRUE}
+ggplotly(res1$plot)
+
+ggplotly(res2$plot)
+```
+
+- Test permanova:
+```{r,warning = FALSE, message = FALSE,  fig.keep='all', fig.align='left', echo = TRUE}
+res1$permanova
+```
+
+- Test pairwise permanova:
+```{r,warning = FALSE, message = FALSE,  fig.keep='all', fig.align='left', echo = TRUE}
+res1$pairwisepermanova
+```
+
+- NMDS ordination:
+```{r,warning = FALSE, message = FALSE,  fig.keep='all', fig.align='left', echo = TRUE, results = 'hide'}
+res2 = invisible(diversity_beta_light(data, col = "souche_temps", dist0 = "bray", ord0 = "NMDS", output="./plot_div_beta/", tests = TRUE))
+```
+
+```{r,warning = FALSE, message = FALSE,  fig.keep='all', fig.align='left', echo = TRUE}
+ggplotly(res2$plot)
+```
+
+<!-- ## Unifrac Distance -->
+
+<!-- - MDS/PCoA ordination: -->
+<!-- ```{r,warning = FALSE, message = FALSE,  fig.keep='all', fig.align='left', echo = TRUE, results = 'hide'} -->
+<!-- data4 = subset_samples(data, matrice %in% "carotte" |  matrice %in% "mangue" | matrice %in% "TP") -->
+<!-- res1 = diversity_beta_light(data4, col = "matrice", cov="temps", dist0 = "unifrac", ord0 = "MDS", output="./plot_div_beta/", tests = TRUE) -->
+<!-- ``` -->
+<!-- ```{r,warning = FALSE, message = FALSE,  fig.keep='all', fig.align='left', echo = TRUE} -->
+<!-- ggplotly(res1$plot) -->
+<!-- ``` -->
+
+<!-- - Test permanova: -->
+<!-- ```{r,warning = FALSE, message = FALSE,  fig.keep='all', fig.align='left', echo = TRUE} -->
+<!-- res1$permanova -->
+<!-- ``` -->
+
+<!-- - Test pairwise permanova: -->
+<!-- ```{r,warning = FALSE, message = FALSE,  fig.keep='all', fig.align='left', echo = TRUE} -->
+<!-- res1$pairwisepermanova -->
+<!-- ``` -->
+
+
+<!-- - NMDS ordination: -->
+<!-- ```{r,warning = FALSE, message = FALSE,  fig.keep='all', fig.align='left', echo = TRUE, results = 'hide'} -->
+<!-- res2 = invisible(diversity_beta_light(data4, col = "matrice", cov="temps", dist0 = "unifrac", ord0 = "NMDS", output="./plot_div_beta/", tests = TRUE)) -->
+<!-- ``` -->
+
+<!-- ```{r,warning = FALSE, message = FALSE,  fig.keep='all', fig.align='left', echo = TRUE} -->
+<!-- ggplotly(res2$plot) -->
+<!-- ``` -->
+
+# Analyses differentielles
+
+## Metacoder
+
+```{r,warning = FALSE, message = FALSE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE, results = 'hide'}
+out1 = metacoder_fun(data = data, output = "./metacoder", column1 = "souche_temps", rank = "Family",
+                           signif = TRUE, plottrees = TRUE, min ="10", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0")
+
+```
+
+<!-- ```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE} -->
+<!--  out1$sauvage_t50_vs_mutant_t50$plots -->
+<!-- ``` -->
+
+## DESeq2
+```{r,warning = FALSE, message = FALSE, echo = TRUE, fig.width = 15, results = 'hide'}
+#fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10
+out2 = deseq2_fun(data = data, output = "./deseq/", column1 = "souche_temps", verbose = 1, rank = "Family", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0")
+```
+
+```{r,warning = FALSE, message = FALSE, echo = TRUE, fig.width = 10}
+ggplotly(out2$sauvage_t50_vs_mutant_t50$plot)
+DT::datatable(out2$sauvage_t50_vs_mutant_t50$table, filter = "top", options = list(scrollX = TRUE))
+```
+
+## MetagenomeSeq
+
+```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', echo = TRUE, results = "hide"}
+out3 = metagenomeseq_fun(data = data, output = "./metagenomeseq/", column1 = "souche_temps", verbose = 1, rank = "Family", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0")
+```
+
+```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', echo = TRUE}
+ggplotly(out3$sauvage_t50_vs_mutant_t50$plot)
+
+DT::datatable(out3$sauvage_t50_vs_mutant_t50$table, filter = "top", options = list(scrollX = TRUE))
+```
+
+## Aggregate methods
+
+```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.height = 10, echo = TRUE, results = "hide"}
+resF = aggregate_fun(data = data, metacoder = "./metacoder/metacoder_signif_Family.csv", deseq = "./deseq/", mgseq = "./metagenomeseq/", output = "./aggregate_diff/", column1 = "souche_temps", column2 = NULL, verbose = 1, rank = "Genus", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0")
+```
+
+```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left'}
+ggplotly(resF$sauvage_t0_vs_mutant_t0$plot)
+
+ggplotly(resF$sauvage_t50_vs_mutant_t50$plot)
+
+DT::datatable(resF$table, filter = "top", options = list(scrollX = TRUE))
+```
+
