@@ -2,18 +2,19 @@
 % Please edit documentation in R/metacoder_fun.R
 \name{metacoder_fun}
 \alias{metacoder_fun}
-\title{Metacoder Differential Analysis function.}
+\title{Metacoder Differential Analysis wrapper.}
 \usage{
 metacoder_fun(
   data = data,
   output = "./metacoder",
   column1 = "",
-  column2 = "",
   rank = "Species",
   signif = TRUE,
   plottrees = FALSE,
   min = "1000",
-  comp = "all"
+  comp = "all",
+  save.file = FALSE,
+  verbose = 1
 )
 }
 \arguments{
@@ -22,8 +23,6 @@ metacoder_fun(
 \item{output}{Output directory}
 
 \item{column1}{Column name of factor to test}
-
-\item{column2}{Column name to split dataset with.}
 
 \item{rank}{Taxonomic rank to agglomerate data (one of rank_names(data) )}
 
@@ -34,10 +33,14 @@ metacoder_fun(
 \item{min}{Minimum number of reads for a taxa to be represented.}
 
 \item{comp}{Comma separated list of comparison to test. Comparisons are informed with a tilde (A~C,A~B,B~C). If empty, test all combination}
+
+\item{save.file}{Boolean whether to save output as files or not.}
+
+\item{verbose}{Set to 3 for debug.}
 }
 \value{
 Export plots and CSV file listing significant differentialy abundant ASVs.
 }
 \description{
-Metacoder Differential Analysis function.
+Metacoder Differential Analysis wrapper.
 }

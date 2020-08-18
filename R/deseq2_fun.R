@@ -21,6 +21,7 @@
 #' @importFrom ggpubr ggtexttable
 #' @importFrom ggpubr ttheme
 #' @importFrom ggpubr text_grob
+#' @importFrom plotly ggplotly
 #' @import ggplot2
 
 #'
@@ -71,8 +72,8 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
   }
 
   flog.info('Done...')
-  pdf(file=paste(output,'/deseq2_',column1,'.pdf',sep=''),width=15,height=16)
 
+  outF = list()
   '%!in%' <- function(x,y)!('%in%'(x,y))
   for (col in (1:ncol(combinaisons))){
     fun <- paste('tmp <- sample_data(data)$',column1,sep='')
@@ -143,12 +144,14 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
     flog.debug(show(res))
     alpha = 0.05
 
+    # outlist1 <- list()
+
     if(length(which(res$padj < alpha)) > 0){
       # sigtab = res[which(res$padj < alpha), ]
       sigtab = res
       sigtab = cbind(row.names(sigtab),as(sigtab, "data.frame"), as(tax_table(data)[rownames(sigtab), ], "matrix"))
       colnames(sigtab)[1]=resultsNames(dseq3)[2]
-      save.image("debug.rdata")
+      # save.image("debug.rdata")
       write.table(sigtab, file = paste(output,'/signtab_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.csv',sep=''),quote=FALSE,sep="\t", row.names=FALSE)
 
       if(rank != 'ASV'){
@@ -168,8 +171,17 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
 			color=',rank,')) + geom_point(size=6) + theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))',sep='')
       eval(parse(text=fun))
 
-      ggtable <- ggtexttable(sigtab[,c("baseMean","log2FoldChange","stat","pvalue","padj",rank)],theme = ttheme("mOrange"),rows=NULL)
+      Ftable = sigtab[,c("baseMean","log2FoldChange","stat","pvalue","padj",rank)]
+      ggtable <- ggtexttable(Ftable,theme = ttheme("mOrange"),rows=NULL)
+
+      pdf(file=paste(output,'/deseq2_',column1,'.pdf',sep=''),width=15,height=16)
       grid.arrange(p,ggtable,top=text_grob(paste('Combination ',combinaisons[1,col], ' VS ' , combinaisons[2,col],sep=''), size=20))
+      invisible(dev.off())
+
+
+      outF[[paste(combinaisons[,col],collapse="_vs_")]] = list(plot = p, table = Ftable)
+
+
     } else{
       flog.info(paste('No significant results for comparison ',combinaisons[1,col], ' ' , combinaisons[2,col], sep=''))
       tab0 = data.frame(matrix(ncol = 14, nrow = 0))
@@ -181,7 +193,7 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
     }
   }
 
-  invisible(dev.off())
+return(outF)
 
   flog.info('Done...')
 
