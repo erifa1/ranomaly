@@ -1,0 +1,183 @@
+---
+title: "rANOMALY use case"
+fig_width: 15
+author: "Etienne Rifa & Sebastien Theil"
+date: "17/08/2020"
+output: html_document
+---
+
+# rANOMALY step-by-step use case.
+
+## Help
+
+Each function have a detailed help accessible in R via `?{funtion}`.
+
+## Tests datasets
+
+The dataset can be downloaded via this [link](https://nextcloud.inrae.fr/s/Zx3iASe64x8oSoM).
+
+This tutorial assume that you have extracted all the read file in a folder named `reads` along with the `sample-metadata.csv` file.
+
+We share a 24 samples test dataset extract from rats feces at two different time (t0 & t50) and in two nutrition conditions. Also included two extraction control sample (blank).
+
+```{r,warning = FALSE, message = TRUE}
+library(DT)
+library(ranomaly)
+sm <- read.table("sample_metadata.csv", sep="\t",header=TRUE)
+DT::datatable(sm)
+```
+
+```{r}
+load("decontam_out/robjects.Rdata")
+```
+
+## ASV definition with DADA2
+
+The first step will be the creation of ASVs (Amplicon Sequence Variants) thanks to the dada2 package.
+In rANOMALY, only one function is needed to compute all the different steps require from this package.
+
+Sample names will be extracted from the file name, so files must be formatted as followed :
+{sample-id1}_R1.fastq.gz
+{sample-id1}_R2.fastq.gz
+etc...
+
+
+```{r eval=FALSE}
+dada_res = dada2_fun(path="./reads", dadapool = "pseudo", compress=TRUE, plot=FALSE)
+```
+
+Main output:
+- `read_tracking.csv` that summarize the read number after each filtering step.
+
+```{r}
+DT::datatable(read.table("dada2_out/read_tracking.csv",sep="\t",header=TRUE))
+```
+
+The sample names extracted from the file name. We consider as sample name anything that is before the first underscore. This must match the sample names that are in sample metadata files.
+*input*: raw read number.
+*filtered*: after dada2 filtering step: no N's in sequence, low quality, and phiX.
+*denoisedF* & *denoisedR*: after denoising. Forward & Reverse.
+*merged*: after merging R1 & R2.
+*nonchim*: after chimeras filtering.
+
+- `dada2_robjects.Rdata` with raw ASV table and representative sequences in objects `otu.table`, `seqtab.export` & `seqtab.nochim`.
+- `raw_asv-table.csv`
+- `rep-seqs.fna`
+
+
+## Taxonomic assignment
+
+This script uses IDTAXA function from DECIPHER package, and allows to use 2 differents databases. It keeps the best assignation on 2 criteria, resolution (depth) and confidence. The final taxonomy is validated by multiple ancestors taxa and incongruity correction step.
+
+
+We share the latest databases we use in the IDTAXA format in this [link](#TODO). You can also generate your own database following those instructions and scripts we provide in another [repository](#TODO).
+
+
+```{r eval=FALSE}
+tax.table = assign_taxo_fun(dada_res = dada_res, id_db = c("path_to_your_banks/silva/SILVA_SSU_r132_March2018.RData","path_to_your_banks/DAIRYdb_v1.2.0_20190222_IDTAXA.RData") )
+```
+
+
+Main output:
+- `taxo_robjects.Rdata` with taxonomy in phyloseq format in `tax.table` object.
+- `final_tax_table.csv` the final assignation table.
+- `allDB_tax_table.csv` assignations from the two databases.
+
+## Phylogenetic Tree
+
+The phylogenetic tree from the representative sequences is generated using phangorn and DECIPHER packages.
+
+```{r eval=FALSE}
+tree = generate_tree_fun(dada_res)
+```
+
+Main output:
+- `tree_robjects.Rdata` with phylogenetic `tree` object in phyloseq format.
+
+## Phyloseq object
+
+To create a phyloseq object, we need to merge four objects and one file:
+- the asv table `otu.table` and  the representative sequences `seqtab.nochim` from `dada2_robjects.Rdata`
+- a taxonomy table `taxo_robjects.Rdata` from `taxo_robjects.Rdata`
+- the phylogenetic tree `tree` from `tree_robjects.Rdata`
+- metadata from `sample-metadata.csv`
+
+```{r eval = FALSE}
+data = generate_phyloseq_fun(dada_res = dada_res, taxtable = tax.table, tree = tree, metadata = "./sample_metadata.csv")
+```
+
+Main output:
+- `robjects.Rdata` with phyloseq object in `data` for raw counts and `data_rel` for relative abundance.
+
+## Decontamination
+
+The `decontam_fun` function uses [decontam](https://www.bioconductor.org/packages/release/bioc/html/decontam.html) R package with control samples to filter contaminants.
+The decontam package offers two main methods, frequency and prevalence (and then you can combine those methods). For frequency method, it is mandatory to have the dna concentration of each sample in phyloseq (and hence in the `sample-metadata.csv`).
+"_In this method, the distribution of the frequency of each sequence feature as a function of the input DNA concentration is used to identify contaminants._"
+In the prevalence methods no need of DNA quantification.
+"_In this method, the prevalence (presence/absence across samples) of each sequence feature in true positive samples is compared to the prevalence in negative controls to identify contaminants._"
+
+Tips: sequencing plateforms often quantify the DNA before sequencing, but do not automaticaly give the information. Just ask for it ;).
+
+Our function integrates the basics ASV frequency (nb_reads_ASV/nb_total_reads) and prevalence (nb_sample_ASV/nb_total_sample) filtering.
+As in our lab we had a known recurrent contaminant we included an option to filter out ASV based on they taxa names.
+
+```{r eval=FALSE}
+data = decontam_fun(data = data, domain = "Bacteria", column = "type", ctrl_identifier = "control", spl_identifier = "sample", number = 100)
+```
+
+Main output:
+- `robjects.Rdata` with contaminant filtered phyloseq object named `data`.
+- `Exclu_out.csv`  list of filtered ASVs for each filtering step.
+- Kronas [before](test/krona_no_filtering.html) and [after](test/krona_filtering.html) filtering.
+- `raw_asv-table.csv` & `relative_asv-table.csv`.
+- `venndiag_filtering.png`.
+
+
+## Plots, diversity and statistics
+
+!!! We are currently developping a ShinyApp to visualize your data, sub-select your samples/taxons and do all those analyses interactively !!!
+[ExploreMetabar](https://forgemia.inra.fr/umrf/exploremetabar)
+
+### Rarefaction curves
+
+In order to observe the sampling depth of each samples we start by plotting rarefactions curves. Those plots are generated by Plotly which makes the plots interactive.
+
+```{r}
+rarefaction(data, "souche_temps", 100 )
+```
+
+### Composition plots
+
+
+Composition plots reveals here the top 10 genus present in our samples. 
+#TODO
+Ord1 option control the...
+Fact1 option control the...
+
+
+#### Relative abundance
+```{r warning=FALSE, message=FALSE}
+bars_fun2(data = data, top = 10, Ord1 = "souche_temps", Fact1 = "souche_temps", rank="Genus", relative = TRUE)
+```
+
+#### Raw abundance
+```{r warning=FALSE, message=FALSE}
+bars_fun(data = data, top = 10, Ord1 = "souche_temps", Fact1 = "souche_temps", rank="Genus", relative = FALSE)
+```
+
+
+### Diversity analyses
+
+#### Alpha diversity
+
+```r
+diversity_alpha_fun(data = data, output = "./plot_div_alpha/", column1 = "temps", column2 = "souche",
+                    column3 = "", supcovs = "", measures = c("Observed","Shannon","Simpson","InvSimpson") )
+```
+
+#### Beta diversity
+
+```r
+diversity_beta_fun(data = data, output = "./plot_div_beta/", glom = "ASV", column1 = "temps", column2 = "souche", covar ="")
+```
