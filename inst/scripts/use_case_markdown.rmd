@@ -164,14 +164,26 @@ ggplotly(res2$plot)
 ## Metacoder
 
 ```{r,warning = FALSE, message = FALSE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE, results = 'hide'}
-out1 = metacoder_fun(data = data, output = "./metacoder", column1 = "souche_temps", rank = "Family",
-                           signif = TRUE, plottrees = TRUE, min ="10", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0")
+out1 = metacoder_fun(data = data, output = "./metacoder", column1 = "souche_temps", rank = "Family", signif = TRUE, plottrees = TRUE, min ="10", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0")
 
 ```
 
-<!-- ```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE} -->
-<!--  out1$sauvage_t50_vs_mutant_t50$plots -->
-<!-- ``` -->
+- Table
+```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE}
+ DT::datatable(out1$table, filter = "top", options = list(scrollX = TRUE))
+```
+
+- Comparaison 1 
+```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE}
+ out1$sauvage_t0_vs_mutant_t0$plot
+```
+
+- Comparaison 2
+```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE}
+ out1$sauvage_t50_vs_mutant_t50$plot
+```
+
+
 
 ## DESeq2
 ```{r,warning = FALSE, message = FALSE, echo = TRUE, fig.width = 15, results = 'hide'}

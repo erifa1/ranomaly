@@ -165,6 +165,8 @@ launch_metacoder <- function(psobj, min, col, rank, var, title, plot1, signif){
       }
       eval(parse(text=fun))
       flog.info('Done.')
+      graphics.off()
+
       # p <- list(p1,p2)
       p <- list(p1,p2,table)
       return (p)
@@ -262,6 +264,7 @@ metacoder_fun <- function(data = data, output = "./metacoder", column1 = "", ran
     }
     p_list <- c()
 
+
     outF = list()
     '%!in%' <- function(x,y)!('%in%'(x,y))
     for (comp in (1:ncol(combinaisons))){
@@ -280,7 +283,7 @@ metacoder_fun <- function(data = data, output = "./metacoder", column1 = "", ran
       table <- rbind(table,pp[[3]])
       p_list <- c(p_list,pp[1:2])
 
-      outF[[paste(combinaisons[,comp],collapse="_vs_")]] = list(res.table = table, plots = marrangeGrob(grobs=pp,nrow=1,ncol=2) )
+      outF[[paste(combinaisons[,comp],collapse="_vs_")]] = list(plot = marrangeGrob(grobs=pp[1:2],nrow=1,ncol=2) )
 
     }
 
@@ -293,8 +296,9 @@ metacoder_fun <- function(data = data, output = "./metacoder", column1 = "", ran
     }
   }
 
-
-
+  graphics.off()
+  # save(list = ls(all.names = TRUE), file = "debug.rdata", envir = environment())
+  outF$table = table
   return(outF)
   flog.info('Finish.')
 }
