@@ -14,6 +14,7 @@
 #' @import phyloseq
 #' @import ggplot2
 #' @import metagenomeSeq
+#' @importFrom Biobase fData
 #'
 #' @export
 
@@ -28,11 +29,7 @@ metagenomeseq_fun <- function(data = data, output = "./metagenomeseq/", column1 
     dir.create(output)
   }
 
-  if(rank != 'ASV'){
-    data.glom <- tax_glom(data, taxrank=rank)
-  } else {
-    data.glom <- data
-  }
+
   if(comp == ''){
     fun <- paste('combinaisons <- combn(na.omit(unique(sample_data(data.glom)$',column1,')),2) ',sep='')
     eval(parse(text=fun))
@@ -45,12 +42,21 @@ metagenomeseq_fun <- function(data = data, output = "./metagenomeseq/", column1 
       combinaisons[2,i] <- tmp[2]
     }
   }
-  # save.image("debug.rdata")
-  # quit()
 
-  MGdata <- phyloseq_to_metagenomeSeq(data)
+if(rank != 'ASV'){
+  data.glom <- tax_glom(data, taxrank=rank)
+} else {
+  data.glom <- data
+}
+
+  # save(list = ls(all.names = TRUE), file = "debug.rdata", envir = environment())
+  MGdata <- phy2MGseq(data.glom) #phyloseq_to_metagenomeSeq
+
+# featureData(MGdata)
+# fData(MGdata)
   '%!in%' <- function(x,y)!('%in%'(x,y))
 
+  outF = list()
   for (col in (1:ncol(combinaisons))){
     fun <- paste('tmp <- sample_data(data)$',column1,sep='')
     eval(parse(text=fun))
@@ -103,11 +109,26 @@ metagenomeseq_fun <- function(data = data, output = "./metagenomeseq/", column1 
     TAB = TAB[TAB$adjPvalues<=0.05,]
 
     nrow(TAB)
-    TAB=cbind(row.names(TAB),TAB)
-    colnames(TAB)[1]=paste(combinaisons[,col],collapse="_vs_")
-    write.table(na.omit(TAB), paste(output,'/signtab_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.csv',sep=''), row.names=FALSE, quote=FALSE, sep="\t")
+    TAB=cbind(row.names(TAB) ,TAB)
 
+    TABF = na.omit(TAB)
+    TABF <- cbind(TABF, fData(MGdata)[row.names(TABF),])
+    colnames(TABF)[1]=paste(combinaisons[,col],collapse="_vs_")
+
+    TABF <- TABF[order(TABF$logFC, decreasing = FALSE), ]
+
+    write.table(na.omit(TABF), paste(output,'/signtab_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.csv',sep=''), row.names=FALSE, quote=FALSE, sep="\t")
+
+    #Plots
+    fun <- paste('p <- ggplot(TABF,
+    aes(x=reorder(',rank,', -logFC),
+    y=logFC,
+    color=',rank,')) + geom_point(size=6) + theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))',sep='')
+    eval(parse(text=fun))
+
+    outF[[paste(combinaisons[,col],collapse="_vs_")]] = list(plot = p, table = TABF)
   }
 
+  return(outF)
 
 }

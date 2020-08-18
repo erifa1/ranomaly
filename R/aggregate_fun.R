@@ -66,8 +66,7 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
     mcoderTab <- read.table(paste(metacoder), h=TRUE)
   }
 
-  # save.image("debug.rdata")
-  # quit()
+  outF = list()
   TABfinal <- data.frame()
   for (col in (1:ncol(combinaisons))){
     flog.info(paste('Combinaison ',combinaisons[1,col], ' ' , combinaisons[2,col],sep=''))
@@ -234,6 +233,10 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
         scale_y_continuous(minor_breaks = seq(-1E4 , 1E4, 1), breaks = seq(-1E4, 1E4, 5))
       print(p)
       dev.off()
+
+
+      outF[[paste(combinaisons[,col],collapse="_vs_")]] = list(plot = p)
+
     }else{flog.info('No ASV to plot...')}
 
     # Krona ? Diversity of differentialy abundant features.
@@ -272,10 +275,9 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
     write.table(TABfinal, paste(output,"/aggregate_diff_",column1,'.csv', sep=""), row.names=FALSE, sep="\t", quote = FALSE)
 
 
-    outlist = list()
-    outlist$table = TABfinal
-    outlist$barplot = pbarplot
-    if(returnval){return(outlist)}
+
+    outF[["table"]] = TABfinal
+    if(returnval){return(outF)}
 
     flog.info('Done.')
 

@@ -218,7 +218,8 @@ launch_metacoder <- function(psobj, min, col, rank, var, title, plot1, signif){
 # Decontam Function
 
 metacoder_fun <- function(data = data, output = "./metacoder", column1 = "", rank = "Species",
-                          signif = TRUE, plottrees = FALSE, min ="1000", comp = "all", save.file=FALSE, verbose = 1){
+                          signif = TRUE, plottrees = FALSE, min ="1000", comp = "all", save.file=FALSE,
+                          verbose = 1){
 
   if(verbose == 3){
     invisible(flog.threshold(DEBUG))
@@ -261,6 +262,7 @@ metacoder_fun <- function(data = data, output = "./metacoder", column1 = "", ran
     }
     p_list <- c()
 
+    outF = list()
     '%!in%' <- function(x,y)!('%in%'(x,y))
     for (comp in (1:ncol(combinaisons))){
       flog.info(paste('Comparison ...',combinaisons[1,comp], combinaisons[2,comp]))
@@ -278,6 +280,8 @@ metacoder_fun <- function(data = data, output = "./metacoder", column1 = "", ran
       table <- rbind(table,pp[[3]])
       p_list <- c(p_list,pp[1:2])
 
+      outF[[paste(combinaisons[,comp],collapse="_vs_")]] = list(res.table = table, plots = marrangeGrob(grobs=pp,nrow=1,ncol=2) )
+
     }
 
     flog.info('Output...')
@@ -289,6 +293,8 @@ metacoder_fun <- function(data = data, output = "./metacoder", column1 = "", ran
     }
   }
 
-  return(list(res.table = table, plots = plots ))
+
+
+  return(outF)
   flog.info('Finish.')
 }
