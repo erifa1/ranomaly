@@ -2,51 +2,35 @@
 % Please edit documentation in R/bars_fun.R
 \name{bars_fun}
 \alias{bars_fun}
-\title{Barplots community}
+\title{Barplots plotly}
 \usage{
 bars_fun(
   data = data,
-  bar = TRUE,
-  compo1 = TRUE,
-  output = "./plot_bar/",
-  column1 = "",
-  column2 = "",
-  sname = FALSE,
-  num = 10,
-  rare = NULL,
   rank = "Genus",
-  verbose = TRUE
+  top = 10,
+  Ord1 = NULL,
+  Fact1 = NULL,
+  relative = TRUE
 )
 }
 \arguments{
 \item{data}{output from decontam or generate_phyloseq}
 
-\item{bar}{Plotting bar plot with raw reads number.}
+\item{rank}{Rank to output}
 
-\item{output}{Output directory}
+\item{top}{Number of top taxa to plot}
 
-\item{column1}{Column name of factor used to sort sample}
+\item{Ord1}{Variable used to order sample (X axis)}
 
-\item{column2}{Column name of factor used to split barplot}
+\item{Fact1}{Variable used to change X axis tick labels and color categories}
 
-\item{sname}{Change sample.id by the corresponding factor levels in graph.}
+\item{relative}{Plot relative plot (TRUE, default), raw abundance plot (FALSE)}
 
-\item{num}{Number of top taxon to display.}
-
-\item{rare}{Column name for splitting rare curves.}
-
-\item{rank}{Taxonomic rank name. You can provide multiple ranks seperated by comma.}
-
-\item{compo}{Plotting with relative composition.}
+\item{output}{}
 }
 \value{
-Exports barplots in an html file and returns plot in list object:
-\itemize{
-\item $bars: raw abundance barplot
-\item $compo: relative abundnce barplot
-\item $rare: rarefaction curves
-}
+Exports barplots in an interactive plotly community plot
 }
 \description{
-Barplots community
+Barplots plotly
 }
