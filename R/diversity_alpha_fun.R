@@ -1,3 +1,37 @@
+#' alpha diversité graphique
+#' @param data A phyloseq object
+#' @param col1 Metadata column name.
+#' @param col2 Metadata column name.
+#' @param measures "Observed","Shannon","Simpson","InvSimpson"
+#'
+#' @return A plot.
+#'
+alphaPlot <- function(data = data, col1 = "", col2 = "", measures = c("Shannon")) {
+  flog.info('Plotting ...')
+  if(col2 == ''){
+    p <- plot_richness(data,x=col1, color=col1, measures=measures)
+  } else{
+    p <- plot_richness(data,x=col1, color=col2, measures=measures)
+  }
+  p$layers <- p$layers[-1]
+  p <- p + ggtitle('Alpha diversity indexes') +  geom_boxplot(alpha = 1, outlier.shape = NA) +
+    theme_bw()
+  flog.info('Done.')
+  return(p)
+}
+
+
+alphaPlotly <- function(data=data, alpha=alpha, col1='', col2='', measures=c("Shannon")) {
+  alpha[,col1] <- sample_data(data)[gsub('\\.','-',rownames(alpha)),col1]
+  alpha <- melt(alpha, id=c(col1), measure.vars = measures)
+  for (el in measures){
+    fun <- glue('p <- plot_ly(alpha, x=~{col1}, y=~{el}, color=~col1, type="box")')
+    print(fun)
+  }
+}
+
+
+
 #' Diversity Alpha
 #'
 #' Provides boxplots with multiples diversity indices and statistical tests like ANOVA with post hoc test and non parametric Wilcoxon tests.
@@ -25,11 +59,9 @@
 diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", column1 = "", column2 = "",
                                 column3 = "", supcovs = "", measures = c("Observed","Shannon","Simpson","InvSimpson")){
 
-
   if(!dir.exists(output)){
     dir.create(output, recursive=TRUE)
   }
-
 
   ## Gestion des NA
   if(!all(is.na(sample_data(data)[,column1]))){
@@ -47,41 +79,21 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
     }
 
     #alpha diversité tableau
-
     resAlpha = list()
     flog.info('Alpha diversity tab ...')
-    alpha.diversity <- estimate_richness(data, measures = c("Observed","Shannon","Simpson","InvSimpson") )
-    # row.names(alpha.diversity) <- gsub("X","",row.names(alpha.diversity))
-    resAlpha$alphatable = alpha.diversity
-    write.table(alpha.diversity,paste(output,'/alphaDiversity_table.csv',sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
+    resAlpha$alphatable <- estimate_richness(data, measures = measures )
+    # row.names(resAlpha$alphatable) <- gsub("X","",row.names(resAlpha$alphatable))
+
+    write.table(resAlpha$alphatable,paste(output,'/alphaDiversity_table.csv',sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
     flog.info('Done.')
 
+    p <- alphaPlot(data, column1, column2, measures)
 
-    #alpha diversité graphique
-    alphaPlot <- function() {
-      flog.info('Plotting ...')
-      if(column2 == ''){
-        p <- plot_richness(data,x=column1, color=column1, measures=measures)
-      } else{
-        p <- plot_richness(data,x=column1, color=column2, measures=measures)
-      }
-      p$layers <- p$layers[-1]
-      p <- p + ggtitle('Alpha diversity indexes') +  geom_boxplot(position = position_dodge(width = 0.5),alpha = 0.7, outlier.shape = NA) +
-        theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5, size=11), plot.title = element_text(hjust = 0.5)) + theme_bw()
-      flog.info('Done.')
-      return(p)
-    }
-    p <- alphaPlot()
-    if(length(measures) == 1){
-      ggplotly(p)
-    }else{
-      plot(p)
-    }
     resAlpha$plot = p
     ggsave(paste(output,'/alpha_diversity.png',sep=''), plot=p, height = 15, width = 30, units="cm")
 
 
-    anova_data <- cbind(sample_data(data), alpha.diversity)
+    anova_data <- cbind(sample_data(data), resAlpha$alphatable)
     anova_data$Depth <- sample_sums(data)
     if(length(levels(as.factor(anova_data[,column1])))>1){
       flog.info('ANOVA ...')
@@ -89,10 +101,11 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
       sink(paste(output,'/all_ANOVA.txt', sep=''), split = FALSE)
       for (m in measures){
 
-        cat(paste("\n\n############\n",m,"\n############\n"))
+        flog.info(paste("\n\n############\n",m,"\n############\n"))
+
         if(supcovs != ""){
           COVS <- sapply(strsplit(supcovs,","), '[')
-          print(COVS)
+          flog.debug(COVS)
           if(column2 != ''){
             f <- paste(m," ~ ", "Depth + ", paste(COVS, collapse="+"), "+", column1," + ",column2)
             anova_data$fact1 <- paste( anova_data[,column1],  anova_data[,column2], sep="_")
@@ -108,16 +121,17 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
           }
         }
 
-        cat("############\nANOVA + pairwise wilcox test\n")
-        print(f)
+        flog.info("############\nANOVA + pairwise wilcox test\n")
+        flog.debug(f)
         anova_res1 <- aov( as.formula(paste(f)), anova_data)
         # print(anova_data)
         # write.table(anova_data, paste(output,"/anovatable.csv", sep=""), sep="\t", row.names=FALSE)
         # print(anova_res1)
         res1 <- summary(anova_res1)
-        print(res1)
 
         resAlpha$anova = res1
+        flog.debug(resAlpha$anova)
+
 
         # # post hoc test  commented du to conflict between LSD.test() and DESeq() function. #' @importFrom agricolae LSD.test
         # cat("############\npost hoc LSD.test\n")
@@ -130,28 +144,26 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
         #   eval(parse(text = fun))
         #   print(lsd1)
         # }
-
-        cat(paste("\n##pvalues of pairwise wilcox test on ", m, "with FDR correction \n"), sep="")
-        fun <- paste("wilcox_res1 <- pairwise.wilcox.test(anova_data$",m,", anova_data[,column1], p.adjust.method='fdr')", sep="")
-        eval(parse(text = fun))
-        print(round(wilcox_res1$p.value,3))
-
-        if(column2 != ''){
-          cat(paste("\n##pvalues of pairwise wilcox test on ", m, "with FDR correction \n"), sep="")
+        if(column1 != '' && column2 == '' && column3 == ''){
+          flog.info(paste("\n##pvalues of pairwise wilcox test on ", m, "with FDR correction \n"), sep="")
+          fun <- paste("wilcox_res1 <- pairwise.wilcox.test(anova_data$",m,", anova_data[,column1], p.adjust.method='fdr')", sep="")
+          eval(parse(text = fun))
+          # print(round(wilcox_res1$p.value,3))
+          resAlpha$wilcox <- round(wilcox_res1$p.value,3)
+        } else if(column2 != '' && column3 == ''){
+          flog.info(paste("\n##pvalues of pairwise wilcox test on ", m, "with FDR correction \n"), sep="")
           fun <- paste("wilcox_res1 <- pairwise.wilcox.test(anova_data$",m,", anova_data[,column2], p.adjust.method='fdr')", sep="")
           eval(parse(text = fun))
           print(round(wilcox_res1$p.value,3))
 
-          cat("\n\n#######################\n")
-          cat(paste("##pvalues of pairwise wilcox test on ", m, " with collapsed factors (no correction)\n"), sep="")
+          flog.info(paste("##pvalues of pairwise wilcox test on ", m, " with collapsed factors (no correction)\n"), sep="")
           fun <- paste("wilcox_res <- pairwise.wilcox.test(anova_data$",m,", anova_data$fact1, p.adjust.method='none')", sep="")
           eval(parse(text = fun))
           print(round(wilcox_res$p.value,3))
-        }
 
-        resAlpha$wilcox = round(wilcox_res$p.value,3)
-
-        if(column3 != ''){
+          #TODO pourquoi on return que ce wilcox ?
+          resAlpha$wilcox = round(wilcox_res$p.value,3)
+        } else if(column3 != ''){
           cat("\n############\nANOVA repeated measures\n")
           print(paste(f,"+ Error(",column3,")"))
           anova_res <- aov( as.formula(paste(f,"+ Error(",column3,")")), anova_data)

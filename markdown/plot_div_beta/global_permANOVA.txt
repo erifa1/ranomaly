@@ -1,0 +1,117 @@
+
+#####################
+##PERMANOVA on BrayCurtis distances
+#####################
+
+Call:
+adonis(formula = as.formula(paste("BC.dist ~ Depth +", paste(cov1,      collapse = "+"), "+", col)), data = mdata, permutations = 1000) 
+
+Permutation: free
+Number of permutations: 1000
+
+Terms added sequentially (first to last)
+
+          Df SumsOfSqs MeanSqs F.Model      R2   Pr(>F)    
+Depth      1    0.5075 0.50751  3.1218 0.06845 0.020979 *  
+temps      1    2.1846 2.18458 13.4380 0.29463 0.000999 ***
+souche     1    1.4711 1.47112  9.0493 0.19841 0.000999 ***
+Residuals 20    3.2514 0.16257         0.43851             
+Total     23    7.4146                 1.00000             
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+#####################
+##pairwisePERMANOVA on BrayCurtis distances
+#####################
+                      pairs Df SumsOfSqs   F.Model        R2 p.value p.adjusted
+1   t0-sauvage vs t0-mutant  1  0.952842  4.640344 0.3169559   0.004     0.0048
+2 t0-sauvage vs t50-sauvage  1  2.020676 28.967360 0.7433750   0.002     0.0040
+3  t0-sauvage vs t50-mutant  1  2.197269 26.004113 0.7222540   0.001     0.0030
+4  t0-mutant vs t50-sauvage  1  1.680832 11.591365 0.5368519   0.006     0.0060
+5   t0-mutant vs t50-mutant  1  1.569713  9.826226 0.4956176   0.001     0.0030
+6 t50-sauvage vs t50-mutant  1  1.817719 75.219295 0.8826557   0.004     0.0048
+  sig
+1   *
+2   *
+3   *
+4   *
+5   *
+6   *
+
+#####################
+##PERMANOVA on UniFrac distances
+#####################
+
+Call:
+adonis(formula = as.formula(paste("UF.dist ~ Depth +", paste(cov1,      collapse = "+"), "+", col)), data = mdata, permutations = 1000) 
+
+Permutation: free
+Number of permutations: 1000
+
+Terms added sequentially (first to last)
+
+          Df SumsOfSqs MeanSqs F.Model      R2   Pr(>F)    
+Depth      1   0.14326 0.14326  2.4262 0.04787 0.032967 *  
+temps      1   1.03837 1.03837 17.5862 0.34698 0.000999 ***
+souche     1   0.63007 0.63007 10.6711 0.21054 0.000999 ***
+Residuals 20   1.18089 0.05904         0.39460             
+Total     23   2.99260                 1.00000             
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+#####################
+##pairwisePERMANOVA on UniFrac distances
+#####################
+                      pairs Df SumsOfSqs   F.Model        R2 p.value p.adjusted
+1   t0-sauvage vs t0-mutant  1 0.2378044  3.318044 0.2491390   0.001     0.0040
+2 t0-sauvage vs t50-sauvage  1 0.5256437 11.749607 0.5402216   0.004     0.0048
+3  t0-sauvage vs t50-mutant  1 1.0643999 21.792240 0.6854578   0.002     0.0040
+4  t0-mutant vs t50-sauvage  1 0.6364616 14.416735 0.5904448   0.003     0.0045
+5   t0-mutant vs t50-mutant  1 0.8835482 18.310605 0.6467755   0.002     0.0040
+6 t50-sauvage vs t50-mutant  1 0.7775266 36.468644 0.7848011   0.006     0.0060
+  sig
+1   *
+2   *
+3   *
+4   *
+5   *
+6   *
+
+#####################
+##PERMANOVA on Weighted UniFrac distances
+#####################
+
+Call:
+adonis(formula = as.formula(paste("wUF.dist ~ Depth +", paste(cov1,      collapse = "+"), "+", col)), data = mdata, permutations = 1000) 
+
+Permutation: free
+Number of permutations: 1000
+
+Terms added sequentially (first to last)
+
+          Df SumsOfSqs MeanSqs F.Model      R2   Pr(>F)    
+Depth      1   0.21699 0.21699  6.4192 0.14472 0.001998 ** 
+temps      1   0.35230 0.35230 10.4221 0.23497 0.000999 ***
+souche     1   0.25400 0.25400  7.5142 0.16941 0.000999 ***
+Residuals 20   0.67606 0.03380         0.45090             
+Total     23   1.49935                 1.00000             
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+#####################
+##pairwisePERMANOVA on Weighted UniFrac distances
+#####################
+                      pairs Df SumsOfSqs   F.Model        R2 p.value p.adjusted
+1   t0-sauvage vs t0-mutant  1 0.1634340  2.838825 0.2211125   0.052     0.0520
+2 t0-sauvage vs t50-sauvage  1 0.3595478 13.063956 0.5664230   0.002     0.0060
+3  t0-sauvage vs t50-mutant  1 0.4692174 15.571734 0.6089432   0.004     0.0060
+4  t0-mutant vs t50-sauvage  1 0.2136786  6.791884 0.4044742   0.006     0.0072
+5   t0-mutant vs t50-mutant  1 0.2555299  7.499838 0.4285662   0.004     0.0060
+6 t50-sauvage vs t50-mutant  1 0.3054314 75.930639 0.8836271   0.002     0.0060
+  sig
+1    
+2   *
+3   *
+4   *
+5   *
+6   *
