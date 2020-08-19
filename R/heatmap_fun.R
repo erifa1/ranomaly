@@ -28,7 +28,7 @@ heatmap_fun <- function(data = data, column1 = "", top = 20, output = "./plot_he
 
   ps.glom.rel <- microbiome::transform(psobj.top, "compositional")
 
-  plot.composition.relAbun <- plot_composition(ps.glom.rel, x.label = column1)
+  plot.composition.relAbun <- microbiome::plot_composition(ps.glom.rel, x.label = column1)
   data.com <- plot.composition.relAbun$data
   colnames(data.com)
 

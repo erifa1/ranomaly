@@ -34,7 +34,6 @@ beta1 = diversity_beta_light(psobj = data_decontam, rank = "ASV", col = "souche_
 plotly::ggplotly(beta1$plot)
 
 
-### ICI
 out1 = metacoder_fun(data = data, output = "./metacoder", column1 = "souche_temps", rank = "Family",
                           signif = TRUE, plottrees = TRUE, min ="10", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0")
 
@@ -46,3 +45,10 @@ out3 = metagenomeseq_fun(data = data, output = "./metagenomeseq/", column1 = "so
 outF = aggregate_fun(data = data, metacoder = "./metacoder/metacoder_signif_Family.csv", deseq = "./deseq/", mgseq = "./metagenomeseq/", output = "./aggregate_diff/",
                           column1 = "souche_temps", column2 = NULL, verbose = 1, rank = "Genus", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0")
 head(outF)
+
+#ok
+
+## autre fonctions
+heatmap_fun(data = data, column1 = "souche_temps", top = 20, output = "./plot_heatmap/", rank = "Species")
+
+phy2cyto_fun(data = data, output = "./cytoscape/", column1 = "souche_temps", repl = NULL, verbose = 1)
