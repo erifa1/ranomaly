@@ -29,8 +29,8 @@ Imports:
   metacoder,
   ggpubr,
   pairwiseAdonis,
-  psadd,
   phyloseq,
+  psadd,
   DESeq2,
   VennDiagram,
   digest,
@@ -44,7 +44,8 @@ Imports:
   phangorn,
   plotly,
   taxa,
-  rmarkdown
+  rmarkdown,
+  ranacapa
 Remotes:
   bioc::3.10/biomformat,
   bioc::3.10/Biostrings,
@@ -57,4 +58,5 @@ Remotes:
   bioc::3.10/microbiome,
   bioc::3.10/DESeq2,
   github::pmartinezarbizu/pairwiseAdonis/pairwiseAdonis,
-  github::cpauvert/psadd
+  github::cpauvert/psadd,
+  github::gauravsk/ranacapa
