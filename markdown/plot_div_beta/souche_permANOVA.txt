@@ -12,7 +12,7 @@ Number of permutations: 1000
 Terms added sequentially (first to last)
 
           Df SumsOfSqs MeanSqs F.Model      R2   Pr(>F)    
-Depth      1    0.5075 0.50751  1.9574 0.06845 0.073926 .  
+Depth      1    0.5075 0.50751  1.9574 0.06845 0.098901 .  
 souche     1    1.4622 1.46217  5.6393 0.19720 0.000999 ***
 Residuals 21    5.4449 0.25928         0.73435             
 Total     23    7.4146                 1.00000             
@@ -37,19 +37,19 @@ Number of permutations: 1000
 
 Terms added sequentially (first to last)
 
-          Df SumsOfSqs MeanSqs F.Model      R2   Pr(>F)   
-Depth      1   0.14451 0.14451  1.3558 0.04797 0.231768   
-souche     1   0.62942 0.62942  5.9052 0.20895 0.003996 **
-Residuals 21   2.23836 0.10659         0.74308            
-Total     23   3.01229                 1.00000            
+          Df SumsOfSqs MeanSqs F.Model      R2   Pr(>F)    
+Depth      1   0.14109 0.14109  1.3569 0.04814 0.238761    
+souche     1   0.60653 0.60653  5.8333 0.20693 0.000999 ***
+Residuals 21   2.18352 0.10398         0.74494             
+Total     23   2.93114                 1.00000             
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 #####################
 ##pairwisePERMANOVA on UniFrac distances
 #####################
-              pairs Df SumsOfSqs F.Model        R2 p.value p.adjusted sig
-1 sauvage vs mutant  1 0.6656014 6.23995 0.2209618   0.002      0.002   *
+              pairs Df SumsOfSqs  F.Model        R2 p.value p.adjusted sig
+1 sauvage vs mutant  1 0.6411514 6.159557 0.2187377   0.001      0.001  **
 
 #####################
 ##PERMANOVA on Weighted UniFrac distances
@@ -63,11 +63,11 @@ Number of permutations: 1000
 
 Terms added sequentially (first to last)
 
-          Df SumsOfSqs  MeanSqs F.Model      R2   Pr(>F)    
-Depth      1   0.11860 0.118601  3.0286 0.10077 0.012987 *  
-souche     1   0.23596 0.235957  6.0253 0.20048 0.000999 ***
-Residuals 21   0.82238 0.039161         0.69875             
-Total     23   1.17694                  1.00000             
+          Df SumsOfSqs MeanSqs F.Model      R2   Pr(>F)   
+Depth      1   0.34096 0.34096  4.5057 0.14820 0.004995 **
+souche     1   0.37060 0.37060  4.8974 0.16108 0.006993 **
+Residuals 21   1.58915 0.07567         0.69072            
+Total     23   2.30071                 1.00000            
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -75,4 +75,4 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ##pairwisePERMANOVA on Weighted UniFrac distances
 #####################
               pairs Df SumsOfSqs  F.Model        R2 p.value p.adjusted sig
-1 sauvage vs mutant  1 0.2365825 5.534929 0.2010148   0.001      0.001  **
+1 sauvage vs mutant  1 0.4044203 4.691911 0.1757803   0.002      0.002   *

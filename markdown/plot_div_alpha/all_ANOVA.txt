@@ -1,62 +1,36 @@
-
+INFO [2020-08-20 16:12:58] 
 
 ############
  Observed 
 ############
-############
+
+INFO [2020-08-20 16:12:58] ############
 ANOVA + pairwise wilcox test
-[1] "Observed  ~  Depth +  souche  +  temps"
-            Df Sum Sq Mean Sq F value   Pr(>F)    
-Depth        1     49      49   0.509 0.483774    
-souche       1   1877    1877  19.357 0.000276 ***
-temps        1   3649    3649  37.639 5.39e-06 ***
-Residuals   20   1939      97                     
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
+INFO [2020-08-20 16:12:58] 
 ##pvalues of pairwise wilcox test on  Observed with FDR correction 
-        mutant
-sauvage  0.043
 
+resAlpha[["Observed"]] <- list(anova = anova, wilcox_col1 = wilcox_col1)
+INFO [2020-08-20 16:12:58] 
 ##pvalues of pairwise wilcox test on  Observed with FDR correction 
-       t0
-t50 0.001
 
+INFO [2020-08-20 16:12:58] ##pvalues of pairwise wilcox test on  Observed  with collapsed factors (no correction)
 
-#######################
-##pvalues of pairwise wilcox test on  Observed  with collapsed factors (no correction)
-            mutant_t0 mutant_t50 sauvage_t0
-mutant_t50      0.002         NA         NA
-sauvage_t0      0.377      0.005         NA
-sauvage_t50     0.336      0.002      0.008
-
+INFO [2020-08-20 16:12:58] 
 
 ############
  Shannon 
 ############
-############
+
+INFO [2020-08-20 16:12:58] ############
 ANOVA + pairwise wilcox test
-[1] "Shannon  ~  Depth +  souche  +  temps"
-            Df Sum Sq Mean Sq F value   Pr(>F)    
-Depth        1  1.777   1.777  10.098  0.00473 ** 
-souche       1  0.520   0.520   2.955  0.10103    
-temps        1  5.141   5.141  29.218 2.73e-05 ***
-Residuals   20  3.519   0.176                     
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
+INFO [2020-08-20 16:12:58] 
 ##pvalues of pairwise wilcox test on  Shannon with FDR correction 
-        mutant
-sauvage  0.347
 
+resAlpha[["Shannon"]] <- list(anova = anova, wilcox_col1 = wilcox_col1)
+INFO [2020-08-20 16:12:58] 
 ##pvalues of pairwise wilcox test on  Shannon with FDR correction 
-    t0
-t50  0
 
+INFO [2020-08-20 16:12:58] ##pvalues of pairwise wilcox test on  Shannon  with collapsed factors (no correction)
 
-#######################
-##pvalues of pairwise wilcox test on  Shannon  with collapsed factors (no correction)
-            mutant_t0 mutant_t50 sauvage_t0
-mutant_t50      0.002         NA         NA
-sauvage_t0      0.132      0.002         NA
-sauvage_t50     0.002      0.310      0.002

@@ -58,9 +58,19 @@ alphaPlotly <- function(data=data, alpha=alpha, col1='', col2='', measures=c("Sh
 
 diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", column1 = "", column2 = "",
                                 column3 = "", supcovs = "", measures = c("Observed","Shannon","Simpson","InvSimpson")){
-
+  print('coucou')
   if(!dir.exists(output)){
     dir.create(output, recursive=TRUE)
+  }
+
+  if(column1 == ""){
+    flog.error('You need to provide at least one column.')
+    return(1)
+  }
+
+  if(!(column1 %in% colnames(sample_data(data)))){
+    flog.error(paste(column1, ' not in metadata.'))
+    return(1)
   }
 
   ## Gestion des NA
@@ -83,7 +93,6 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
     flog.info('Alpha diversity tab ...')
     resAlpha$alphatable <- estimate_richness(data, measures = measures )
     # row.names(resAlpha$alphatable) <- gsub("X","",row.names(resAlpha$alphatable))
-
     write.table(resAlpha$alphatable,paste(output,'/alphaDiversity_table.csv',sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
     flog.info('Done.')
 
@@ -99,8 +108,8 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
       flog.info('ANOVA ...')
       # variables <- paste(sep=" + ", "Depth", var1)
       sink(paste(output,'/all_ANOVA.txt', sep=''), split = FALSE)
-      for (m in measures){
 
+      for (m in measures){
         flog.info(paste("\n\n############\n",m,"\n############\n"))
 
         if(supcovs != ""){
@@ -127,11 +136,7 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
         # print(anova_data)
         # write.table(anova_data, paste(output,"/anovatable.csv", sep=""), sep="\t", row.names=FALSE)
         # print(anova_res1)
-        res1 <- summary(anova_res1)
-
-        resAlpha$anova = res1
-        flog.debug(resAlpha$anova)
-
+        anova <- summary(anova_res1)
 
         # # post hoc test  commented du to conflict between LSD.test() and DESeq() function. #' @importFrom agricolae LSD.test
         # cat("############\npost hoc LSD.test\n")
@@ -144,44 +149,46 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
         #   eval(parse(text = fun))
         #   print(lsd1)
         # }
-        if(column1 != '' && column2 == '' && column3 == ''){
-          flog.info(paste("\n##pvalues of pairwise wilcox test on ", m, "with FDR correction \n"), sep="")
-          fun <- paste("wilcox_res1 <- pairwise.wilcox.test(anova_data$",m,", anova_data[,column1], p.adjust.method='fdr')", sep="")
-          eval(parse(text = fun))
-          # print(round(wilcox_res1$p.value,3))
-          resAlpha$wilcox <- round(wilcox_res1$p.value,3)
-        } else if(column2 != '' && column3 == ''){
+
+        flog.info(paste("\n##pvalues of pairwise wilcox test on ", m, "with FDR correction \n"), sep="")
+        fun <- paste("wilcox_res1 <- pairwise.wilcox.test(anova_data$",m,", anova_data[,column1], p.adjust.method='fdr')", sep="")
+        eval(parse(text = fun))
+        # print(round(wilcox_res1$p.value,3))
+        wilcox_col1 <- round(wilcox_res1$p.value,3)
+        fun <- glue("resAlpha[[\"{m}\"]] <- list(anova = anova, wilcox_col1 = wilcox_col1)")
+        print(fun)
+        eval(parse(text=fun))
+
+        if(column2 != ''){
           flog.info(paste("\n##pvalues of pairwise wilcox test on ", m, "with FDR correction \n"), sep="")
           fun <- paste("wilcox_res1 <- pairwise.wilcox.test(anova_data$",m,", anova_data[,column2], p.adjust.method='fdr')", sep="")
           eval(parse(text = fun))
-          print(round(wilcox_res1$p.value,3))
+          wilcox_col2_fdr <- round(wilcox_res1$p.value,3)
 
           flog.info(paste("##pvalues of pairwise wilcox test on ", m, " with collapsed factors (no correction)\n"), sep="")
           fun <- paste("wilcox_res <- pairwise.wilcox.test(anova_data$",m,", anova_data$fact1, p.adjust.method='none')", sep="")
           eval(parse(text = fun))
-          print(round(wilcox_res$p.value,3))
+          wilcox_col2_collapsed = round(wilcox_res$p.value,3)
 
-          #TODO pourquoi on return que ce wilcox ?
-          resAlpha$wilcox = round(wilcox_res$p.value,3)
-        } else if(column3 != ''){
+          fun <- glue("resAlpha[[\"{m}\"]] <- c(resAlpha[[\"{m}\"]], list(wilcox_col2_fdr = wilcox_col2_fdr, wilcox_col2_collapsed = wilcox_col2_collapsed))")
+          eval(parse(text=fun))
+        }
+        if(column3 != ''){
           cat("\n############\nANOVA repeated measures\n")
           print(paste(f,"+ Error(",column3,")"))
           anova_res <- aov( as.formula(paste(f,"+ Error(",column3,")")), anova_data)
           res <- summary(anova_res)
-          print(res)
-
-          resAlpha$anovarepeat = res
+          anovarepeat = res
 
           cat("\n############\nMixed effects models (nlme::lme)\n")
-          print(f)
           print(paste("lme1 = anova(lme(as.formula(",f,"), random = ~1 | ",column3,", data = anova_data, method = 'ML') )", sep=""))
           fun <- paste( "lme1 = anova(lme(as.formula(",f,"), random = ~1 | ",column3,", data = anova_data, method = 'ML') ) ", sep="")
           eval(parse(text=fun))
-          print(lme1)
 
-          resAlpha$mixedeffect = lme1
+          mixedeffect = lme1
+          fun <- glue("resAlpha[[\"{m}\"]] <- c(resAlpha[[\"{m}\"]], list(anovarepeat = anovarepeat, mixedeffect = mixedeffect))")
+          eval(parse(text=fun))
         }
-
       }
       sink()
 

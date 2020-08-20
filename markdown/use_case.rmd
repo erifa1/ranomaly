@@ -19,7 +19,9 @@ output:
 
 ```{r loading_libraries, warning = FALSE, message=FALSE, include=FALSE, results='hide'}
 library(DT)
+library(pander)
 devtools::load_all(".")
+
 ```
 
 ## Help
@@ -184,21 +186,55 @@ bars_fun(data = data, top = 10, Ord1 = "souche_temps", Fact1 = "souche_temps", r
 
 #### Alpha diversity
 
-This function computes various alpha diversity indexes and returns
+This function computes various alpha diversity indexes and returns:
+- a boxplot comparing conditions.
+- a table of values
+- an ANOVA analysis
+- a wilcox result test comparing conditions and giving the significativity of the observed differences.
+- a mixture model if your data include repetition in sampling.
+All this in a single function.
 
 ```{r alpha, warning=FALSE, message=FALSE}
 alpha <- diversity_alpha_fun(data = data, output = "./plot_div_alpha/", column1 = "souche", column2 = "temps",
                     column3 = "", supcovs = "", measures = c("Observed", "Shannon") )
 ```
 
-##### Tables
+##### Table of values
+The table of values for each indices you choose to compute.
 ```{r alpha_tables}
-DT::datatable(alpha$alphatable, filter = "top")
+pander(alpha$alphatable, style='rmarkdown')
 ```
 #### Boxplots
 
+The boxplots of those values.
+
 ```{r alpha_boxplots}
 alpha$plot
+```
+
+#### ANOVA results
+
+For each indices, you have access to the ANOVA test. Here we present the result for the "Observed" indice.
+
+```{r}
+pander(alpha$Observed$anova)
+```
+
+#### Wilcox test
+
+Wilcox tests are made on each factor you have entered, and the combination of the two. Here "souche" and "temps".
+
+##### Wilcox test for "souche" factor
+```{r}
+pander(alpha$Observed$wilcox_col1)
+```
+##### Wilcox test for "temps" factor FDR corrected.
+```{r}
+pander(alpha$Observed$wilcox_col2_fdr)
+```
+##### Wilcox test for the collapsed factors
+```{r}
+pander(alpha$Observed$wilcox_col2_collapsed)
 ```
 #### Beta diversity
 
