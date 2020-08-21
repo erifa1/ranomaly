@@ -4,7 +4,7 @@
 #####################
 
 Call:
-adonis(formula = as.formula(paste("BC.dist ~ Depth +", paste(cov1,      collapse = "+"), "+", col)), data = mdata, permutations = 1000) 
+adonis(formula = as.formula(paste("dist1 ~ Depth +", paste(cov1,      collapse = "+"), "+", col)), data = mdata, permutations = 1000) 
 
 Permutation: free
 Number of permutations: 1000
@@ -12,67 +12,16 @@ Number of permutations: 1000
 Terms added sequentially (first to last)
 
           Df SumsOfSqs MeanSqs F.Model      R2   Pr(>F)    
-Depth      1    0.5075 0.50751  1.9574 0.06845 0.098901 .  
-souche     1    1.4622 1.46217  5.6393 0.19720 0.000999 ***
-Residuals 21    5.4449 0.25928         0.73435             
+Depth      1    0.5075 0.50751  3.1218 0.06845 0.020979 *  
+temps      1    2.1846 2.18458 13.4380 0.29463 0.000999 ***
+souche     1    1.4711 1.47112  9.0493 0.19841 0.000999 ***
+Residuals 20    3.2514 0.16257         0.43851             
 Total     23    7.4146                 1.00000             
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 #####################
 ##pairwisePERMANOVA on BrayCurtis distances
 #####################
               pairs Df SumsOfSqs  F.Model        R2 p.value p.adjusted sig
 1 sauvage vs mutant  1  1.529137 5.715979 0.2062341   0.001      0.001  **
-
-#####################
-##PERMANOVA on UniFrac distances
-#####################
-
-Call:
-adonis(formula = as.formula(paste("UF.dist ~ Depth +", paste(cov1,      collapse = "+"), "+", col)), data = mdata, permutations = 1000) 
-
-Permutation: free
-Number of permutations: 1000
-
-Terms added sequentially (first to last)
-
-          Df SumsOfSqs MeanSqs F.Model      R2   Pr(>F)    
-Depth      1   0.14109 0.14109  1.3569 0.04814 0.238761    
-souche     1   0.60653 0.60653  5.8333 0.20693 0.000999 ***
-Residuals 21   2.18352 0.10398         0.74494             
-Total     23   2.93114                 1.00000             
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-#####################
-##pairwisePERMANOVA on UniFrac distances
-#####################
-              pairs Df SumsOfSqs  F.Model        R2 p.value p.adjusted sig
-1 sauvage vs mutant  1 0.6411514 6.159557 0.2187377   0.001      0.001  **
-
-#####################
-##PERMANOVA on Weighted UniFrac distances
-#####################
-
-Call:
-adonis(formula = as.formula(paste("wUF.dist ~ Depth +", paste(cov1,      collapse = "+"), "+", col)), data = mdata, permutations = 1000) 
-
-Permutation: free
-Number of permutations: 1000
-
-Terms added sequentially (first to last)
-
-          Df SumsOfSqs MeanSqs F.Model      R2   Pr(>F)   
-Depth      1   0.34096 0.34096  4.5057 0.14820 0.004995 **
-souche     1   0.37060 0.37060  4.8974 0.16108 0.006993 **
-Residuals 21   1.58915 0.07567         0.69072            
-Total     23   2.30071                 1.00000            
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-#####################
-##pairwisePERMANOVA on Weighted UniFrac distances
-#####################
-              pairs Df SumsOfSqs  F.Model        R2 p.value p.adjusted sig
-1 sauvage vs mutant  1 0.4044203 4.691911 0.1757803   0.002      0.002   *

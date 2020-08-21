@@ -12,12 +12,12 @@ Number of permutations: 1000
 Terms added sequentially (first to last)
 
           Df SumsOfSqs MeanSqs F.Model      R2   Pr(>F)    
-Depth      1    0.5075 0.50751  2.2568 0.06845 0.056943 .  
+Depth      1    0.5075 0.50751  2.2568 0.06845 0.055944 .  
 temps      1    2.1846 2.18458  9.7144 0.29463 0.000999 ***
 Residuals 21    4.7225 0.22488         0.63692             
 Total     23    7.4146                 1.00000             
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 #####################
 ##pairwisePERMANOVA on BrayCurtis distances
@@ -38,18 +38,18 @@ Number of permutations: 1000
 Terms added sequentially (first to last)
 
           Df SumsOfSqs MeanSqs F.Model      R2   Pr(>F)    
-Depth      1    0.1408  0.1408  1.6722 0.04814 0.123876    
-temps      1    1.0156  1.0156 12.0618 0.34726 0.000999 ***
-Residuals 21    1.7682  0.0842         0.60460             
-Total     23    2.9246                 1.00000             
+Depth      1   0.14575 0.14575  1.6478 0.04770 0.150849    
+temps      1   1.05270 1.05270 11.9015 0.34448 0.000999 ***
+Residuals 21   1.85747 0.08845         0.60783             
+Total     23   3.05592                 1.00000             
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 #####################
 ##pairwisePERMANOVA on UniFrac distances
 #####################
       pairs Df SumsOfSqs  F.Model        R2 p.value p.adjusted sig
-1 t0 vs t50  1  1.024072 11.85414 0.3501533   0.001      0.001  **
+1 t0 vs t50  1  1.062242 11.72172 0.3476015   0.001      0.001  **
 
 #####################
 ##PERMANOVA on Weighted UniFrac distances
@@ -63,16 +63,16 @@ Number of permutations: 1000
 
 Terms added sequentially (first to last)
 
-          Df SumsOfSqs  MeanSqs F.Model      R2   Pr(>F)    
-Depth      1   0.14305 0.143045  4.7521 0.14129 0.002997 ** 
-temps      1   0.23722 0.237221  7.8807 0.23432 0.000999 ***
-Residuals 21   0.63213 0.030102         0.62439             
-Total     23   1.01240                  1.00000             
+          Df SumsOfSqs MeanSqs F.Model      R2   Pr(>F)    
+Depth      1   0.13135 0.13135  2.6616 0.08612 0.047952 *  
+temps      1   0.35741 0.35741  7.2421 0.23434 0.000999 ***
+Residuals 21   1.03637 0.04935         0.67953             
+Total     23   1.52513                 1.00000             
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 #####################
 ##pairwisePERMANOVA on Weighted UniFrac distances
 #####################
       pairs Df SumsOfSqs  F.Model        R2 p.value p.adjusted sig
-1 t0 vs t50  1 0.2780463 8.329805 0.2746409   0.001      0.001  **
+1 t0 vs t50  1 0.3899855 7.558217 0.2557061   0.001      0.001  **
