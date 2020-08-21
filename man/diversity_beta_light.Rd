@@ -16,19 +16,21 @@ diversity_beta_light(
 )
 }
 \arguments{
-\item{output}{Output directory}
+\item{psobj}{A phyloseq object.}
 
-\item{data}{output from decontam or generate_phyloseq}
+\item{rank}{A taxonomic rank.}
 
-\item{glom}{Taxonomic rank to agglomerate data (one of rank_names(data) )}
+\item{col}{A metadata column.}
 
-\item{column1}{Column name of main factor to test}
+\item{cov}{Covariable list, separated by commas.}
 
-\item{covar}{One or more factor name to integrate as covariable in permanova. (for multiple covariable, provide as vector)}
+\item{dist0}{Dissimilarity index, partial match to "manhattan", "euclidean", "canberra", "bray", "kulczynski", "jaccard", "gower", "altGower", "morisita", "horn", "mountford", "raup" , "binomial", "chao", "cao" or "mahalanobis".}
 
-\item{column2}{Column name to split dataset with.}
+\item{ord0}{Currently supported method options are: c("DCA", "CCA", "RDA", "CAP", "DPCoA", "NMDS", "MDS", "PCoA")}
 
-\item{supp}{Supplementary plot (jaccard indexes + CCA/RDA ordination)}
+\item{output}{The output file directory.}
+
+\item{tests}{Whether to compute tests or not (TRUE/FALSE)}
 }
 \value{
 Export plots and tests in the output directory.

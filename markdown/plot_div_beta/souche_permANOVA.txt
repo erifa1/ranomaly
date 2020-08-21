@@ -1,27 +1,6 @@
-
-#####################
-##PERMANOVA on BrayCurtis distances
-#####################
-
-Call:
-adonis(formula = as.formula(paste("dist1 ~ Depth +", paste(cov1,      collapse = "+"), "+", col)), data = mdata, permutations = 1000) 
-
-Permutation: free
-Number of permutations: 1000
-
-Terms added sequentially (first to last)
-
-          Df SumsOfSqs MeanSqs F.Model      R2   Pr(>F)    
-Depth      1    0.5075 0.50751  3.1218 0.06845 0.020979 *  
-temps      1    2.1846 2.18458 13.4380 0.29463 0.000999 ***
-souche     1    1.4711 1.47112  9.0493 0.19841 0.000999 ***
-Residuals 20    3.2514 0.16257         0.43851             
-Total     23    7.4146                 1.00000             
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-#####################
-##pairwisePERMANOVA on BrayCurtis distances
-#####################
-              pairs Df SumsOfSqs  F.Model        R2 p.value p.adjusted sig
-1 sauvage vs mutant  1  1.529137 5.715979 0.2062341   0.001      0.001  **
+"Df"	"SumsOfSqs"	"MeanSqs"	"F.Model"	"R2"	"Pr(>F)"
+"Depth"	1	0.507505514518014	0.507505514518014	3.12180642948519	0.0684470761399186	0.017982017982018
+"temps"	1	2.18458235019829	2.18458235019829	13.4379687146174	0.294633792501652	0.000999000999000999
+"souche"	1	1.47112234690962	1.47112234690962	9.04927940635962	0.198409712622905	0.000999000999000999
+"Residuals"	20	3.25135799404261	0.16256789970213	NA	0.438509418735524	NA
+"Total"	23	7.41456820566854	NA	NA	1	NA

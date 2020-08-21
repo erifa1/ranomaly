@@ -211,20 +211,15 @@ plot_beta <- function(psobj, rank, col, path, var = 'total', cov=covar) {
 diversity_beta_fun <- function(data = data, output = "./plot_div_beta/", glom = "ASV", column1 = "", column2 = "", covar ="", supp = FALSE){
 
   # suppressMessages(source(system.file("supdata", "phyloseq_extended_graphical_methods.R", package="ranomaly")))
-
-
   if(!dir.exists(output)){
     dir.create(output, recursive=TRUE)
   }
-
-
-
-
 
   mdata <- as.matrix(sample_data(data))
   fact1 <- paste(na.omit(mdata[,column1]))
   # print(levels(as.factor(na.omit(mdata[,column1]))))
   #too few levels
+
   if(length(levels(as.factor(fact1))) > 1 ){
     # If too few observations.
     if(min(table(fact1)) < 3 & column2 != ""){
@@ -232,7 +227,6 @@ diversity_beta_fun <- function(data = data, output = "./plot_div_beta/", glom = 
       p <- plot_beta(data, glom, column1, output, var=column1)
       p <- plot_beta(data, glom, column2, output, var=column2)
     }else{
-
       if(column2 != ""){
         flog.info('Option1...')
         fact1 <- paste(mdata[,column1], mdata[,column2],sep="_")
@@ -275,10 +269,9 @@ diversity_beta_fun <- function(data = data, output = "./plot_div_beta/", glom = 
   }
 
 
-
-
   save.image(paste(output,"/beta_env_bak.rdata", sep=""))
-  return(betaRes)
   flog.info('Finish')
+  return(betaRes)
+
 
 }
