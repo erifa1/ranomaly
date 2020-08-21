@@ -21,10 +21,22 @@ library(DT)
 library(pander)
 devtools::load_all(".")
 ```
+We share this use case to show all features of rANOMALY packages that allow to highlight difference of microbial community between groups of samples. rANOMALY main features are : 
+
+* ASV generation thanks to `dada2` algorithm
+
+* Taxonomic assignment thanks to IDTAXA from `DECIPHER` packages. rANOMALY allow to assign with up to 2 complementary reference database (eg. SILVA which generalist, DAIRYdb which is specific to dairy environments), keep the best and more confident taxonomic assignment, check for taxonomy incongruency like empty fields and multiple ancestors. 
+
+* Phyloseq format to handle datas and downstream statistical analysis. 
+
+* Decontamination step thanks to `decontam` package. rANOMALY allows to filter ASV (Amplicon Sequence Variant) dependings on ASV overall frequence (low abondance filter), and ASV prevalence (presence in 1 or more samples), specific filters like manual suppression of specific taxa are available to. 
+
+* Complete statistical analysis workflow: rarefaction curves, community composition plots, alpha/beta diversity analysis with associated statistical tests and multivariate analysis, and differential analysis using 3 three different methods (metacoder, DESeq2, metagenomeSeq).
+
 
 # Help
 
-Each function have a detailed help accessible in R via `?{funtion}`.
+Each function has a detailed help accessible in R via `?{function}`.
 
 # Tests datasets
 
@@ -32,7 +44,7 @@ The dataset can be downloaded via this [link](https://nextcloud.inrae.fr/s/Zx3iA
 
 This tutorial assume that you have extracted all the read file in a folder named `reads` along with the `sample-metadata.csv` file.
 
-We share a 24 samples test dataset extract from rats feces at two different time (t0 & t50) and in two nutrition conditions. Also included two extraction control sample (blank).
+We share a 24 samples test dataset extract from rats feces at two different time (t0 & t50) and in two nutrition conditions. Rats were feeded with to strain of a particular bacteria (wild type & mutant). Also, extraction control sample (blank) included two are included. 
 
 ```{r loading_metadata, warning = FALSE, message = TRUE}
 sm <- read.table("sample_metadata.csv", sep="\t",header=TRUE)
@@ -47,7 +59,7 @@ load("decontam_out/robjects.Rdata")
 
 ## ASV definition with DADA2
 
-The first step will be the creation of ASVs (Amplicon Sequence Variants) thanks to the dada2 package.
+The first step will be the creation of ASVs thanks to the dada2 package.
 In rANOMALY, only one function is needed to compute all the different steps require from this package.
 
 Sample names will be extracted from the file name, so files must be formatted as followed :
@@ -64,7 +76,7 @@ Main output:
 - `read_tracking.csv` that summarize the read number after each filtering step.
 
 ```{r}
-DT::datatable(read.table("dada2_out/read_tracking.csv",sep="\t",header=TRUE))
+DT::datatable(read.table("dada2_out/read_tracking.csv",sep="\t",header=TRUE), filer = "top")
 ```
 
 The sample names extracted from the file name. We consider as sample name anything that is before the first underscore. This must match the sample names that are in sample metadata files.
