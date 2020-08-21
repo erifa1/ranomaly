@@ -19,7 +19,7 @@
 #' @param unassigned Unassigned kingdom or phylum fitering.
 #' @param skip Skip decontam step.
 #' @param manual_cont_rank Rank of taxa to remove, inform 'ASV' to remove ASV.
-#' @param manual_cont List of Genus to remove comma separated (eg. g__Enterococcus,g__Cellulosimicrobium,g__Serratia).
+#' @param manual_cont Comma separated list of Genus to remove (eg. "g__Enterococcus,g__Cellulosimicrobium,g__Serratia").
 #' @param krona Export krona plot (not available for windows)
 #' @param returnval Boolean to return values in console or not.
 #'
