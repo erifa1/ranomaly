@@ -31,7 +31,7 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
 
   if( (dist0 == "unifrac" | dist0 == "wunifrac") & is.null(phy_tree(psobj, errorIfNULL=FALSE)) ){return(print("Error: unifrac distances needs phylogenetic tree."))}
 
-  print(cov)
+  flog.debug(cov)
   if(!is.null(cov)){
     cov1 = unlist(strsplit(cov, ","))
   }

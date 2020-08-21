@@ -2,7 +2,7 @@
 title: "rANOMALY step-by-step use case."
 author: "Etienne Rifa & Sebastien Theil"
 date: "17/08/2020"
-output: 
+output:
   html_document:
     toc: yes
     toc_float: yes
@@ -298,7 +298,7 @@ out1 = metacoder_fun(data = data, output = "./metacoder", column1 = "souche_temp
  DT::datatable(out1$table, filter = "top", options = list(scrollX = TRUE))
 ```
 
-- Comparaison 1 
+- Comparaison 1
 ```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE}
  out1$sauvage_t0_vs_mutant_t0$plot
 ```
@@ -346,5 +346,3 @@ ggplotly(resF$sauvage_t50_vs_mutant_t50$plot)
 
 DT::datatable(resF$table, filter = "top", options = list(scrollX = TRUE))
 ```
-
-
