@@ -66,46 +66,57 @@ Sample names will be extracted from the file name, so files must be formatted as
 {sample-id1}_R1.fastq.gz
 {sample-id1}_R2.fastq.gz
 etc...
-
+The sample names are extracted from the file name. We consider as sample name anything that is before the first underscore. This must match the sample names that are in sample metadata files.
 
 ```{r eval=FALSE}
 dada_res = dada2_fun(path="./reads", dadapool = "pseudo", compress=TRUE, plot=FALSE)
 ```
 
-Main output:
-- `read_tracking.csv` that summarize the read number after each filtering step.
+Main outputs:
 
+* `./dada2_out/read_tracking.csv` that summarize the read number after each filtering step.
+
+* `./dada2_out/raw_otu-table.csv`
+
+* `./dada2_out/rep-seqs.fna`: fasta file with all representative sequences for each ASV
+
+* `./dada2_out/robjects.Rdata` with saved dada_res list containing raw ASV table and representative sequences in objects `otu.table`, `seqtab.export` & `seqtab.nochim`.
+
+
+Read tracking table: 
 ```{r}
-DT::datatable(read.table("dada2_out/read_tracking.csv",sep="\t",header=TRUE), filer = "top")
+DT::datatable(read.table("dada2_out/read_tracking.csv",sep="\t",header=TRUE), filter = "top")
 ```
 
-The sample names extracted from the file name. We consider as sample name anything that is before the first underscore. This must match the sample names that are in sample metadata files.
-*input*: raw read number.
-*filtered*: after dada2 filtering step: no N's in sequence, low quality, and phiX.
-*denoisedF* & *denoisedR*: after denoising. Forward & Reverse.
-*merged*: after merging R1 & R2.
-*nonchim*: after chimeras filtering.
+* *input*: raw read number.
 
-- `dada2_robjects.Rdata` with raw ASV table and representative sequences in objects `otu.table`, `seqtab.export` & `seqtab.nochim`.
-- `raw_asv-table.csv`
-- `rep-seqs.fna`
+* *filtered*: after dada2 filtering step: no N's in sequence, low quality, and phiX.
+
+* *denoisedF* & *denoisedR*: after denoising. Forward & Reverse.
+
+* *merged*: after merging R1 & R2.
+
+* *nonchim*: after chimeras filtering.
 
 
 ## Taxonomic assignment
 
-This function uses IDTAXA function from DECIPHER package, and allows to use 2 differents databases. It keeps the best assignation on 2 criteria, resolution (depth) and confidence. The final taxonomy is validated by multiple ancestors taxa and incongruity correction step.
+`assign_taxo_fun` function uses IDTAXA function from DECIPHER package, and allows to use 2 differents databases. It keeps the best assignment on 2 criteria, resolution (depth) and confidence. The final taxonomy is validated by multiple ancestors taxa and incongruity correction step.
 
-
-We share the latest databases we use in the IDTAXA format in this [link](https://nextcloud.inrae.fr/s/YHi3fmDdEJt5cqR). You can also generate your own database following those instructions and scripts we provide in another [repository](https://forgemia.inra.fr/umrf/database_formatting).
+We share the latest databases we use in the IDTAXA format in this [link](https://nextcloud.inrae.fr/s/YHi3fmDdEJt5cqR). You can also generate your own IDTAXA formatted database following those instructions and scripts we provide at  [this page](https://forgemia.inra.fr/umrf/ranomaly/-/wikis/idtaxa_db_proc).
 
 
 ```{r eval=FALSE}
 tax.table = assign_taxo_fun(dada_res = dada_res, id_db = c("path_to_your_banks/silva/SILVA_SSU_r132_March2018.RData","path_to_your_banks/DAIRYdb_v1.2.0_20190222_IDTAXA.RData") )
 ```
 
+```{r echo=FALSE}
+DT::datatable(tax_table(data), filter = "top", options = list(scrollX = TRUE))
+```
 
-Main output:
-- `taxo_robjects.Rdata` with taxonomy in phyloseq format in `tax.table` object.
+
+Main outputs:
+- `./idtaxa/robjects.Rdata` with taxonomy in phyloseq format in `tax.table` object.
 - `final_tax_table.csv` the final assignation table that will be use in next steps.
 - `allDB_tax_table.csv` raw assignations from the two databases, mainly for debugging.
 
@@ -117,7 +128,7 @@ The phylogenetic tree from the representative sequences is generated using phang
 tree = generate_tree_fun(dada_res)
 ```
 
-Main output:
+Main outputs:
 - `tree_robjects.Rdata` with phylogenetic `tree` object in phyloseq format.
 
 ## Phyloseq object
@@ -132,217 +143,223 @@ To create a phyloseq object, we need to merge four objects and one file:
 data = generate_phyloseq_fun(dada_res = dada_res, taxtable = tax.table, tree = tree, metadata = "./sample_metadata.csv")
 ```
 
-Main output:
-- `robjects.Rdata` with phyloseq object in `data` for raw counts and `data_rel` for relative abundance.
-
-## Decontamination
-
-The `decontam_fun` function uses [decontam](https://www.bioconductor.org/packages/release/bioc/html/decontam.html) R package with control samples to filter contaminants.
-The decontam package offers two main methods, frequency and prevalence (and then you can combine those methods). For frequency method, it is mandatory to have the dna concentration of each sample in phyloseq (and hence in the `sample-metadata.csv`).
-"_In this method, the distribution of the frequency of each sequence feature as a function of the input DNA concentration is used to identify contaminants._"
-In the prevalence methods no need of DNA quantification.
-"_In this method, the prevalence (presence/absence across samples) of each sequence feature in true positive samples is compared to the prevalence in negative controls to identify contaminants._"
-
-Tips: sequencing plateforms often quantify the DNA before sequencing, but do not automaticaly give the information. Just ask for it ;).
-
-Our function integrates the basics ASV frequency (nb_reads_ASV/nb_total_reads) and prevalence (nb_sample_ASV/nb_total_sample) filtering.
-As in our lab we had a known recurrent contaminant we included an option to filter out ASV based on they taxa names.
-
-```{r eval=FALSE}
-data = decontam_fun(data = data, domain = "Bacteria", column = "type", ctrl_identifier = "control", spl_identifier = "sample", number = 100)
+```{r}
+data
 ```
+
 
 Main output:
-- `robjects.Rdata` with contaminant filtered phyloseq object named `data`.
-- `Exclu_out.csv`  list of filtered ASVs for each filtering step.
-- Kronas [before](test/krona_no_filtering.html) and [after](test/krona_filtering.html) filtering.
-- `raw_asv-table.csv` & `relative_asv-table.csv`.
-- `venndiag_filtering.png`.
 
-![venndiag](./decontam_out/venndiag_filtering.png)
+* `./phyloseq/robjects.Rdata` with phyloseq object in `data` for raw counts and `data_rel` for relative abundance.
 
-# Plots, diversity and statistics
+<!-- ## Decontamination -->
 
-!!! We are currently developping a ShinyApp to visualize your data, sub-select your samples/taxons and do all those analyses interactively !!!
-[ExploreMetabar](https://forgemia.inra.fr/umrf/exploremetabar)
+<!-- The `decontam_fun` function uses [decontam](https://www.bioconductor.org/packages/release/bioc/html/decontam.html) R package with control samples to filter contaminants. -->
+<!-- The decontam package offers two main methods, frequency and prevalence (and then you can combine those methods). For frequency method, it is mandatory to have the dna concentration of each sample in phyloseq (and hence in the `sample-metadata.csv`). -->
+<!-- "_In this method, the distribution of the frequency of each sequence feature as a function of the input DNA concentration is used to identify contaminants._" -->
+<!-- In the prevalence methods no need of DNA quantification. -->
+<!-- "_In this method, the prevalence (presence/absence across samples) of each sequence feature in true positive samples is compared to the prevalence in negative controls to identify contaminants._" -->
 
-## Rarefaction curves
+<!-- Tips: sequencing plateforms often quantify the DNA before sequencing, but do not automaticaly give the information. Just ask for it ;). -->
 
-In order to observe the sampling depth of each samples we start by plotting rarefactions curves. Those plots are generated by Plotly which makes the plots interactive.
+<!-- Our function integrates the basics ASV frequency (nb_reads_ASV/nb_total_reads) and prevalence (nb_sample_ASV/nb_total_sample) filtering. -->
+<!-- As in our lab we had a known recurrent contaminant we included an option to filter out ASV based on they taxa names. -->
 
-```{r rareproc, warning = FALSE, results='hide'}
-rareplot = rarefaction(data, "souche_temps", 100 )
-```
-```{r rareplot}
-htmltools::tagList(list(rareplot))
-```
+<!-- ```{r eval=FALSE} -->
+<!-- data = decontam_fun(data = data, domain = "Bacteria", column = "type", ctrl_identifier = "control", spl_identifier = "sample", number = 100) -->
+<!-- ``` -->
 
-## Composition plots
+<!-- Main outputs: -->
+<!-- - `robjects.Rdata` with contaminant filtered phyloseq object named `data`. -->
+<!-- - `Exclu_out.csv`  list of filtered ASVs for each filtering step. -->
+<!-- - Kronas [before](test/krona_no_filtering.html) and [after](test/krona_filtering.html) filtering. -->
+<!-- - `raw_asv-table.csv` & `relative_asv-table.csv`. -->
+<!-- - `venndiag_filtering.png`. -->
 
+<!-- ![venndiag](./decontam_out/venndiag_filtering.png) -->
 
-Composition plots reveals here the top 10 genus present in our samples.
-#TODO
-Ord1 option control the...
-Fact1 option control the...
+<!-- # Plots, diversity and statistics -->
 
-### Raw abundance
-```{r compo_raw, fig.width=10, warning=FALSE, message=FALSE}
-bars_fun(data = data, top = 10, Ord1 = "souche_temps", Fact1 = "souche_temps", rank="Genus", relative = FALSE)
-```
+<!-- !!! We are currently developping a ShinyApp to visualize your data, sub-select your samples/taxons and do all those analyses interactively !!! -->
+<!-- [ExploreMetabar](https://forgemia.inra.fr/umrf/exploremetabar) -->
 
-### Relative abundance
-```{r compo_relative, fig.width=10, message=FALSE, warning=FALSE}
-bars_fun(data = data, top = 10, Ord1 = "souche_temps", Fact1 = "souche_temps", rank="Genus", relative = TRUE)
-```
+<!-- ## Rarefaction curves -->
 
+<!-- In order to observe the sampling depth of each samples we start by plotting rarefactions curves. Those plots are generated by Plotly which makes the plots interactive. -->
 
-## Diversity analyses
+<!-- ```{r rareproc, warning = FALSE, results='hide'} -->
+<!-- rareplot = rarefaction(data, "souche_temps", 100 ) -->
+<!-- ``` -->
+<!-- ```{r rareplot} -->
+<!-- htmltools::tagList(list(rareplot)) -->
+<!-- ``` -->
 
-### Alpha diversity
-
-This function computes various alpha diversity indexes and returns:
-- a boxplot comparing conditions.
-- a table of values
-- an ANOVA analysis
-- a wilcox result test comparing conditions and giving the significativity of the observed differences.
-- a mixture model if your data include repetition in sampling.
-All this in a single function.
-
-```{r alpha, warning=FALSE, message=FALSE, results = 'hide'}
-alpha <- diversity_alpha_fun(data = data, output = "./plot_div_alpha/", column1 = "souche", column2 = "temps", column3 = "", supcovs = "", measures = c("Observed", "Shannon") )
-```
-
-### Table of diversity index values
-The table of values for each indices you choose to compute.
-```{r alpha_tables}
-pander(alpha$alphatable, style='rmarkdown')
-```
-### Boxplots
-
-The boxplots of those values.
-
-```{r alpha_boxplots, warnings = FALSE, message=FALSE, echo = TRUE}
-ggplotly(alpha$plot) %>%
-  layout(boxmode = "group")
-```
-
-### Tests on Observed index
-
-#### ANOVA results
-
-For each indices, you have access to the ANOVA test. Here we present the result for the "Observed" indice.
-
-```{r}
-pander(alpha$Observed$anova)
-```
-
-#### Wilcox test
-
-Wilcox tests are made on each factor you have entered, and the combination of the two. Here "souche" and "temps".
-
-#### Wilcox test for "souche" factor
-```{r}
-pander(alpha$Observed$wilcox_col1)
-```
-#### Wilcox test for "temps" factor FDR corrected.
-```{r}
-pander(alpha$Observed$wilcox_col2_fdr)
-```
-#### Wilcox test for the collapsed factors
-```{r}
-pander(alpha$Observed$wilcox_col2_collapsed)
-```
+<!-- ## Composition plots -->
 
 
-## Beta diversity
+<!-- Composition plots reveals here the top 10 genus present in our samples. -->
+<!-- #TODO -->
+<!-- Ord1 option control the... -->
+<!-- Fact1 option control the... -->
 
-```{r beta, warning=FALSE, results = 'hide'}
-# beta <- diversity_beta_light(data = data, output = "./plot_div_beta/", glom = "ASV", column1 = "temps", column2 = "souche", covar ="")
-beta = diversity_beta_light(data, col = "souche", cov="temps", dist0 = "bray", ord0 = "MDS", output="./plot_div_beta/", tests = TRUE)
-beta2 = diversity_beta_light(data, col = "souche_temps", dist0 = "bray", ord0 = "MDS", output="./plot_div_beta/", tests = TRUE)
-```
-### Ordination plot
-```{r beta_ordination, warning=FALSE}
-ggplotly(beta$plot)
-ggplotly(beta2$plot)
-```
+<!-- ### Raw abundance -->
+<!-- ```{r compo_raw, fig.width=10, warning=FALSE, message=FALSE} -->
+<!-- bars_fun(data = data, top = 10, Ord1 = "souche_temps", Fact1 = "souche_temps", rank="Genus", relative = FALSE) -->
+<!-- ``` -->
 
-
-### Statistical tests
-
-* permanova
-
-```{r beta_test1, warning=FALSE}
-beta$permanova
-```
-
-* pairwise permanova on concatenated factors
-
-```{r beta_test2, warning=FALSE}
-pander(beta2$pairwisepermanova)
-```
+<!-- ### Relative abundance -->
+<!-- ```{r compo_relative, fig.width=10, message=FALSE, warning=FALSE} -->
+<!-- bars_fun(data = data, top = 10, Ord1 = "souche_temps", Fact1 = "souche_temps", rank="Genus", relative = TRUE) -->
+<!-- ``` -->
 
 
+<!-- ## Diversity analyses -->
 
-## Differential analyses
+<!-- ### Alpha diversity -->
 
-### Metacoder
+<!-- This function computes various alpha diversity indexes and returns: -->
+<!-- - a boxplot comparing conditions. -->
+<!-- - a table of values -->
+<!-- - an ANOVA analysis -->
+<!-- - a wilcox result test comparing conditions and giving the significativity of the observed differences. -->
+<!-- - a mixture model if your data include repetition in sampling. -->
+<!-- All this in a single function. -->
 
-```{r,warning = FALSE, message = FALSE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE, results = 'hide'}
-out1 = metacoder_fun(data = data, output = "./metacoder", column1 = "souche_temps", rank = "Family", signif = TRUE, plottrees = TRUE, min ="10", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0")
+<!-- ```{r alpha, warning=FALSE, message=FALSE, results = 'hide'} -->
+<!-- alpha <- diversity_alpha_fun(data = data, output = "./plot_div_alpha/", column1 = "souche", column2 = "temps", column3 = "", supcovs = "", measures = c("Observed", "Shannon") ) -->
+<!-- ``` -->
 
-```
+<!-- ### Table of diversity index values -->
+<!-- The table of values for each indices you choose to compute. -->
+<!-- ```{r alpha_tables} -->
+<!-- pander(alpha$alphatable, style='rmarkdown') -->
+<!-- ``` -->
+<!-- ### Boxplots -->
 
-- Table
-```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE}
- DT::datatable(out1$table, filter = "top", options = list(scrollX = TRUE))
-```
+<!-- The boxplots of those values. -->
 
-- Comparaison 1
-```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE}
- out1$sauvage_t0_vs_mutant_t0$plot
-```
+<!-- ```{r alpha_boxplots, warnings = FALSE, message=FALSE, echo = TRUE} -->
+<!-- ggplotly(alpha$plot) %>% -->
+<!--   layout(boxmode = "group") -->
+<!-- ``` -->
 
-- Comparaison 2
-```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE}
- out1$sauvage_t50_vs_mutant_t50$plot
-```
+<!-- ### Tests on Observed index -->
+
+<!-- #### ANOVA results -->
+
+<!-- For each indices, you have access to the ANOVA test. Here we present the result for the "Observed" indice. -->
+
+<!-- ```{r} -->
+<!-- pander(alpha$Observed$anova) -->
+<!-- ``` -->
+
+<!-- #### Wilcox test -->
+
+<!-- Wilcox tests are made on each factor you have entered, and the combination of the two. Here "souche" and "temps". -->
+
+<!-- #### Wilcox test for "souche" factor -->
+<!-- ```{r} -->
+<!-- pander(alpha$Observed$wilcox_col1) -->
+<!-- ``` -->
+<!-- #### Wilcox test for "temps" factor FDR corrected. -->
+<!-- ```{r} -->
+<!-- pander(alpha$Observed$wilcox_col2_fdr) -->
+<!-- ``` -->
+<!-- #### Wilcox test for the collapsed factors -->
+<!-- ```{r} -->
+<!-- pander(alpha$Observed$wilcox_col2_collapsed) -->
+<!-- ``` -->
+
+
+<!-- ## Beta diversity -->
+
+<!-- ```{r beta, warning=FALSE, results = 'hide'} -->
+<!-- # beta <- diversity_beta_light(data = data, output = "./plot_div_beta/", glom = "ASV", column1 = "temps", column2 = "souche", covar ="") -->
+<!-- beta = diversity_beta_light(data, col = "souche", cov="temps", dist0 = "bray", ord0 = "MDS", output="./plot_div_beta/", tests = TRUE) -->
+<!-- beta2 = diversity_beta_light(data, col = "souche_temps", dist0 = "bray", ord0 = "MDS", output="./plot_div_beta/", tests = TRUE) -->
+<!-- ``` -->
+<!-- ### Ordination plot -->
+<!-- ```{r beta_ordination, warning=FALSE} -->
+<!-- ggplotly(beta$plot) -->
+<!-- ggplotly(beta2$plot) -->
+<!-- ``` -->
+
+
+<!-- ### Statistical tests -->
+
+<!-- * permanova -->
+
+<!-- ```{r beta_test1, warning=FALSE} -->
+<!-- beta$permanova -->
+<!-- ``` -->
+
+<!-- * pairwise permanova on concatenated factors -->
+
+<!-- ```{r beta_test2, warning=FALSE} -->
+<!-- pander(beta2$pairwisepermanova) -->
+<!-- ``` -->
 
 
 
-### DESeq2
-```{r,warning = FALSE, message = FALSE, echo = TRUE, fig.width = 15, results = 'hide'}
-#fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10
-out2 = deseq2_fun(data = data, output = "./deseq/", column1 = "souche_temps", verbose = 1, rank = "Family", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0")
-```
+<!-- ## Differential analyses -->
 
-```{r,warning = FALSE, message = FALSE, echo = TRUE, fig.width = 10}
-ggplotly(out2$sauvage_t50_vs_mutant_t50$plot)
-DT::datatable(out2$sauvage_t50_vs_mutant_t50$table, filter = "top", options = list(scrollX = TRUE))
-```
+<!-- ### Metacoder -->
 
-### MetagenomeSeq
+<!-- ```{r,warning = FALSE, message = FALSE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE, results = 'hide'} -->
+<!-- out1 = metacoder_fun(data = data, output = "./metacoder", column1 = "souche_temps", rank = "Family", signif = TRUE, plottrees = TRUE, min ="10", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0") -->
 
-```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', echo = TRUE, results = "hide"}
-out3 = metagenomeseq_fun(data = data, output = "./metagenomeseq/", column1 = "souche_temps", verbose = 1, rank = "Family", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0")
-```
+<!-- ``` -->
 
-```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', echo = TRUE}
-ggplotly(out3$sauvage_t50_vs_mutant_t50$plot)
+<!-- - Table -->
+<!-- ```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE} -->
+<!--  DT::datatable(out1$table, filter = "top", options = list(scrollX = TRUE)) -->
+<!-- ``` -->
 
-DT::datatable(out3$sauvage_t50_vs_mutant_t50$table, filter = "top", options = list(scrollX = TRUE))
-```
+<!-- - Comparaison 1 -->
+<!-- ```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE} -->
+<!--  out1$sauvage_t0_vs_mutant_t0$plot -->
+<!-- ``` -->
 
-### Aggregate methods
+<!-- - Comparaison 2 -->
+<!-- ```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE} -->
+<!--  out1$sauvage_t50_vs_mutant_t50$plot -->
+<!-- ``` -->
 
-```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.height = 10, echo = TRUE, results = "hide"}
-resF = aggregate_fun(data = data, metacoder = "./metacoder/metacoder_signif_Family.csv", deseq = "./deseq/", mgseq = "./metagenomeseq/", output = "./aggregate_diff/", column1 = "souche_temps", column2 = NULL, verbose = 1, rank = "Genus", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0")
-```
 
-```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left'}
-ggplotly(resF$sauvage_t0_vs_mutant_t0$plot)
 
-ggplotly(resF$sauvage_t50_vs_mutant_t50$plot)
+<!-- ### DESeq2 -->
+<!-- ```{r,warning = FALSE, message = FALSE, echo = TRUE, fig.width = 15, results = 'hide'} -->
+<!-- #fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10 -->
+<!-- out2 = deseq2_fun(data = data, output = "./deseq/", column1 = "souche_temps", verbose = 1, rank = "Family", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0") -->
+<!-- ``` -->
 
-DT::datatable(resF$table, filter = "top", options = list(scrollX = TRUE))
-```
+<!-- ```{r,warning = FALSE, message = FALSE, echo = TRUE, fig.width = 10} -->
+<!-- ggplotly(out2$sauvage_t50_vs_mutant_t50$plot) -->
+<!-- DT::datatable(out2$sauvage_t50_vs_mutant_t50$table, filter = "top", options = list(scrollX = TRUE)) -->
+<!-- ``` -->
+
+<!-- ### MetagenomeSeq -->
+
+<!-- ```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', echo = TRUE, results = "hide"} -->
+<!-- out3 = metagenomeseq_fun(data = data, output = "./metagenomeseq/", column1 = "souche_temps", verbose = 1, rank = "Family", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0") -->
+<!-- ``` -->
+
+<!-- ```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', echo = TRUE} -->
+<!-- ggplotly(out3$sauvage_t50_vs_mutant_t50$plot) -->
+
+<!-- DT::datatable(out3$sauvage_t50_vs_mutant_t50$table, filter = "top", options = list(scrollX = TRUE)) -->
+<!-- ``` -->
+
+<!-- ### Aggregate methods -->
+
+<!-- ```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.height = 10, echo = TRUE, results = "hide"} -->
+<!-- resF = aggregate_fun(data = data, metacoder = "./metacoder/metacoder_signif_Family.csv", deseq = "./deseq/", mgseq = "./metagenomeseq/", output = "./aggregate_diff/", column1 = "souche_temps", column2 = NULL, verbose = 1, rank = "Genus", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0") -->
+<!-- ``` -->
+
+<!-- ```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left'} -->
+<!-- ggplotly(resF$sauvage_t0_vs_mutant_t0$plot) -->
+
+<!-- ggplotly(resF$sauvage_t50_vs_mutant_t50$plot) -->
+
+<!-- DT::datatable(resF$table, filter = "top", options = list(scrollX = TRUE)) -->
+<!-- ``` -->
