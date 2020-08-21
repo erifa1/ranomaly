@@ -2,13 +2,14 @@
 #'
 #' Provides ordination (PCoA, NMDS) of beta diversity indices (BrayCurtis, UniFrac and WeightedUnifrac) and statistical tests like PERMANOVA and pairwisePERMANOVA.
 #'
-#' @param data output from decontam or generate_phyloseq
-#' @param output Output directory
-#' @param glom Taxonomic rank to agglomerate data (one of rank_names(data) )
-#' @param column1 Column name of main factor to test
-#' @param covar One or more factor name to integrate as covariable in permanova. (for multiple covariable, provide as vector)
-#' @param column2 Column name to split dataset with.
-#' @param supp Supplementary plot (jaccard indexes + CCA/RDA ordination)
+#' @param psobj A phyloseq object.
+#' @param rank A taxonomic rank.
+#' @param col A metadata column.
+#' @param cov Covariable list, separated by commas.
+#' @param dist0 Dissimilarity index, partial match to "manhattan", "euclidean", "canberra", "bray", "kulczynski", "jaccard", "gower", "altGower", "morisita", "horn", "mountford", "raup" , "binomial", "chao", "cao" or "mahalanobis".
+#' @param ord0 Currently supported method options are: c("DCA", "CCA", "RDA", "CAP", "DPCoA", "NMDS", "MDS", "PCoA")
+#' @param output The output file directory.
+#' @param tests Whether to compute tests or not (TRUE/FALSE)
 #'
 #' @return Export plots and tests in the output directory.
 #'
@@ -53,27 +54,6 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
   }else{
     data_rank = tax_glom(psobj, rank)
   }
-  otable = otu_table(data_rank)
-
-  flog.info(glue::glue('Tests on {dist0} ...'))
-  mdata = data.frame(sample_data(data_rank))
-  mdata$Depth <- sample_sums(data_rank)
-  print(table(mdata[,col1]))
-  dist1 <<- vegdist(t(otable), distance=dist0)
-  if(!is.null(cov)){
-    resBC = adonis(as.formula(paste('dist1 ~ Depth +', paste(cov1, collapse="+"), "+", col)), data = mdata, permutations = 1000)
-  }else{
-    resBC = adonis(as.formula(paste('dist1 ~ Depth +', col)), data = mdata, permutations = 1000)
-  }
-
-  #PairwiseAdonis
-  # resBC2 = pairwise.adonis2(as.formula( paste('BC.dist ~ ', col,sep="") ), data = mdata)
-  if(length(col1)>1){
-    fact1 <- apply( mdata[,c(col1)] , 1 , paste , collapse = "-" )
-    resBC2 = pairwise.adonis(dist1, fact1, p.adjust.m='fdr')
-  } else {
-    resBC2 = pairwise.adonis(dist1, mdata[,c(col1)], p.adjust.m='fdr')
-  }
 
 
   # Figure
@@ -84,20 +64,33 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
   resBeta$plot = p1
 
   if(tests){
-    ### Print tests
-    sink(paste(output,'/',col,'_permANOVA.txt',sep=''), split = FALSE)
-    cat("\n#####################\n##PERMANOVA on BrayCurtis distances\n#####################\n")
-    print(resBC)
-    cat("\n#####################\n##pairwisePERMANOVA on BrayCurtis distances\n#####################\n")
-    print(resBC2)
-    sink()
+    otable = otu_table(data_rank)
 
-    resBeta$permanova = resBC
+    flog.info(glue::glue('Tests on {dist0} ...'))
+    mdata = data.frame(sample_data(data_rank))
+    mdata$Depth <- sample_sums(data_rank)
+    dist1 <<- vegdist(t(otable), method = dist0)
+    if(!is.null(cov)){
+      resBC = adonis(as.formula(paste('dist1 ~ Depth +', paste(cov1, collapse="+"), "+", col)), data = mdata, permutations = 1000)
+    }else{
+      resBC = adonis(as.formula(paste('dist1 ~ Depth +', col)), data = mdata, permutations = 1000)
+    }
+
+    #PairwiseAdonis
+    # resBC2 = pairwise.adonis2(as.formula( paste('BC.dist ~ ', col,sep="") ), data = mdata)
+    if(length(col1)>1){
+      fact1 <- apply( mdata[,c(col1)] , 1 , paste , collapse = "-" )
+      resBC2 = pairwise.adonis(dist1, fact1, p.adjust.m='fdr')
+    } else {
+      resBC2 = pairwise.adonis(dist1, mdata[,c(col1)], p.adjust.m='fdr')
+    }
+
+    write.table(resBC$aov.tab, file=paste0(output,'/',col,'_permANOVA.txt'), sep="\t")
+    write.table(resBC2$aov.tab, file=paste0(output,'/',col,'pairwisepermANOVA.txt'), sep="\t")
+
+        resBeta$permanova = resBC
     resBeta$pairwisepermanova = resBC2
 
   }
-
-
-
   return(resBeta)
 }

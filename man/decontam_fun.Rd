@@ -65,7 +65,7 @@ decontam_fun(
 
 \item{manual_cont_rank}{Rank of taxa to remove, inform 'ASV' to remove ASV.}
 
-\item{manual_cont}{List of Genus to remove comma separated (eg. g__Enterococcus,g__Cellulosimicrobium,g__Serratia).}
+\item{manual_cont}{Comma separated list of Genus to remove (eg. "g__Enterococcus,g__Cellulosimicrobium,g__Serratia").}
 
 \item{krona}{Export krona plot (not available for windows)}
 
