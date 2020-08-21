@@ -58,7 +58,6 @@ alphaPlotly <- function(data=data, alpha=alpha, col1='', col2='', measures=c("Sh
 
 diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", column1 = "", column2 = "",
                                 column3 = "", supcovs = "", measures = c("Observed","Shannon","Simpson","InvSimpson")){
-  print('coucou')
   if(!dir.exists(output)){
     dir.create(output, recursive=TRUE)
   }
