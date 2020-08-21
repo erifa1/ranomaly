@@ -10,7 +10,6 @@ output:
     collapsed: no
     smooth_scroll: no
     number_sections: yes
-    code_folding: hide
   pdf_document:
     toc: yes
 ---
@@ -239,5 +238,5 @@ pander(alpha$Observed$wilcox_col2_collapsed)
 #### Beta diversity
 
 ```{r beta, warning=FALSE}
-beta <- diversity_beta_fun(data = data, output = "./plot_div_beta/", glom = "ASV", column1 = "temps", column2 = "souche", covar ="")
+beta <- diversity_beta_fun(data = data, output = "./plot_div_beta/", glom = "ASV", column1 = "souche", column2 = "temps", covar ="")
 ```
