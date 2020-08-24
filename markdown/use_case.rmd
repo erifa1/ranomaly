@@ -33,6 +33,8 @@ We share this use case to show all features of rANOMALY packages that allow to h
 
 * Complete statistical analysis workflow: rarefaction curves, community composition plots, alpha/beta diversity analysis with associated statistical tests and multivariate analysis, and differential analysis using 3 three different methods (metacoder, DESeq2, metagenomeSeq).
 
+* At each steps plots and R objects are saved in folders to be able to relaunch the analysis and to exports plots.
+
 
 # Help
 
@@ -62,11 +64,11 @@ load("decontam_out/robjects.Rdata")
 The first step will be the creation of ASVs thanks to the dada2 package.
 In rANOMALY, only one function is needed to compute all the different steps require from this package.
 
-Sample names will be extracted from the file name, so files must be formatted as followed :
+Sample names will be extracted from the file name, from the begining to the first underscore (_), so files must be formatted as followed :
 {sample-id1}_R1.fastq.gz
 {sample-id1}_R2.fastq.gz
 etc...
-The sample names are extracted from the file name. We consider as sample name anything that is before the first underscore. This must match the sample names that are in sample metadata files.
+Those must match the sample name that are stored in the sample metadata file.
 
 ```{r eval=FALSE}
 dada_res = dada2_fun(path="./reads", dadapool = "pseudo", compress=TRUE, plot=FALSE)
@@ -74,19 +76,16 @@ dada_res = dada2_fun(path="./reads", dadapool = "pseudo", compress=TRUE, plot=FA
 
 Main outputs:
 
-* `./dada2_out/read_tracking.csv` that summarize the read number after each filtering step.
+* `./dada2_out/read_tracking.csv` summarize the read number after each filtering step.
 
-* `./dada2_out/raw_otu-table.csv`
+* `./dada2_out/raw_otu-table.csv` the raw ASV table
 
 * `./dada2_out/rep-seqs.fna`: fasta file with all representative sequences for each ASV
 
 * `./dada2_out/robjects.Rdata` with saved dada_res list containing raw ASV table and representative sequences in objects `otu.table`, `seqtab.export` & `seqtab.nochim`.
 
 
-Read tracking table: 
-```{r}
-DT::datatable(read.table("dada2_out/read_tracking.csv",sep="\t",header=TRUE), filter = "top")
-```
+Read tracking table:
 
 * *input*: raw read number.
 
@@ -98,6 +97,9 @@ DT::datatable(read.table("dada2_out/read_tracking.csv",sep="\t",header=TRUE), fi
 
 * *nonchim*: after chimeras filtering.
 
+```{r}
+DT::datatable(read.table("dada2_out/read_tracking.csv",sep="\t",header=TRUE), filter = "top")
+```
 
 ## Taxonomic assignment
 
@@ -115,9 +117,12 @@ DT::datatable(tax_table(data), filter = "top", options = list(scrollX = TRUE))
 ```
 
 
-Main outputs:
+Main file outputs:
+
 - `./idtaxa/robjects.Rdata` with taxonomy in phyloseq format in `tax.table` object.
+
 - `final_tax_table.csv` the final assignation table that will be use in next steps.
+
 - `allDB_tax_table.csv` raw assignations from the two databases, mainly for debugging.
 
 ## Phylogenetic Tree
@@ -133,11 +138,15 @@ Main outputs:
 
 ## Phyloseq object
 
-To create a phyloseq object, we need to merge four objects and one file:
-- the asv table `otu.table` and  the representative sequences `seqtab.nochim` from `dada2_robjects.Rdata`
-- a taxonomy table `taxo_robjects.Rdata` from `taxo_robjects.Rdata`
+To create a [phyloseq](https://joey711.github.io/phyloseq/) object, we need to merge four objects and one file:
+
+- the asv table `dada_res` and  the representative sequences `seqtab.nochim` from `dada2_robjects.Rdata`
+
+- a taxonomy table (`taxtable`) `taxo_robjects.Rdata` from `taxo_robjects.Rdata`
+
 - the phylogenetic tree `tree` from `tree_robjects.Rdata`
-- metadata from `sample-metadata.csv`
+
+- `metadata` from `sample-metadata.csv`
 
 ```{r eval = FALSE}
 data = generate_phyloseq_fun(dada_res = dada_res, taxtable = tax.table, tree = tree, metadata = "./sample_metadata.csv")
@@ -197,10 +206,11 @@ htmltools::tagList(list(rareplot))
 ## Composition plots
 
 
-Composition plots reveals here the top 10 genus present in our samples.
-#TODO
-Ord1 option control the...
-Fact1 option control the...
+The `bar_fun` function outputs a composition plot, in this example it reveals the top 10 genus present in our samples, but it is possible to plot at different `rank` and to modify the number of taxas to show.
+
+- `Ord1` option order the sample along the X axis.
+
+- `Fact1` option control labels of the X axis. `Fact1="sample.id"` if you don't want the sample to be renamed.
 
 ### Raw abundance
 ```{r compo_raw, fig.width=10, warning=FALSE, message=FALSE}
@@ -217,12 +227,25 @@ bars_fun(data = data, top = 10, Ord1 = "souche_temps", Fact1 = "souche_temps", r
 
 ### Alpha diversity
 
-This function computes various alpha diversity indexes and returns:
-- a boxplot comparing conditions.
-- a table of values
-- an ANOVA analysis
-- a wilcox result test comparing conditions and giving the significativity of the observed differences.
-- a mixture model if your data include repetition in sampling.
+This function computes various alpha diversity indexes, it uses the [`estimate_richness`](https://www.rdocumentation.org/packages/phyloseq/versions/1.16.2/topics/estimate_richness) function from Phyloseq.
+
+Available measures : c("Observed", "Chao1", "ACE", "Shannon", "Simpson", "InvSimpson", "Fisher").
+
+It returns a list which contains:
+
+- a boxplot comparing conditions. (`$plot`)
+
+- a table of indices values.  (`$alphatable`)
+
+And for each of the computed indices :
+
+- an ANOVA analysis. (`${measure}$anova`)
+
+- a wilcox result test comparing conditions and giving the significativity of the observed differences. (`${measure}$wilcox_col1`, `${measure}$wilcox_col2_fdr`, `${measure}$wilcox_col2_collapsed`)
+
+- a mixture model if your data include repetition in sampling, ie. `column3` option. (`${measure}$anovarepeat`, `${measure}$mixedeffect`)
+
+
 All this in a single function.
 
 ```{r alpha, warning=FALSE, message=FALSE, results = 'hide'}
@@ -273,15 +296,33 @@ pander(alpha$Observed$wilcox_col2_collapsed)
 
 ## Beta diversity
 
+The `diversity_beta_fun` function is an exhaustive function allowing to generate all possible tests and ordination in one command.
+
+
+The `diversity_beta_light` function is equivalent to the first fonction but allows to generate specific tests and figures ready to publish in rmarkdown as in the example below. It is bases on the vegan package function [`vegdist`](https://www.rdocumentation.org/packages/vegan/versions/2.4-2/topics/vegdist) for the distance calculation and [`ordinate`](https://www.rdocumentation.org/packages/phyloseq/versions/1.16.2/topics/ordinate) for the ordination plot.
+
+We include statiscal test to ease the interpretation of your results. Here we include permutational ANOVA to compare groups and test that the centroids and dispersion of the groups are equivalent for all groups. User can inform `col` and `cov` arguments to assess PERMANOVA to determine significant differences between groups (eg. factor "souche" here and covariable "temps"). A pairwise-PERMANOVA is processed to determine which conditions are significantly different from another (based on p-value).
+
+As return, you will get an object that contains:
+
+- An ordination plot (`$plot`)
+
+- The permANOVA results (`$permanova`)
+
+- The pairwise permANOVA (`$pairwisepermanova`)
+
 ```{r beta, warning=FALSE, results = 'hide'}
 # beta <- diversity_beta_light(data = data, output = "./plot_div_beta/", glom = "ASV", column1 = "temps", column2 = "souche", covar ="")
-beta = diversity_beta_light(data, col = "souche", cov="temps", dist0 = "bray", ord0 = "MDS", output="./plot_div_beta/", tests = TRUE)
-beta2 = diversity_beta_light(data, col = "souche_temps", dist0 = "bray", ord0 = "MDS", output="./plot_div_beta/", tests = TRUE)
+beta_souche = diversity_beta_light(data, col = "souche", cov="temps", dist0 = "bray", ord0 = "MDS", output="./plot_div_beta_souche/", tests = TRUE)
+beta_temps = diversity_beta_light(data, col = "temps", cov="souche", dist0 = "bray", ord0 = "MDS", output="./plot_div_beta_temps/", tests = TRUE)
+
+beta_souche_temps = diversity_beta_light(data, col = "souche_temps", dist0 = "bray", ord0 = "MDS", output="./plot_div_beta_souche_temps/", tests = TRUE)
 ```
 ### Ordination plot
+
+
 ```{r beta_ordination, warning=FALSE}
-ggplotly(beta$plot)
-ggplotly(beta2$plot)
+htmltools::tagList(list(ggplotly(beta_souche$plot), ggplotly(beta_temps$plot)))
 ```
 
 
@@ -290,20 +331,26 @@ ggplotly(beta2$plot)
 * permanova
 
 ```{r beta_test1, warning=FALSE}
-beta$permanova
+pander(beta_souche$permanova)
 ```
 
 * pairwise permanova on concatenated factors
 
 ```{r beta_test2, warning=FALSE}
-pander(beta2$pairwisepermanova)
+pander(beta_souche_temps$pairwisepermanova)
 ```
 
 
 
 ## Differential analyses
 
+We choose three different methods to process differential analysis which is a key step of the workflow. The main advantage of the use of multiple methods is the cross validation of differentially abundant taxa between tested conditions.
+
 ### Metacoder
+
+Metacoder is the most simple differential tool of the three. Counts are normalized by total sum scaling to minimise the sample sequencing depth effect and metacoder use a Kruskal-Wallis test to determine significant difference between sample groups. The `metacoder_fun` function allows the user to choose the **taxonomic `rank`**, which factor to the test (`column1`), and a specific pairwise comparison (`comp`) to launch the differential analysis.
+
+It also produces pretty graphical trees, representing the taxa present in both groups and coloring the branches depending on the group in which this taxa is more abundant. Two of those trees are produced, the raw one and the filtered one (p-value <= 0.05).
 
 ```{r,warning = FALSE, message = FALSE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE, results = 'hide'}
 out1 = metacoder_fun(data = data, output = "./metacoder", column1 = "souche_temps", rank = "Family", signif = TRUE, plottrees = TRUE, min ="10", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0")
@@ -328,6 +375,9 @@ out1 = metacoder_fun(data = data, output = "./metacoder", column1 = "souche_temp
 
 
 ### DESeq2
+
+DESeq2 is a widely used method, primarily for RNAseq applications, for assessing differentially expressed genes between controlled conditions. Its use for metabarcoding datas is sensibly the same. The `deseq2_fun` allows to process differential analysis as `metacoder_fun`, and users can choose the taxonomic rank, factor to test and which conditions to compare. DESeq2 algorithm uses negative binomial generalized linear models with VST normalization (Varian Stabilizing Transformation).
+
 ```{r,warning = FALSE, message = FALSE, echo = TRUE, fig.width = 15, results = 'hide'}
 #fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10
 out2 = deseq2_fun(data = data, output = "./deseq/", column1 = "souche_temps", verbose = 1, rank = "Family", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0")
@@ -339,6 +389,9 @@ DT::datatable(out2$sauvage_t50_vs_mutant_t50$table, filter = "top", options = li
 ```
 
 ### MetagenomeSeq
+
+MetagenomeSeq use zero-inflated log-normal model with cumulative with CSS normalization (Cumulative Sum Scaling).
+
 
 ```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', echo = TRUE, results = "hide"}
 out3 = metagenomeseq_fun(data = data, output = "./metagenomeseq/", column1 = "souche_temps", verbose = 1, rank = "Family", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0")
@@ -352,6 +405,35 @@ DT::datatable(out3$sauvage_t50_vs_mutant_t50$table, filter = "top", options = li
 
 ### Aggregate methods
 
+The `aggregate_fun` function allows to merge the results from the three differential analysis methods used before, to obtain one unique table with all information of significant differentially abundant features.
+
+The generated table include the following informations :
+
+* seqid: ASV ID
+
+* Comparaison: Tested comparison
+
+* Deseq: differentially abundant with this method (0 no or 1 yes)
+
+* metagenomeSeq: differentially abundant with this method (0 no or 1 yes)
+
+* metacoder:differentialy abundant with this method (0 no or 1 yes)
+
+* sumMethods: sum of methods in which feature in significant.
+
+* DESeqLFC: Log Fold Change value from DESeq2
+
+* absDESeqLFC: absolute value of Log Fold Change value from DESeq2
+
+* MeanRelAbcond1: Mean relative abundance in condition 1
+
+* MeanRelAbcond2: Mean relative abundance in condition 2
+
+* Condition: in which the mean feature abundance is higher.
+
+* Taxonomy & representative sequence.
+
+
 ```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.height = 10, echo = TRUE, results = "hide"}
 resF = aggregate_fun(data = data, metacoder = "./metacoder/metacoder_signif_Family.csv", deseq = "./deseq/", mgseq = "./metagenomeseq/", output = "./aggregate_diff/", column1 = "souche_temps", column2 = NULL, verbose = 1, rank = "Genus", comp = "sauvage_t50~mutant_t50,sauvage_t0~mutant_t0")
 ```
@@ -363,3 +445,38 @@ ggplotly(resF$sauvage_t50_vs_mutant_t50$plot)
 
 DT::datatable(resF$table, filter = "top", options = list(scrollX = TRUE))
 ```
+
+
+
+# Miscellaneous function
+
+## Heatmap
+
+`heatmap_fun` allows to plot relative abundance of more abundant taxas (20 by default). Use can choose which taxonomy rank to plot and the factor used to seprate plot.
+
+
+## Shared taxa
+
+* Venn Diagram
+
+`ASVenn_fun` allows to define shared taxa between specific condtitions (up to 5 conditions). It generates Venn Diagram and table informing presence of each ASV in each condition with taxonomy and sequence. Counts can be verified with this table. `rank` argument allows to generate output with upper taxonomy level taxas.
+
+* Cytoscape
+`phy2cyto_fun` allows to generate input files for cytoscape which is usefull to vizualise shared taxa.
+
+
+## Supplementary tools and features:
+
+`csv2phyloseq_fun` allows to import the 4 files in tabulated format to generate phyloseq object ready to use with `rANOMALY`.
+
+
+`assign_fasta_fun` is used to assign sequences from fasta files.
+
+`export_to_stamp_fun` allows you to generate input files for [STAMP](https://beikolab.cs.dal.ca/software/STAMP).
+
+`split_table_fun`
+
+
+`update_metadata_fun` allows you to easily modify `sample_data` part of the phyloseq object.
+
+
