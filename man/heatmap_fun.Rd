@@ -13,15 +13,15 @@ heatmap_fun(
 )
 }
 \arguments{
-\item{data}{output from decontam or generate_phyloseq}
+\item{data}{a phyloseq object (output from decontam or generate_phyloseq)}
 
-\item{column1}{Column name of factor to plot with.}
+\item{column1}{Column name of factor to plot with (among sample_variables(data)).}
 
 \item{top}{Number of top features to plot.}
 
 \item{output}{Output directory}
 
-\item{rank}{Taxonomic rank name.}
+\item{rank}{Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)}
 }
 \value{
 Generate an heatmap with top taxa (html plotly version in output directory)

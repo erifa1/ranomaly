@@ -1,10 +1,10 @@
 #' Rarefaction plotly
 #'
-#' @param data Phyloseq object
+#' @param data a phyloseq object (output from decontam or generate_phyloseq)
 #' @param col The metadata column name you want to split the graph.
 #' @param step The number of steps you want your rarefaction plots to be done.
 #'
-#' @return A Plotly graph.
+#' @return A plotly graph.
 #'
 #' @import plotly
 #' @importFrom ranacapa ggrare
@@ -22,13 +22,13 @@ rarefaction <- function(data = data, col = NULL, step = 100){
 #' Barplots plotly
 #'
 #'
-#' @param data output from decontam or generate_phyloseq
-#' @param rank Rank to output
+#' @param data a phyloseq object (output from decontam or generate_phyloseq)
+#' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
 #' @param top Number of top taxa to plot
 #' @param Ord1 Variable used to order sample (X axis)
-#' @param Fact1 Variable used to change X axis tick labels and color categories
-#' @param relative Plot relative plot (TRUE, default), raw abundance plot (FALSE)
-#' @param output
+#' @param Fact1 Variable used to change X axis tick labels and color
+#' @param relative Plot relative (TRUE, default) or raw abundance plot (FALSE)
+#' @param output Output directory
 #'
 #' @return Exports barplots in an interactive plotly community plot
 #'

@@ -15,7 +15,7 @@ diversity_alpha_fun(
 )
 }
 \arguments{
-\item{data}{output from decontam or generate_phyloseq}
+\item{data}{a phyloseq object (output from decontam or generate_phyloseq)}
 
 \item{output}{Output directory}
 
@@ -25,12 +25,12 @@ diversity_alpha_fun(
 
 \item{column3}{Column name of subjects in case of repeated mesures (mixed model)}
 
-\item{supcovs}{One or more supplementary covariables to test in anova (provided as vector)}
+\item{supcovs}{One or more supplementary covariables to test in anova (provided as comma separated vector)}
 
-\item{measures}{Diversity indices (provided as vector)}
+\item{measures}{Diversity indices (provided as comma separated vector)}
 }
 \value{
-Export plots and tests in the output directory.
+Return plots and tests as list and export them in the output directory.
 }
 \description{
 Provides boxplots with multiples diversity indices and statistical tests like ANOVA with post hoc test and non parametric Wilcoxon tests.

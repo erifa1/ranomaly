@@ -7,7 +7,7 @@
 export_to_stamp_fun(data = data, output = "./stamp/", correc = FALSE)
 }
 \arguments{
-\item{data}{output from decontam or generate_phyloseq}
+\item{data}{a phyloseq object (output from decontam or generate_phyloseq)}
 
 \item{output}{Output directory}
 

@@ -7,11 +7,11 @@
 phy2tsv_fun(data = data, output = "./tsv_table/", rank = "ASV")
 }
 \arguments{
-\item{data}{output from decontam or generate_phyloseq}
+\item{data}{a phyloseq object (output from decontam or generate_phyloseq)}
 
 \item{output}{Output directory}
 
-\item{rank}{Taxonomic rank used to agglomerate otu table.}
+\item{rank}{Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)}
 }
 \value{
 Export tabulated otu table and metadata

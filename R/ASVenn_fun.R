@@ -1,12 +1,13 @@
 #' ASVenn
 #'
+#' Function to create Venn Diagram of shared features 
 #'
-#' @param dada_res Results of dada2_fun()
+#' @param data a phyloseq object (output from decontam or generate_phyloseq)
 #' @param output Output directory
-#' @param rank Taxonomic rank name, or 'ASV' for ASV level.
-#' @param column1 Factor to test.
+#' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
+#' @param column1 Column name of factor to test (among sample_variables(data))
 #' @param subset Subset sample, please provide as c(FACTOR,LEVEL).
-#' @param lvls Vector list levels of factor to print in venn diagram (max. 5).
+#' @param lvls Vector comma separated list levels of factor to print in venn diagram (max. 5).
 #' @param krona Krona of exclusive ASV or shared with informed level and others. Must be among levels of column1 argument.
 #' @param shared shared [TRUE] or exclusive [FALSE] mode.
 #'

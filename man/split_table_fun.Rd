@@ -7,11 +7,11 @@
 split_table_fun(data = data, output = "./", column1 = "")
 }
 \arguments{
-\item{data}{output from decontam or generate_phyloseq}
+\item{data}{a phyloseq object (output from decontam or generate_phyloseq)}
 
 \item{output}{Output directory}
 
-\item{column1}{Column name of factor to split phyloseq object with.}
+\item{column1}{Column name of factor to split phyloseq object with. (among sample_variables(data))}
 }
 \value{
 Export new folders with splited phyloseq Robjects

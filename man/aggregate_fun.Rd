@@ -19,7 +19,7 @@ aggregate_fun(
 )
 }
 \arguments{
-\item{data}{output from decontam or generate_phyloseq}
+\item{data}{a phyloseq object (output from decontam or generate_phyloseq)}
 
 \item{metacoder}{Path to the metacoder CSV file}
 
@@ -29,13 +29,13 @@ aggregate_fun(
 
 \item{output}{Output directory}
 
-\item{column1}{Column name of factor to test}
+\item{column1}{Column name of factor to test (among sample_variables(data))}
 
-\item{column2}{Column name on which table were splitted.}
+\item{column2}{Column name on which table were splitted}
 
 \item{verbose}{Verbose level. (1: quiet, 3: verbal)}
 
-\item{rank}{Taxonomic rank name, or 'ASV' for ASV level.}
+\item{rank}{Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)}
 
 \item{comp}{Comparison to test. Comma separated and comparisons are informed with a tilde (A~C,A~B,B~C). If empty, test all combination.}
 }
