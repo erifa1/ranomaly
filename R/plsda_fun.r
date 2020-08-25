@@ -71,15 +71,21 @@ plsda_fun <- function(data = data, output = "./plsda/", column1 = "",
   plot_plsda_perf <- function(){
   	flog.info('Plotting PLSDA performance...')
   	perf.plsda <- perf(plsda.res, validation = "Mfold", folds = 5, progressBar = FALSE, auc = TRUE, nrepeat = 10)
-  	png(paste(output,'/plsda_perf_',column1,'_',rank,'.png',sep=''))
+
   	plotperf <- plot(perf.plsda, col = color.mixo(1:3), sd = TRUE, legend.position = "horizontal", title = "PLSDA performance plot")
+  	# plotperf <- recordPlot()
+  	# invisible(dev.off())
+  	#
+  	# png(paste(output,'/plsda_perf_',column1,'_',rank,'.png',sep=''))
+  	# replayPlot(plotperf)
+  	# dev.off()
   	flog.info('Done.')
-  	dev.off()
+
     return(plotperf)
   }
 
   # tryCatch(plot_perf(), error = function(e) { flog.warn("PLSDA perf function not working.")})
-  outF$plsda.plotPerf <- plot_plsda_perf()
+  # outF$splsda.plotPerf <- plot_plsda_perf()
 
 
 
@@ -95,9 +101,14 @@ plsda_fun <- function(data = data, output = "./plsda/", column1 = "",
   	nrepeat = 10)',sep='')
   	eval(parse(text=fun))
 
-  	png(paste(output,'/splsda_error_',column1,'_',rank,'.png',sep=''))
-  	outF$splsda.plotError <- plot(tune.splsda, col = color.jet(4), title = "Error rates SPLSDA")
-  	dev.off()
+  # 	plot(tune.splsda, col = color.jet(4), title = "Error rates SPLSDA")
+  # 	outF$splsda.plotError <- recordPlot()
+  # 	invisible(dev.off())
+  #
+  # 	png(paste(output,'/splsda_error_',column1,'_',rank,'.png',sep=''))
+  #   replayPlot(outF$splsda.plotError)
+  # 	dev.off()
+
   	ncomp <- tune.splsda$choice.ncomp$ncomp + 1
   	select.keepX <- tune.splsda$choice.keepX[1:ncomp-1]
   	r_lst <- list("ncomp" = ncomp, "selectkeepX" = select.keepX)
@@ -129,7 +140,7 @@ plsda_fun <- function(data = data, output = "./plsda/", column1 = "",
                    progressBar = FALSE)
 
   png(paste(output,'/splsda_perf_',column1,'_',rank,'.png',sep=''))
-  outF$splsda.plotPerf <- plot(perf.splsda, col = color.mixo(5))
+  plot(perf.splsda, col = color.mixo(5))
   dev.off()
   flog.info('Done.')
 
@@ -144,8 +155,12 @@ plsda_fun <- function(data = data, output = "./plsda/", column1 = "",
   	dev.off()
   }
 
+  plotArrow(splsda.res, legend=T)
+  outF$splsda.plotArrow <- recordPlot()
+  invisible(dev.off())
+
   png(paste(output,'/splsda_arrow_',column1,'_',rank,'.png',sep=''))
-  outF$splsda.plotArrow <- plotArrow(splsda.res, legend=T)
+  replayPlot(outF$splsda.plotArrow)
   dev.off()
 
   outF$splsda.loadings_table = splsda.res$loadings$X
