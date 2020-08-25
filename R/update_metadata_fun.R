@@ -1,7 +1,7 @@
 #' Update metadata
 #'
 #'
-#' @param data output from decontam or generate_phyloseq
+#' @param data a phyloseq object (output from decontam or generate_phyloseq)
 #' @param metadata Tabulated metadata file path.
 #' @param output Output directory
 #' @param returnval Boolean to return values in console or not.

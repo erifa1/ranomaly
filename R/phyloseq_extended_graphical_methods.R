@@ -14,7 +14,7 @@ phy2MGseq <- function (physeq, ...)
     }
     if (!is.null(tax_table(physeq, FALSE))) {
         TDF = AnnotatedDataFrame(data.frame(OTUname = taxa_names(physeq),
-            physeq@tax_table@.Data, row.names = taxa_names(physeq)))    #data.frame(tax_table(physeq))
+            physeq@tax_table@.Data, row.names = taxa_names(physeq)))    #HERE data.frame(tax_table(physeq))
     } else {
         TDF = AnnotatedDataFrame(data.frame(OTUname = taxa_names(physeq),
             row.names = taxa_names(physeq)))

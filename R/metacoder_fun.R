@@ -1,15 +1,17 @@
 #' Metacoder Differential Analysis function.
 #'
+#' Plot heattrees function
+#'
 #' @param psobj A phyloseq object.
 #' @param min Minimum read number.
-#' @param col A column name.
-#' @param rank A taxonomy rank. (one of rank_names(data) )
-#' @param var
-#' @param title
-#' @param plot1
+#' @param col Column name of factor to test (among sample_variables(data))
+#' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
+#' @param title Title for figures output.
+#' @param plot1 Plot heattrees or not
+#' @param signif Plot only siignificant or not
 
 
-launch_metacoder <- function(psobj, min, col, rank, var, title, plot1, signif){
+launch_metacoder <- function(psobj, min, col, rank, title, plot1 = TRUE, signif = TRUE){
 
   vector <- unique(data.frame(sample_data(psobj)[,col])[,1])
 
@@ -188,12 +190,12 @@ launch_metacoder <- function(psobj, min, col, rank, var, title, plot1, signif){
 
 #' Metacoder Differential Analysis wrapper.
 #'
-#' @param data output from decontam or generate_phyloseq
+#' @param data a phyloseq object (output from decontam or generate_phyloseq)
 #' @param output Output directory
-#' @param rank Taxonomic rank to agglomerate data (one of rank_names(data) )
-#' @param column1 Column name of factor to test
+#' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
+#' @param column1 Column name of factor to test (among sample_variables(data))
 #' @param signif Plot only significant.
-#' @param plottrees Plot trees (long treatments).
+#' @param plottrees Plot heattrees (long treatments).
 #' @param min Minimum number of reads for a taxa to be represented.
 #' @param comp Comma separated list of comparison to test. Comparisons are informed with a tilde (A~C,A~B,B~C). If empty, test all combination
 #' @param save.file Boolean whether to save output as files or not.
@@ -239,8 +241,8 @@ metacoder_fun <- function(data = data, output = "./metacoder", column1 = "", ran
 
   if(comp == "matrix"){
     flog.info("Comparison in matrix...")
-    title = paste('Matrix column ',column1,' at rank ',rank,sep='')
-    gg <- launch_metacoder(data, min, column1, rank, '', title, plot1=plottrees, signif)
+    titleFact = paste('Matrix column ',column1,' at rank ',rank,sep='')
+    gg <- launch_metacoder(data, min, column1, rank, '', titleFact, plot1=plottrees, signif)
 
     plots = marrangeGrob(grobs=gg[1:2],nrow=1,ncol=2)
     ggsave(paste(output,'/metacoder_',column1,'_',rank,'.png',sep=''),plot=plots, width=30, height=16, dpi = 320)
@@ -277,8 +279,8 @@ metacoder_fun <- function(data = data, output = "./metacoder", column1 = "", ran
       }
       fun <- paste('psobj <- subset_samples(data, ',column1,' %in% c("',combinaisons[1,comp],'","',combinaisons[2,comp],'"))',sep='')
       eval(parse(text=fun))
-      title = paste(combinaisons[1,comp], ' VS ', combinaisons[2,comp],sep='')
-      pp <- launch_metacoder(psobj, min, column1, rank, '', title, plot1=plottrees, signif)
+      titleFact = paste(combinaisons[1,comp], ' VS ', combinaisons[2,comp],sep='')
+      pp <- launch_metacoder(psobj, min, column1, rank, '', titleFact, plot1=plottrees, signif)
 
       table <- rbind(table,pp[[3]])
       p_list <- c(p_list,pp[1:2])

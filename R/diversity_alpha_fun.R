@@ -1,8 +1,8 @@
 #' alpha diversité graphique
-#' @param data A phyloseq object
-#' @param col1 Metadata column name.
-#' @param col2 Metadata column name.
-#' @param measures "Observed","Shannon","Simpson","InvSimpson"
+#' @param data a phyloseq object (output from decontam or generate_phyloseq)
+#' @param col1 Metadata column name (from sample_variables(data)).
+#' @param col2 Metadata column name (from sample_variables(data)).
+#' @param measures Indices among "Observed","Shannon","Simpson","InvSimpson"
 #'
 #' @return A plot.
 #'
@@ -36,15 +36,15 @@ alphaPlotly <- function(data=data, alpha=alpha, col1='', col2='', measures=c("Sh
 #'
 #' Provides boxplots with multiples diversity indices and statistical tests like ANOVA with post hoc test and non parametric Wilcoxon tests.
 #'
-#' @param data output from decontam or generate_phyloseq
+#' @param data a phyloseq object (output from decontam or generate_phyloseq)
 #' @param output Output directory
 #' @param column1 Column name of first factor to test (covariable in ANOVA).
 #' @param column2 Column name of second factor to test (last factor in ANOVA).
 #' @param column3 Column name of subjects in case of repeated mesures (mixed model)
-#' @param supcovs One or more supplementary covariables to test in anova (provided as vector)
-#' @param measures Diversity indices (provided as vector)
+#' @param supcovs One or more supplementary covariables to test in anova (provided as comma separated vector)
+#' @param measures Diversity indices (provided as comma separated vector)
 #'
-#' @return Export plots and tests in the output directory.
+#' @return Return plots and tests as list and export them in the output directory.
 #'
 #' @import phyloseq
 #' @import ggplot2

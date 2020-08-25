@@ -7,15 +7,17 @@
 plot_beta(psobj, rank, col, path, var = "total", cov = covar)
 }
 \arguments{
-\item{psobj}{A phyloseq object}
+\item{psobj}{a phyloseq object (output from decontam or generate_phyloseq)}
 
-\item{rank}{A taxonomic rank}
+\item{rank}{Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)}
 
-\item{col}{A column name from metadata}
+\item{col}{A column name from metadata (among sample_variables(data))}
 
-\item{path}{The output directory path}
+\item{path}{Output directory}
 
-\item{cov}{A column name from metadata to treat as a covariable}
+\item{var}{Name of analysis for output customization}
+
+\item{cov}{One or more column names from metadata to treat as a covariable (among sample_variables(data)), provided as comma separated vector.}
 }
 \description{
 Plot beta diversity

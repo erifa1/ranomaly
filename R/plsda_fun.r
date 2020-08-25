@@ -2,10 +2,10 @@
 #'
 #' Multivariate methods for discriminant analysis.
 #'
-#' @param data A phyloseq object
+#' @param data A phyloseq object (output from decontam or generate_phyloseq)
 #' @param output Output directory
 #' @param column1 Factor to test.
-#' @param rank Taxonomy rank (among rank_names(data))
+#' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
 #'
 #'
 #' @return Return a list object with plots, and loadings table.
@@ -21,7 +21,7 @@
 
 
 plsda_fun <- function(data = data, output = "./plsda/", column1 = "",
-            rank = "Species"){
+            rank = "ASV"){
 
   outF <- list()
 
@@ -31,10 +31,18 @@ plsda_fun <- function(data = data, output = "./plsda/", column1 = "",
 
 
   flog.info('Preparing table...')
-  physeqDA <- tax_glom(data, taxrank=rank)
+  if(rank != 'ASV'){
+    flog.info('Glom rank...')
+    physeqDA <- tax_glom(data, taxrank=rank)
+    otable <- otu_table(physeqDA)
+    row.names(otable) <- tax_table(physeqDA)[,rank]
+  } else {
+    physeqDA <- data
+    otable <- otu_table(physeqDA)
+  }
+
   mdata <- sample_data(physeqDA)
-  otable <- otu_table(physeqDA)
-  row.names(otable) <- tax_table(physeqDA)[,rank]
+
   flog.info('Done.')
 
   fun <- paste('lvl_to_remove <- names(table(mdata$',column1,')[table(mdata$',column1,') <= 1])',sep='')

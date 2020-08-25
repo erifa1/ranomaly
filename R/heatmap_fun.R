@@ -2,11 +2,11 @@
 #'
 #' Generate an heatmap with top taxa.
 #'
-#' @param data output from decontam or generate_phyloseq
+#' @param data a phyloseq object (output from decontam or generate_phyloseq)
 #' @param output Output directory
-#' @param column1 Column name of factor to plot with.
+#' @param column1 Column name of factor to plot with (among sample_variables(data)).
 #' @param top Number of top features to plot.
-#' @param rank Taxonomic rank name.
+#' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
 #'
 #' @return Generate an heatmap with top taxa (html plotly version in output directory)
 #' @importFrom htmlwidgets saveWidget

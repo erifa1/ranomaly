@@ -27,7 +27,7 @@ csv2phyloseq_fun(
 \item{returnval}{Boolean to return values in console or not.}
 }
 \value{
-Return a taxonomy table with multiple ancestor checking and incongruence checking when 2 databases are used.
+Return a phyloseq object
 }
 \description{
 Create Phyloseq object from external datas.
