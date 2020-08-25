@@ -16,25 +16,25 @@ ASVenn_fun(
 )
 }
 \arguments{
+\item{data}{a phyloseq object (output from decontam or generate_phyloseq)}
+
 \item{output}{Output directory}
 
-\item{rank}{Taxonomic rank name, or 'ASV' for ASV level.}
+\item{rank}{Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)}
 
-\item{column1}{Factor to test.}
+\item{column1}{Column name of factor to test (among sample_variables(data))}
 
 \item{subset}{Subset sample, please provide as c(FACTOR,LEVEL).}
 
-\item{lvls}{Vector list levels of factor to print in venn diagram (max. 5).}
+\item{lvls}{Vector comma separated list levels of factor to print in venn diagram (max. 5).}
 
 \item{krona}{Krona of exclusive ASV or shared with informed level and others. Must be among levels of column1 argument.}
 
 \item{shared}{shared [TRUE] or exclusive [FALSE] mode.}
-
-\item{dada_res}{Results of dada2_fun()}
 }
 \value{
 Export a venn diagram with corresponding tabulated file.
 }
 \description{
-ASVenn
+Function to create Venn Diagram of shared features
 }

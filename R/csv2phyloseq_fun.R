@@ -8,7 +8,7 @@
 #' @param output Output directory
 #' @param returnval Boolean to return values in console or not.
 #'
-#' @return Return a taxonomy table with multiple ancestor checking and incongruence checking when 2 databases are used.
+#' @return Return a phyloseq object
 #'
 #' @export
 

@@ -13,11 +13,11 @@ phy2cyto_fun(
 )
 }
 \arguments{
-\item{data}{output from decontam or generate_phyloseq}
+\item{data}{a phyloseq object (output from decontam or generate_phyloseq)}
 
 \item{output}{Output directory}
 
-\item{column1}{Factor to test.}
+\item{column1}{A metadata column (among sample_variables(data)).}
 
 \item{repl}{Replicates column.}
 

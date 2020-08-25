@@ -16,13 +16,13 @@ diversity_beta_light(
 )
 }
 \arguments{
-\item{psobj}{A phyloseq object.}
+\item{psobj}{a phyloseq object (output from decontam or generate_phyloseq)}
 
-\item{rank}{A taxonomic rank.}
+\item{rank}{Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)}
 
-\item{col}{A metadata column.}
+\item{col}{A metadata column (among sample_variables(data)).}
 
-\item{cov}{Covariable list, separated by commas.}
+\item{cov}{Covariable names comma separated vector.}
 
 \item{dist0}{Dissimilarity index, partial match to "manhattan", "euclidean", "canberra", "bray", "kulczynski", "jaccard", "gower", "altGower", "morisita", "horn", "mountford", "raup" , "binomial", "chao", "cao" or "mahalanobis".}
 
@@ -33,7 +33,7 @@ diversity_beta_light(
 \item{tests}{Whether to compute tests or not (TRUE/FALSE)}
 }
 \value{
-Export plots and tests in the output directory.
+Return specific plots and tests in list and output them in the output directory.
 }
 \description{
 Provides ordination (PCoA, NMDS) of beta diversity indices (BrayCurtis, UniFrac and WeightedUnifrac) and statistical tests like PERMANOVA and pairwisePERMANOVA.

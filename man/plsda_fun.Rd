@@ -4,16 +4,16 @@
 \alias{plsda_fun}
 \title{PLSDA from MixOmics package}
 \usage{
-plsda_fun(data = data, output = "./plsda/", column1 = "", rank = "Species")
+plsda_fun(data = data, output = "./plsda/", column1 = "", rank = "ASV")
 }
 \arguments{
-\item{data}{A phyloseq object}
+\item{data}{A phyloseq object (output from decontam or generate_phyloseq)}
 
 \item{output}{Output directory}
 
 \item{column1}{Factor to test.}
 
-\item{rank}{Taxonomy rank (among rank_names(data))}
+\item{rank}{Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)}
 }
 \value{
 Return a list object with plots, and loadings table.

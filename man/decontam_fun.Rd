@@ -29,7 +29,7 @@ decontam_fun(
 )
 }
 \arguments{
-\item{data}{output from generate_phyloseq_fun()}
+\item{data}{a phyloseq object output from generate_phyloseq_fun()}
 
 \item{domain}{16S region or ITS region (Bacteria or Fungi).}
 
@@ -41,7 +41,7 @@ decontam_fun(
 
 \item{freq}{Minimum ASV frequence on overall samples.}
 
-\item{column}{Column name for type of sample (control or sample). If informed, function filters control samples.}
+\item{column}{Column name from sample_variables(data) for type of sample (control or sample). If informed, function filters control samples.}
 
 \item{ctrl_identifier}{Idendifier name for controls.}
 
@@ -61,13 +61,13 @@ decontam_fun(
 
 \item{unassigned}{Unassigned kingdom or phylum fitering.}
 
-\item{skip}{Skip decontam step.}
+\item{skip}{Skip decontam step and process basic filters (depth per samples, prevalence, frequence).}
 
 \item{manual_cont_rank}{Rank of taxa to remove, inform 'ASV' to remove ASV.}
 
 \item{manual_cont}{Comma separated list of Genus to remove (eg. "g__Enterococcus,g__Cellulosimicrobium,g__Serratia").}
 
-\item{krona}{Export krona plot (not available for windows)}
+\item{krona}{Export krona plot}
 
 \item{returnval}{Boolean to return values in console or not.}
 }

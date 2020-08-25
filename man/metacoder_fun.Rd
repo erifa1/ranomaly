@@ -18,17 +18,17 @@ metacoder_fun(
 )
 }
 \arguments{
-\item{data}{output from decontam or generate_phyloseq}
+\item{data}{a phyloseq object (output from decontam or generate_phyloseq)}
 
 \item{output}{Output directory}
 
-\item{column1}{Column name of factor to test}
+\item{column1}{Column name of factor to test (among sample_variables(data))}
 
-\item{rank}{Taxonomic rank to agglomerate data (one of rank_names(data) )}
+\item{rank}{Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)}
 
 \item{signif}{Plot only significant.}
 
-\item{plottrees}{Plot trees (long treatments).}
+\item{plottrees}{Plot heattrees (long treatments).}
 
 \item{min}{Minimum number of reads for a taxa to be represented.}
 

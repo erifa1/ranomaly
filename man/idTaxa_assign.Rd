@@ -7,10 +7,16 @@
 idTaxa_assign(db_file, dna, asv_names, confidence)
 }
 \arguments{
-\item{amplicon}{Choose amplipcon "16S" or "ITS"}
+\item{db_file}{Path to IDTAXA formatted database file.}
+
+\item{dna}{A ‘DNAStringSet’ of unaligned sequences.}
+
+\item{asv_names}{sequences IDs in same order.}
+
+\item{confidence}{Bootstrap threshold 0...100}
 }
 \value{
-Return raw otu table in phyloseq object.
+return taxonomic assignment of given sequences.
 }
 \description{
 Additionnal function for assign_taxo and assign_fasta function.

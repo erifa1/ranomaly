@@ -1,10 +1,10 @@
 #' MEtaGenomeSeq Differential Analysis function.
 #'
 #'
-#' @param data output from decontam or generate_phyloseq
+#' @param data a phyloseq object (output from decontam or generate_phyloseq)
 #' @param output Output directory
-#' @param rank Taxonomic rank to agglomerate data (one of rank_names(data) )
-#' @param column1 Column name of factor to test
+#' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
+#' @param column1 Column name of factor to test (among sample_variables(data))
 #' @param verbose Verbose level. (1: quiet, 3: verbal)
 #' @param comp Comma separated list of comparison to test. Comparisons are informed with a tilde (A~C,A~B,B~C). If empty, test all combination
 #'

@@ -1,9 +1,9 @@
 #' Export files for cytoscape.
 #'
 #'
-#' @param data output from decontam or generate_phyloseq
+#' @param data a phyloseq object (output from decontam or generate_phyloseq)
 #' @param output Output directory
-#' @param column1 Factor to test.
+#' @param column1 A metadata column (among sample_variables(data)).
 #' @param repl Replicates column.
 #' @param verbose Verbose level. (1: quiet, 3: verbal)
 #'
@@ -71,6 +71,7 @@ phy2cyto_fun <- function(data = data, output = "./cytoscape/", column1 = NULL, r
 
   }else{
     flog.info('Replicates, performing links ...')
+    save(list = ls(all.names = TRUE), file = "debug_cyto1.rdata", envir = environment())
     sif_tab = NULL
     for(asv in taxa_names(data1)){
       # print(asv)
@@ -83,16 +84,15 @@ phy2cyto_fun <- function(data = data, output = "./cytoscape/", column1 = NULL, r
       reps = names(rep1)   #[which(rep1>1)]
       # if(max(rep1[which(rep1>1)]) == 1){print(asv)}
 
-      # si aucun partage 1 seul environnement
+      # si aucun partage 1 seul replenvironnement
       if(length(rep1)==1){
+
+        srcs <- as.character(unique(sdat2[,column1]))
         if(rep1==1){
           flog.debug(glue("{asv} exclusif 1 seul réplicat 1 env"))
-          src <- as.character(unique(sdat2[,column1]))
-          LINKS = c(asv, glue("type_{src}"), src)
+          LINKS = c(asv, glue("type_{srcs}"), srcs)
         }else{
-          rep=names(rep1)
-          sdat3 = sdat2[sdat2$exploit_saison==rep,]
-          srcs = as.character(unique(sdat3[,column1]))
+          # print(c(asv, "debug"))
           LINKS = cbind(rep(asv, length(srcs)), glue("type_{srcs}"), srcs)
         }
       } else{
@@ -113,7 +113,7 @@ phy2cyto_fun <- function(data = data, output = "./cytoscape/", column1 = NULL, r
       sif_tab = rbind(sif_tab, LINKS)
 
     }
-    save.image("debug.rdata")
+    save(list = ls(all.names = TRUE), file = "debug_cyto.rdata", envir = environment())
     flog.info('Output ...')
     # LINK table output
     #Compte le nombre d'occurence de chaque lien (environnement - ASV)
@@ -141,7 +141,9 @@ phy2cyto_fun <- function(data = data, output = "./cytoscape/", column1 = NULL, r
     freq = taxa_sums(data1) / sum(taxa_sums(data1))
 
     # Taille des noeud en fonction de la frequence, noeud "groupe" 0.75 de la freq max.
-    node_table=cbind.data.frame(c(src, trgt), c(rep("source", length(src)), rep("cible", length(trgt))), c(rep(NA, length(src)), freq[trgt]) )
+    node_table=cbind.data.frame(c(as.character(src), as.character(trgt)),
+      c(rep("source", length(src)), rep("cible", length(trgt))),
+      c(rep(NA, length(src)), freq[trgt]) )
     names(node_table)=c("names","attribute", "freq")
 
     node_table[node_table$attribute=="source","freq"] = 0.75*max(na.omit(node_table$freq))

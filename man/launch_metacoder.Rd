@@ -4,17 +4,23 @@
 \alias{launch_metacoder}
 \title{Metacoder Differential Analysis function.}
 \usage{
-launch_metacoder(psobj, min, col, rank, var, title, plot1, signif)
+launch_metacoder(psobj, min, col, rank, title, plot1 = TRUE, signif = TRUE)
 }
 \arguments{
 \item{psobj}{A phyloseq object.}
 
 \item{min}{Minimum read number.}
 
-\item{col}{A column name.}
+\item{col}{Column name of factor to test (among sample_variables(data))}
 
-\item{rank}{A taxonomy rank. (one of rank_names(data) )}
+\item{rank}{Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)}
+
+\item{title}{Title for figures output.}
+
+\item{plot1}{Plot heattrees or not}
+
+\item{signif}{Plot only siignificant or not}
 }
 \description{
-Metacoder Differential Analysis function.
+Plot heattrees function
 }
