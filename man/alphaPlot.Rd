@@ -7,13 +7,13 @@
 alphaPlot(data = data, col1 = "", col2 = "", measures = c("Shannon"))
 }
 \arguments{
-\item{data}{A phyloseq object}
+\item{data}{a phyloseq object (output from decontam or generate_phyloseq)}
 
-\item{col1}{Metadata column name.}
+\item{col1}{Metadata column name (from sample_variables(data)).}
 
-\item{col2}{Metadata column name.}
+\item{col2}{Metadata column name (from sample_variables(data)).}
 
-\item{measures}{"Observed","Shannon","Simpson","InvSimpson"}
+\item{measures}{Indices among "Observed","Shannon","Simpson","InvSimpson"}
 }
 \value{
 A plot.

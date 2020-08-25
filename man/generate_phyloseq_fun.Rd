@@ -30,7 +30,7 @@ generate_phyloseq_fun(
 \item{returnval}{Boolean to return values in console or not.}
 }
 \value{
-Return raw otu table in phyloseq object.
+Return a complete phyloseq object.
 }
 \description{
 Generate Phyloseq Object

@@ -2,9 +2,9 @@
 #'
 #' Export otu table with taxonomy and sequences, + metadata in separated file.
 #'
-#' @param data output from decontam or generate_phyloseq
+#' @param data a phyloseq object (output from decontam or generate_phyloseq)
 #' @param output Output directory
-#' @param rank Taxonomic rank used to agglomerate otu table.
+#' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
 #'
 #' @return Export tabulated otu table and metadata
 #'

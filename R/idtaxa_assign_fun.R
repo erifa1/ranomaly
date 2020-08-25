@@ -2,9 +2,12 @@
 #'
 #' Additionnal function for assign_taxo and assign_fasta function.
 #'
-#' @param amplicon Choose amplipcon "16S" or "ITS"
+#' @param db_file Path to IDTAXA formatted database file.
+#' @param dna A ‘DNAStringSet’ of unaligned sequences.
+#' @param asv_names sequences IDs in same order.
+#' @param confidence Bootstrap threshold 0...100
 #'
-#' @return Return raw otu table in phyloseq object.
+#' @return return taxonomic assignment of given sequences. 
 #' @import futile.logger
 #' @import DECIPHER
 
@@ -41,4 +44,3 @@ idTaxa_assign = function(db_file, dna, asv_names, confidence){
 
   return(ids2)
 }
-

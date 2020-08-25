@@ -14,15 +14,15 @@ deseq2_fun(
 )
 }
 \arguments{
-\item{data}{output from decontam or generate_phyloseq}
+\item{data}{a phyloseq object (output from decontam or generate_phyloseq)}
 
 \item{output}{Output directory}
 
-\item{column1}{Column name of factor to test}
+\item{column1}{Column name of factor to test (among sample_variables(data))}
 
 \item{verbose}{Verbose level. (1: quiet, 3: verbal)}
 
-\item{rank}{Taxonomic rank to agglomerate data (one of rank_names(data) )}
+\item{rank}{Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)}
 
 \item{comp}{Comma separated list of comparison to test. Comparisons are informed with a tilde (A~C,A~B,B~C). If empty, test all combination}
 }

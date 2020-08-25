@@ -1,9 +1,9 @@
 #' Split phyloseq object
 #'
 #'
-#' @param data output from decontam or generate_phyloseq
+#' @param data a phyloseq object (output from decontam or generate_phyloseq)
 #' @param output Output directory
-#' @param column1 Column name of factor to split phyloseq object with.
+#' @param column1 Column name of factor to split phyloseq object with. (among sample_variables(data))
 #'
 #' @return Export new folders with splited phyloseq Robjects
 #' @import phyloseq

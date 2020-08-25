@@ -14,19 +14,19 @@ bars_fun(
 )
 }
 \arguments{
-\item{data}{output from decontam or generate_phyloseq}
+\item{data}{a phyloseq object (output from decontam or generate_phyloseq)}
 
-\item{rank}{Rank to output}
+\item{rank}{Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)}
 
 \item{top}{Number of top taxa to plot}
 
 \item{Ord1}{Variable used to order sample (X axis)}
 
-\item{Fact1}{Variable used to change X axis tick labels and color categories}
+\item{Fact1}{Variable used to change X axis tick labels and color}
 
-\item{relative}{Plot relative plot (TRUE, default), raw abundance plot (FALSE)}
+\item{relative}{Plot relative (TRUE, default) or raw abundance plot (FALSE)}
 
-\item{output}{}
+\item{output}{Output directory}
 }
 \value{
 Exports barplots in an interactive plotly community plot

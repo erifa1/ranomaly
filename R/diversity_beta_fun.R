@@ -1,11 +1,11 @@
 #' Plot beta diversity
 #'
-#' @param psobj A phyloseq object
-#' @param rank A taxonomic rank
-#' @param col A column name from metadata
-#' @param path The output directory path
-#' @param var
-#' @param cov A column name from metadata to treat as a covariable
+#' @param psobj a phyloseq object (output from decontam or generate_phyloseq)
+#' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
+#' @param col A column name from metadata (among sample_variables(data))
+#' @param cov One or more column names from metadata to treat as a covariable (among sample_variables(data)), provided as comma separated vector.
+#' @param path Output directory
+#' @param var Name of analysis for output customization
 
 
 plot_beta <- function(psobj, rank, col, path, var = 'total', cov=covar) {
@@ -40,7 +40,6 @@ plot_beta <- function(psobj, rank, col, path, var = 'total', cov=covar) {
   if(length(col1)>1){
     fact1 <- apply( mdata[,c(col1)] , 1 , paste , collapse = "-" )
     resBC2 = pairwise.adonis(BC.dist, fact1, p.adjust.m='fdr')
-  } else {
     resBC2 = pairwise.adonis(BC.dist, mdata[,c(col1)], p.adjust.m='fdr')
   }
   flog.info('Done')

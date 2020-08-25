@@ -1,15 +1,16 @@
 #' Decontam Function using decontam package
 #'
 #'
-#' @param data output from generate_phyloseq_fun()
+#' @param data a phyloseq object output from generate_phyloseq_fun()
 #' @param domain 16S region or ITS region (Bacteria or Fungi).
 #' @param output Output directory
 #' @param number Minimum number of reads per sample.
 #' @param prev Minimum prevalence of an ASV in samples to be keep.
 #' @param freq Minimum ASV frequence on overall samples.
-#' @param column Column name for type of sample (control or sample). If informed, function filters control samples.
+#' @param column Column name from sample_variables(data) for type of sample (control or sample). If informed, function filters control samples.
 #' @param ctrl_identifier Idendifier name for controls.
 #' @param spl_identifier Idendifier name for samples.
+#' @param skip Skip decontam step and process basic filters (depth per samples, prevalence, frequence).
 #' @param batch Batch column name for independent contaminant identification.
 #' @param plot Plot all test.
 #' @param method Method for contaminant identification. (frequency, prevalence, combined, both, either).
@@ -17,10 +18,9 @@
 #' @param concentration Column name for ADN concentration.
 #' @param verbose Verbose level. (1: quiet, 3: verbal)
 #' @param unassigned Unassigned kingdom or phylum fitering.
-#' @param skip Skip decontam step.
 #' @param manual_cont_rank Rank of taxa to remove, inform 'ASV' to remove ASV.
 #' @param manual_cont Comma separated list of Genus to remove (eg. "g__Enterococcus,g__Cellulosimicrobium,g__Serratia").
-#' @param krona Export krona plot (not available for windows)
+#' @param krona Export krona plot
 #' @param returnval Boolean to return values in console or not.
 #'
 #' @return Return a decontaminated phyloseq object.

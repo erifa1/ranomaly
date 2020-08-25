@@ -10,7 +10,7 @@
 #' @param verbose Verbose level. (1: quiet, 3: verbal)
 #' @param returnval Boolean to return values in console or not.
 #'
-#' @return Return raw otu table in phyloseq object.
+#' @return Return a complete phyloseq object.
 #' @import dada2
 #' @import phyloseq
 #' @import DECIPHER

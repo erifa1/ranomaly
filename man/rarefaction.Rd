@@ -7,14 +7,14 @@
 rarefaction(data = data, col = NULL, step = 100)
 }
 \arguments{
-\item{data}{Phyloseq object}
+\item{data}{a phyloseq object (output from decontam or generate_phyloseq)}
 
 \item{col}{The metadata column name you want to split the graph.}
 
 \item{step}{The number of steps you want your rarefaction plots to be done.}
 }
 \value{
-A Plotly graph.
+A plotly graph.
 }
 \description{
 Rarefaction plotly

@@ -2,15 +2,15 @@
 #'
 #' Aggregate results of the tree differential analysis methods in one single file.
 #'
-#' @param data output from decontam or generate_phyloseq
+#' @param data a phyloseq object (output from decontam or generate_phyloseq)
 #' @param output Output directory
 #' @param metacoder Path to the metacoder CSV file
 #' @param deseq Path to deseq results folder
 #' @param mgseq Path to metagenomeseq results folder
-#' @param column1 Column name of factor to test
-#' @param column2 Column name on which table were splitted.
+#' @param column1 Column name of factor to test (among sample_variables(data))
+#' @param column2 Column name on which table were splitted
 #' @param verbose Verbose level. (1: quiet, 3: verbal)
-#' @param rank Taxonomic rank name, or 'ASV' for ASV level.
+#' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
 #' @param comp Comparison to test. Comma separated and comparisons are informed with a tilde (A~C,A~B,B~C). If empty, test all combination.
 #'
 #' @return Export final CSV files, barplot with top significant ASV and Venn Digramm.
