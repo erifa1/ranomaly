@@ -52,3 +52,6 @@ head(outF)
 heatmap_fun(data = data, column1 = "souche_temps", top = 20, output = "./plot_heatmap/", rank = "Species")
 
 phy2cyto_fun(data = data, output = "./cytoscape/", column1 = "souche_temps", repl = NULL, verbose = 1)
+
+
+plsda_fun(data = data, output = "./plsda/", column1 = "souche_temps", rank = "Species")
