@@ -56,7 +56,7 @@ plsda_fun <- function(data = data, output = "./plsda/", column1 = "",
   flog.info('Plotting PLSDA individuals...')
   png(paste(output,'/plsda_indiv_',column1,'_',rank,'.png',sep=''))
   background = background.predict(plsda.res, comp.predicted=2, dist = "max.dist")
-  fun <- paste('outF$plsda1 <- plotIndiv(plsda.res,
+  fun <- paste('outF$plsda.plotIndiv <- plotIndiv(plsda.res,
   	comp= 1:2,
   	group = mdata$',column1,',
   	ind.names=FALSE,
@@ -77,10 +77,9 @@ plsda_fun <- function(data = data, output = "./plsda/", column1 = "",
   	dev.off()
     return(plotperf)
   }
-  save.image(file = "debug.Rdata")
 
   # tryCatch(plot_perf(), error = function(e) { flog.warn("PLSDA perf function not working.")})
-  outF$plsda2 <- plot_plsda_perf()
+  outF$plsda.plotPerf <- plot_plsda_perf()
 
 
 
@@ -97,7 +96,7 @@ plsda_fun <- function(data = data, output = "./plsda/", column1 = "",
   	eval(parse(text=fun))
 
   	png(paste(output,'/splsda_error_',column1,'_',rank,'.png',sep=''))
-  	outF$plsda3 <- plot(tune.splsda, col = color.jet(4), title = "Error rates SPLSDA")
+  	outF$splsda.plotError <- plot(tune.splsda, col = color.jet(4), title = "Error rates SPLSDA")
   	dev.off()
   	ncomp <- tune.splsda$choice.ncomp$ncomp + 1
   	select.keepX <- tune.splsda$choice.keepX[1:ncomp-1]
@@ -119,7 +118,7 @@ plsda_fun <- function(data = data, output = "./plsda/", column1 = "",
   flog.info('Done.')
   flog.info('Plot Individuals...')
   png(filename=paste(output,'/splsda_indiv_',column1,'_',rank,'.png',sep=''),width=480,height=480)
-  fun <- paste('outF$plsda3 <- plotIndiv(splsda.res, comp= c(1:2), group = mdata$',column1,', ind.names = FALSE, ellipse = TRUE, legend = TRUE, title = "sPLS-DA on ',column1,'")',sep='')
+  fun <- paste('outF$splsda.plotIndiv <- plotIndiv(splsda.res, comp= c(1:2), group = mdata$',column1,', ind.names = FALSE, ellipse = TRUE, legend = TRUE, title = "sPLS-DA on ',column1,'")',sep='')
   eval(parse(text=fun))
   dev.off()
   flog.info('Done.')
@@ -130,25 +129,28 @@ plsda_fun <- function(data = data, output = "./plsda/", column1 = "",
                    progressBar = FALSE)
 
   png(paste(output,'/splsda_perf_',column1,'_',rank,'.png',sep=''))
-  outF$plsda4 <- plot(perf.splsda, col = color.mixo(5))
+  outF$splsda.plotPerf <- plot(perf.splsda, col = color.mixo(5))
   dev.off()
   flog.info('Done.')
 
   outF[["loadings"]] = list()
   for (comp in 1:ncomp){
-  	png(paste(output,'/splsda_loadings_',column1,'_',rank,'_comp',comp,'.png',sep=''),width=480,height=480)
-  	outF$loadings[[glue::glue("comp{comp}")]] <- plotLoadings(splsda.res, comp = comp, title = paste('Loadings on comp ',comp,sep=''),
-  	contrib = 'max', method = 'mean')
+  	plotLoadings(splsda.res, comp = comp, title = paste('Loadings on comp ',comp,sep=''), contrib = 'max', method = 'mean')
+    outF$loadings[[glue::glue("comp{comp}")]] <- recordPlot()
+    invisible(dev.off())
+
+    png(paste(output,'/splsda_loadings_',column1,'_',rank,'_comp',comp,'.png',sep=''),width=480,height=480)
+    replayPlot(outF$loadings[[glue::glue("comp{comp}")]])
   	dev.off()
   }
 
   png(paste(output,'/splsda_arrow_',column1,'_',rank,'.png',sep=''))
-  outF$plsda5 <- plotArrow(splsda.res, legend=T)
+  outF$splsda.plotArrow <- plotArrow(splsda.res, legend=T)
   dev.off()
 
-  outF$loadings_table = splsda.res$loadings$X
+  outF$splsda.loadings_table = splsda.res$loadings$X
   write.table(splsda.res$loadings$X,paste(output,'/splsda_table_',column1,'_',rank,'.csv',sep=''),quote=FALSE,sep="\t",col.names=NA)
 
-return(outF)
+  return(outF)
 
-            }
+}
