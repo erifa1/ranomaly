@@ -348,7 +348,7 @@ We choose three different methods to process differential analysis which is a ke
 
 ### Metacoder
 
-Metacoder is the most simple differential tool of the three. Counts are normalized by total sum scaling to minimise the sample sequencing depth effect and metacoder use a Kruskal-Wallis test to determine significant difference between sample groups. The `metacoder_fun` function allows the user to choose the **taxonomic `rank`**, which factor to the test (`column1`), and a specific pairwise comparison (`comp`) to launch the differential analysis.
+Metacoder is the most simple differential analysis tool of the three. Counts are normalized by total sum scaling to minimise the sample sequencing depth effect and metacoder use a Kruskal-Wallis test to determine significant difference between sample groups. The `metacoder_fun` function allows the user to choose the **taxonomic `rank`**, which factor to the test (`column1`), and a specific pairwise comparison (`comp`) to launch the differential analysis.
 
 It also produces pretty graphical trees, representing the taxa present in both groups and coloring the branches depending on the group in which this taxa is more abundant. Two of those trees are produced, the raw one and the filtered one (p-value <= 0.05).
 
@@ -390,7 +390,8 @@ DT::datatable(out2$sauvage_t50_vs_mutant_t50$table, filter = "top", options = li
 
 ### MetagenomeSeq
 
-MetagenomeSeq use zero-inflated log-normal model with cumulative with CSS normalization (Cumulative Sum Scaling).
+
+MetagenomeSeq use a normalization method able to control for biases in measurements across taxonomics features and a mixture model taht implements a zero-inflated Gaussian distribution to account for varying depths of coverage.
 
 
 ```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', echo = TRUE, results = "hide"}
