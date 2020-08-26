@@ -46,7 +46,7 @@ The dataset can be downloaded via this [link](https://nextcloud.inrae.fr/s/Zx3iA
 
 This tutorial assume that you have extracted all the read file in a folder named `reads` along with the `sample-metadata.csv` file.
 
-We share a 24 samples test dataset extract from rats feces at two different time (t0 & t50) and in two nutrition conditions. Rats were feeded with to strain of a particular bacteria (wild type & mutant). Also, extraction control sample (blank) included two are included. 
+We share a 24 samples test dataset extract from rats feces at two different time (t0 & t50) and in two nutrition conditions. Rats were feeded with to strain of a particular bacteria (wild type & mutant). Also, extraction control sample (blank) included two are included.
 
 ```{r loading_metadata, warning = FALSE, message = TRUE}
 sm <- read.table("sample_metadata.csv", sep="\t",header=TRUE)
@@ -322,7 +322,7 @@ beta_souche_temps = diversity_beta_light(data, col = "souche_temps", dist0 = "br
 
 
 ```{r beta_ordination, warning=FALSE}
-htmltools::tagList(list(ggplotly(beta_souche$plot), ggplotly(beta_temps$plot)))
+htmltools::tagList(list(ggplotly(beta_souche$plot), ggplotly(beta_temps$plot), ggplotly(beta_souche_temps$plot)))
 ```
 
 
@@ -462,7 +462,7 @@ Our PLS-DA/sparse PLS-DA analysis is based on the [mixOmics package](http://mixo
 
 - `splda.loading_table` Loading of all taxas for each composant.
 
-```{r pslda}
+```{r pslda, results = 'hide', warning = FALSE, message = FALSE}
 plsda_res <- plsda_fun(data = data, output = "./plsda_family/", column1 = "souche_temps", rank = "Family")
 ```
 
@@ -503,7 +503,7 @@ plsda_res$loadings$comp4
 `phy2cyto_fun` allows to generate input files for cytoscape which is usefull to vizualise shared taxa.
 
 
-## Supplementary tools and features:
+## Supplementary tools and features
 
 `csv2phyloseq_fun` allows to import the 4 files in tabulated format to generate phyloseq object ready to use with `rANOMALY`.
 
