@@ -17,7 +17,7 @@
 
 #' @export
 
-idtaxa_assign_fun <- function(fasta, id_db, output = "./assign_fasta/", confidence = 50, verbose = 1, returnval = TRUE){
+idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", confidence = 50, verbose = 1, returnval = TRUE){
 
   if(!dir.exists(output)){
     flog.debug('Creating output directory...')
@@ -143,9 +143,14 @@ idtaxa_assign_fun <- function(fasta, id_db, output = "./assign_fasta/", confiden
   # Filling taxonomy with last assigned rank.
   names(taxid) <- c("Domain", "Phylum", "Class", "Order", "Family", "Genus", "Species")
   flog.info("Filling missing taxonomy ranks...")
-  taxid = fill_tax_fun(taxid, prefix = FALSE)
   PREFIX = c("k__","p__","c__","o__","f__","g__","s__")
-  taxid = as.data.frame( t(apply(taxid, 1, function(x){ paste(PREFIX, x, sep="")})), stringAsFactors = FALSE)
+
+  if( length(grep("p__",taxid[,2])) == 0 ){
+    taxid = fill_tax_fun(taxid, prefix = FALSE)
+    taxid = as.data.frame( t(apply(taxid, 1, function(x){ paste(PREFIX, x, sep="")})), stringAsFactors = FALSE)
+  }else{
+    taxid = fill_tax_fun(taxid, prefix = TRUE)
+  }
   flog.info('Done.')
 
   names(taxid) <- c("Domain", "Phylum", "Class", "Order", "Family", "Genus", "Species")
@@ -170,4 +175,3 @@ idtaxa_assign_fun <- function(fasta, id_db, output = "./assign_fasta/", confiden
 
 
 }
-

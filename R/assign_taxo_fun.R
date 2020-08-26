@@ -154,11 +154,15 @@ assign_taxo_fun <- function(dada_res = dada_res,  output = "./idtaxa/", id_db = 
   # Filling taxonomy with last assigned rank.
   names(taxid) <- c("Domain", "Phylum", "Class", "Order", "Family", "Genus", "Species")
   flog.info("Filling missing taxonomy ranks...")
-  taxid = fill_tax_fun(taxid, prefix = FALSE)
   PREFIX = c("k__","p__","c__","o__","f__","g__","s__")
+
   if( length(grep("p__",taxid[,2])) == 0 ){
+    taxid = fill_tax_fun(taxid, prefix = FALSE)
     taxid = as.data.frame( t(apply(taxid, 1, function(x){ paste(PREFIX, x, sep="")})), stringAsFactors = FALSE)
+  }else{
+    taxid = fill_tax_fun(taxid, prefix = TRUE)
   }
+
 
   flog.info('Done.')
 
