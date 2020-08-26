@@ -6,7 +6,7 @@
 #' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
 #' @param col A metadata column (among sample_variables(data)).
 #' @param cov Covariable names comma separated vector.
-#' @param dist0 Dissimilarity index, partial match to "manhattan", "euclidean", "canberra", "bray", "kulczynski", "jaccard", "gower", "altGower", "morisita", "horn", "mountford", "raup" , "binomial", "chao", "cao" or "mahalanobis".
+#' @param dist0 Dissimilarity index, partial match to "unifrac", "wunifrac", "dpcoa", "jsd", "manhattan", "euclidean", "canberra", "bray", "kulczynski", "jaccard", "gower", "altGower", "morisita", "horn", "mountford", "raup" , "binomial", "chao", "cao" or "mahalanobis".
 #' @param ord0 Currently supported method options are: c("DCA", "CCA", "RDA", "CAP", "DPCoA", "NMDS", "MDS", "PCoA")
 #' @param output The output file directory.
 #' @param tests Whether to compute tests or not (TRUE/FALSE)
@@ -69,7 +69,11 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
     flog.info(glue::glue('Tests on {dist0} ...'))
     mdata = data.frame(sample_data(data_rank))
     mdata$Depth <- sample_sums(data_rank)
-    dist1 <<- vegdist(t(otable), method = dist0)
+    if( any(grepl(dist0, c("unifrac", "wunifrac", "dpcoa", "jsd") )) ){
+      dist1 <-phyloseq::distance(data_rank, dist0)
+    }else{
+      dist1 <<- vegdist(t(otable), method = dist0)
+    }
     if(!is.null(cov)){
       resBC = adonis(as.formula(paste('dist1 ~ Depth +', paste(cov1, collapse="+"), "+", col)), data = mdata, permutations = 1000)
     }else{
