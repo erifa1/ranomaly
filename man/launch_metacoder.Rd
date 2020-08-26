@@ -4,7 +4,15 @@
 \alias{launch_metacoder}
 \title{Metacoder Differential Analysis function.}
 \usage{
-launch_metacoder(psobj, min, col, rank, title, plot1 = TRUE, signif = TRUE)
+launch_metacoder(
+  psobj,
+  min,
+  col,
+  rank,
+  title = "",
+  plot1 = TRUE,
+  signif = TRUE
+)
 }
 \arguments{
 \item{psobj}{A phyloseq object.}

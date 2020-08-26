@@ -11,7 +11,7 @@
 #' @param signif Plot only siignificant or not
 
 
-launch_metacoder <- function(psobj, min, col, rank, title, plot1 = TRUE, signif = TRUE){
+launch_metacoder <- function(psobj, min, col, rank, title = "", plot1 = TRUE, signif = TRUE){
 
   vector <- unique(data.frame(sample_data(psobj)[,col])[,1])
 
