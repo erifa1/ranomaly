@@ -84,8 +84,8 @@ launch_metacoder <- function(psobj, min, col, rank, title, plot1 = TRUE, signif 
     repel_labels = TRUE,
     repel_force = 3,
     overlap_avoidance = 3,
-    node_label_size_range=c(0.01,0.04),
-    make_edge_legend=FALSE) + ggtitle("',title,'") + theme(plot.title = element_text(size = 24, face = "bold"))', sep ='')
+    node_label_size_range=c(0.02,0.045),
+    make_edge_legend=FALSE) + ggtitle("',title,'") + theme(plot.title = element_text(size = 16, face = "bold"))', sep ='')
     }
 
     if(length(vector) > 2){
@@ -109,7 +109,7 @@ launch_metacoder <- function(psobj, min, col, rank, title, plot1 = TRUE, signif 
       node_label_size_range=c(0.01,0.04),
       row_label_size=16,
       col_label_size=16,
-      tree_label_size = 12) + ggtitle("',title,'") + theme(plot.title = element_text(size = 24, face = "bold"))', sep ='')
+      tree_label_size = 12) + ggtitle("',title,'") + theme(plot.title = element_text(size = 16, face = "bold"))', sep ='')
     }
     eval(parse(text=fun))
     flog.info('Done.')
@@ -140,7 +140,7 @@ launch_metacoder <- function(psobj, min, col, rank, title, plot1 = TRUE, signif 
           overlap_avoidance = 3,
           repel_labels = TRUE,
           repel_force = 3,
-          node_label_size_range=c(0.02,0.04)) + ggtitle("',title,' (Only significants)") + theme(plot.title = element_text(size = 24, face = "bold"))', sep ='')
+          node_label_size_range=c(0.025,0.045)) + ggtitle("',title,' (Only significants)") + theme(plot.title = element_text(size = 16, face = "bold"))', sep ='')
       }
       if(length(vector) > 2){
         fun <- paste0('p2 <- heat_tree_matrix(obj,
@@ -163,7 +163,7 @@ launch_metacoder <- function(psobj, min, col, rank, title, plot1 = TRUE, signif 
             node_label_size_range=c(0.03,0.04),
             row_label_size=16,
             col_label_size=16,
-            tree_label_size = 12) + ggtitle("',title,' (Only significants)") + theme(plot.title = element_text(size = 24, face = "bold"))', sep ='')
+            tree_label_size = 12) + ggtitle("',title,' (Only significants)") + theme(plot.title = element_text(size = 16, face = "bold"))', sep ='')
       }
       eval(parse(text=fun))
       flog.info('Done.')
@@ -238,12 +238,14 @@ metacoder_fun <- function(data = data, output = "./metacoder", column1 = "", ran
 
   set.seed(1)
   table <- data.frame()
-
+  outF = list()
   if(comp == "matrix"){
     flog.info("Comparison in matrix...")
     titleFact = paste('Matrix column ',column1,' at rank ',rank,sep='')
-    gg <- launch_metacoder(data, min, column1, rank, '', titleFact, plot1=plottrees, signif)
-
+    gg <- launch_metacoder(psobj=data, min=min, col=column1, rank=rank, title=titleFact, plot1=plottrees, signif=signif)
+    outF[['matrix']]$raw <- gg[1]
+    outF[['matrix']]$signif <- gg[2]
+    outF$table <- gg[3]
     plots = marrangeGrob(grobs=gg[1:2],nrow=1,ncol=2)
     ggsave(paste(output,'/metacoder_',column1,'_',rank,'.png',sep=''),plot=plots, width=30, height=16, dpi = 320)
   }
@@ -267,7 +269,7 @@ metacoder_fun <- function(data = data, output = "./metacoder", column1 = "", ran
     p_list <- c()
 
 
-    outF = list()
+
     '%!in%' <- function(x,y)!('%in%'(x,y))
     for (comp in (1:ncol(combinaisons))){
       flog.info(paste('Comparison ...',combinaisons[1,comp], combinaisons[2,comp]))
@@ -280,12 +282,14 @@ metacoder_fun <- function(data = data, output = "./metacoder", column1 = "", ran
       fun <- paste('psobj <- subset_samples(data, ',column1,' %in% c("',combinaisons[1,comp],'","',combinaisons[2,comp],'"))',sep='')
       eval(parse(text=fun))
       titleFact = paste(combinaisons[1,comp], ' VS ', combinaisons[2,comp],sep='')
-      pp <- launch_metacoder(psobj, min, column1, rank, '', titleFact, plot1=plottrees, signif)
+      pp <- launch_metacoder(psobj=psobj, min=min, col=column1, rank=rank, title=titleFact, plot1=plottrees, signif=signif)
 
       table <- rbind(table,pp[[3]])
       p_list <- c(p_list,pp[1:2])
-
-      outF[[paste(combinaisons[,comp],collapse="_vs_")]] = list(plot = marrangeGrob(grobs=pp[1:2],nrow=1,ncol=2) )
+      outF[[paste(combinaisons[,comp],collapse="_vs_")]]$raw <- pp[1]
+      outF[[paste(combinaisons[,comp],collapse="_vs_")]]$signif <- pp[2]
+      outF$table = table
+      #outF[[paste(combinaisons[,comp],collapse="_vs_")]] = list(plot = marrangeGrob(grobs=pp[1:2],nrow=1,ncol=2) )
 
     }
 
@@ -300,7 +304,7 @@ metacoder_fun <- function(data = data, output = "./metacoder", column1 = "", ran
 
   graphics.off()
   # save(list = ls(all.names = TRUE), file = "debug.rdata", envir = environment())
-  outF$table = table
-  return(outF)
   flog.info('Finish.')
+  return(outF)
+
 }
