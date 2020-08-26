@@ -11,7 +11,7 @@
 #' @param signif Plot only siignificant or not
 
 
-launch_metacoder <- function(psobj, min, col, rank, title, plot1 = TRUE, signif = TRUE){
+launch_metacoder <- function(psobj, min, col, rank, title = "", plot1 = TRUE, signif = TRUE){
 
   vector <- unique(data.frame(sample_data(psobj)[,col])[,1])
 
@@ -280,7 +280,7 @@ metacoder_fun <- function(data = data, output = "./metacoder", column1 = "", ran
       fun <- paste('psobj <- subset_samples(data, ',column1,' %in% c("',combinaisons[1,comp],'","',combinaisons[2,comp],'"))',sep='')
       eval(parse(text=fun))
       titleFact = paste(combinaisons[1,comp], ' VS ', combinaisons[2,comp],sep='')
-      pp <- launch_metacoder(psobj, min, column1, rank, '', titleFact, plot1=plottrees, signif)
+      pp <- launch_metacoder(psobj, min, column1, rank, titleFact, plot1=plottrees, signif)
 
       table <- rbind(table,pp[[3]])
       p_list <- c(p_list,pp[1:2])
