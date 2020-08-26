@@ -268,8 +268,3 @@ idtaxa_traindb <- function(taxtable = taxtable, taxid = taxid, seqs = "", pruned
       save(trainingSet, file = paste(outputDIR, outputDBname,sep="/"))
 
 }
-
-
-
-
-
