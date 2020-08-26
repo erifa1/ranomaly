@@ -5,7 +5,7 @@
 #' @param domain 16S region or ITS region (Bacteria or Fungi).
 #' @param output Output directory
 #' @param number Minimum number of reads per sample.
-#' @param prev Minimum prevalence of an ASV in samples to be keep.
+#' @param prev Minimum prevalence of an ASV in samples to be kept.
 #' @param freq Minimum ASV frequence on overall samples.
 #' @param column Column name from sample_variables(data) for type of sample (control or sample). If informed, function filters control samples.
 #' @param ctrl_identifier Idendifier name for controls.
@@ -231,18 +231,6 @@ decontam_fun <- function(data = data, domain = TRUE, output = "./decontam_out/",
     taxToDump4 = row.names(taxdf[taxdf$Domain!=k,])
     flog.info('Done.')
 
-    # flog.info('Filtering unassigned phylum...')
-    # taxToKeep3 = row.names(taxdf[taxdf$Phylum!=p,])
-    # taxToDump3 = row.names(taxdf[taxdf$Phylum==p,])
-    # flog.info('Done.')
-    #
-    # taxToKeep4 = unique(c(taxToKeep3,taxToKeep4))
-    # taxToDump4 = unique(c(taxToDump3,taxToDump4))
-
-    # print(taxdf[taxToDump4,])
-    # print(nrow(taxdf[taxToDump4,]))
-
-
   }else{
     taxToDump4 = NULL
   }
@@ -293,12 +281,13 @@ decontam_fun <- function(data = data, domain = TRUE, output = "./decontam_out/",
   data <- dataKeep
   #NUMBER OF READS in samples
   flog.info(paste('Filtering samples with less than ',number,' reads...',sep=''))
+  flog.info(sample_data(prune_samples(sample_sums(data) < number, data))$sample.id)
   data <- prune_samples(sample_sums(data) > number, data)
   flog.info('Done.')
   flog.info(paste("AFTER FILTERING: ",nsamples(data), "samples and", ntaxa(data),"ASVs in otu table") )
 
 
-  ##GENUS to remove manually
+  ##TAXA to remove manually
   if(!is.null(manual_cont)){
     cont_list <- unlist(strsplit(manual_cont,","))
     flog.info(paste('Removing ',cont_list, sep=''))

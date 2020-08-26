@@ -168,7 +168,7 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
       fun <- paste('p <- ggplot(sigtab,
 			aes(x=',rank,',
 			y=log2FoldChange,
-			color=',rank,')) + geom_point(size=6) + theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))',sep='')
+			color=',rank,')) + geom_point(size=6) + theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5), legend.position = "none")',sep='')
       eval(parse(text=fun))
 
       Ftable = sigtab[,c("baseMean","log2FoldChange","stat","pvalue","padj",rank)]
@@ -192,9 +192,6 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
 
     }
   }
-
-return(outF)
-
+  return(outF)
   flog.info('Done...')
-
 }

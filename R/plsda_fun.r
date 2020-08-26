@@ -30,7 +30,7 @@ plsda_fun <- function(data = data, output = "./plsda/", column1 = "",
   }
 
 
-  flog.info('Preparing table...')
+  flog.info('Preparing tables...')
   if(rank != 'ASV'){
     flog.info('Glom rank...')
     physeqDA <- tax_glom(data, taxrank=rank)
@@ -40,21 +40,22 @@ plsda_fun <- function(data = data, output = "./plsda/", column1 = "",
     physeqDA <- data
     otable <- otu_table(physeqDA)
   }
-
   mdata <- sample_data(physeqDA)
-
   flog.info('Done.')
 
+  flog.info('Removing levels with only one sample...')
   fun <- paste('lvl_to_remove <- names(table(mdata$',column1,')[table(mdata$',column1,') <= 1])',sep='')
   eval(parse(text=fun))
+  flog.debug(paste0('Level "',lvl_to_remove, '" will be removed.'))
   if(length(lvl_to_remove) > 0){
-  	fun <- paste('sample_to_remove <- rownames(mdata[mdata$mois_lot == lvl_to_remove])')
-  	eval(parse(text=fun))
+  	fun <- paste('sample_to_remove <- rownames(mdata[mdata$',column1,' == lvl_to_remove])')
+    eval(parse(text=fun))
   	flog.info(paste('Removing ',sample_to_remove,sep=''))
   	otable <- otable[,colnames(otable)!=sample_to_remove]
   	mdata <- mdata[rownames(mdata)!=sample_to_remove]
 
   }
+  flog.info('Done.')
 
   flog.info('PLSDA...')
   fun <- paste('plsda.res = plsda(t(otable+1), mdata$',column1,', ncomp = 5, logratio="CLR")',sep='')
