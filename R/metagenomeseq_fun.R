@@ -33,7 +33,7 @@ metagenomeseq_fun <- function(data = data, output = "./metagenomeseq/", column1 
   if(!dir.exists(output)){
     dir.create(output)
   }
-
+  ranks <- c("Domain","Phylum","Class","Order","Family","Genus","Species")
   if(comp == ''){
     fun <- paste('combinaisons <- combn(na.omit(unique(sample_data(data.glom)$',column1,')),2) ',sep='')
     eval(parse(text=fun))
@@ -116,11 +116,11 @@ if(rank != 'ASV'){
     TAB=cbind(row.names(TAB) ,TAB)
 
     TABF = na.omit(TAB)
-    TABF <- cbind(TABF, fData(MGdata)[row.names(TABF),])
+    TABF <- cbind(TABF, fData(MGdata)[row.names(TABF),1:match(rank,ranks)+1])
     colnames(TABF)[1]=paste(combinaisons[,col],collapse="_vs_")
 
     TABF <- TABF[order(TABF$logFC, decreasing = FALSE), ]
-    flog.debug(print(TABF))
+    flog.debug(pander(TABF))
     write.table(na.omit(TABF), paste(output,'/signtab_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.csv',sep=''), row.names=FALSE, quote=FALSE, sep="\t")
 
     #Plots
