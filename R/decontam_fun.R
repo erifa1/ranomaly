@@ -66,15 +66,13 @@ decontam_fun <- function(data = data, domain = TRUE, output = "./decontam_out/",
       p <- ggplot(data=df, aes_string(x="Index", y="LibrarySize", color=column)) + geom_point()
       ggsave(paste(output,'/lib_size.png',sep=''), plot=p)
       flog.info('Done.')
-
     }
+  }
 
-    if(krona){
-      flog.info('Generating Krona...')
-      plot_krona(data, paste(output,'/krona_no_filtering',sep=''),'sample.id')
-      flog.info('Done.')
-    }
-
+  if(krona){
+    flog.info('Generating Krona...')
+    plot_krona(data, paste(output,'/krona_no_filtering',sep=''),'sample.id')
+    flog.info('Done.')
   }
 
   # CHECKING CONTROL SAMPLES
