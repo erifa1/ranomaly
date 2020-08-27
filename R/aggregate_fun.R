@@ -225,7 +225,7 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
     TABbar = tail(TABbar[order(abs(TABbar$DESeqLFC)),],50)
 
     if(nrow(TABbar)){
-      TABbar$tax = paste( substr(ttax[as.character(TABbar$ListAllOtu),"Species"],1,20),"...","_", TABbar$ListAllOtu, sep="")
+      TABbar$tax = ttax[as.character(TABbar$ListAllOtu),rank]
 
       png(paste(output,'/topDiffbarplot_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.png',sep=''), width=20, height=20, units="cm", res=200)
       pbarplot <- p <-ggplot(data=TABbar, aes(x=reorder(tax, -abs(DESeqLFC)), y=DESeqLFC, fill=Condition ) ) +
