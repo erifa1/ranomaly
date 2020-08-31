@@ -216,7 +216,7 @@ idtaxa_traindb <- function(taxtable = taxtable, taxid = taxid, seqs = "", pruned
 
   dna <- readDNAStringSet(seqs)
 
-  if( any(rownames(check1) != names(dna)) ){
+  if( any(rownames(taxtable) != names(dna)) ){
     stop("sequence IDS and taxonomy IDS do not exactly match... Check IDS and order.")
   }
 
