@@ -5,9 +5,11 @@ dada_res = dada2_fun(path="~/home-local-ssd/projets/anomaly/reads_celine_anomaly
 
 tax.table = assign_taxo_fun(dada_res = dada_res, id_db = "~/home-local-ssd/bank/SILVA_SSU_r132_March2018.RData" )
 
+tax.table = assign_taxo_fun(dada_res = dada_res, id_db = "~/home-local-ssd/bank/SILVA_SSU_r132_March2018.RData", output = "./idtaxa_debug/" , verbose = 3 )
+
 tree = generate_tree_fun(dada_res)
 
-data = generate_phyloseq_fun(dada_res = dada_res, taxtable = tax.table, tree = tree, metadata = "~/home-local-ssd/projets/anomaly/sample_metadata.csv")
+data = generate_phyloseq_fun(dada_res = dada_res, tax.table = tax.table, tree = tree, metadata = "~/home-local-ssd/projets/anomaly/sample_metadata.csv")
 
 data
 

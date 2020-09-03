@@ -37,7 +37,7 @@ decontam_fun(
 
 \item{number}{Minimum number of reads per sample.}
 
-\item{prev}{Minimum prevalence of an ASV in samples to be keep.}
+\item{prev}{Minimum prevalence of an ASV in samples to be kept.}
 
 \item{freq}{Minimum ASV frequence on overall samples.}
 
