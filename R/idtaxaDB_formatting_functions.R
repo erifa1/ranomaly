@@ -68,6 +68,7 @@ check_tax_fun <- function(taxtable = taxtable, output = NULL, verbose=3, returnv
   RANKS = c("_domain","_phylum","_class","_order","_family","_genus","_species")
   print("Check taxonomy consistency...")
   # Check for multiple ancestors at each rank, choose first occurence for each problematic taxon
+  sink(paste('./check_tax_fun.log', sep=""), split = TRUE)
   for(rank in 6:2){
     if(verbose==3){flog.info(paste(colnames(taxtable)[rank],".",sep=""))}
 
@@ -111,6 +112,7 @@ check_tax_fun <- function(taxtable = taxtable, output = NULL, verbose=3, returnv
       nloop = nloop + 1
     }
   }
+  sink()
   if(!is.null(output)){
     print("OUTPUT")
     write.table(taxtable, output, sep = "\t", col.names=NA)
@@ -120,6 +122,66 @@ check_tax_fun <- function(taxtable = taxtable, output = NULL, verbose=3, returnv
     return(taxtable)
   }
 
+}
+
+
+
+#' Prune DB
+#'
+#' @param taxtable data.frame
+#' @param seqs path to fasta file or readDNAStringSet
+#' @param prunedb maximum number of sequences per unique taxa.
+#' @param outputDIR
+#' @output
+
+#' @return List with taxonomy table and corresponding sequences.
+#'
+#' @export
+
+prune_db_fun <- function(taxtable = taxtable, seqs = "", prunedb=10, outputDIR = "./"){
+
+  if(class(seqs) == "DNAStringSet"){
+    dna = seqs
+  } else {
+    dna <- readDNAStringSet(seqs)
+  }
+
+  if( any(rownames(taxtable) != names(dna)) ){
+    stop("sequence IDS and taxonomy IDS do not exactly match... Check IDS and order.")
+  }
+
+  taxonomy <- paste( "Root", apply(taxtable, 1, paste, collapse = "; "), sep="; ")
+
+  cat("\n\tPruningDB\n")
+  #Prune DB
+  groups <- taxonomy
+  groupCounts <- table(groups)
+  u_groups <- names(groupCounts) # unique groups
+  #length(u_groups) # number of groups
+
+  #Pruning DB
+  maxGroupSize <- prunedb # max sequences per label (>= 1)
+  remove <- logical(length(dna))
+  for (i in which(groupCounts > maxGroupSize)) {
+    index <- which(groups==u_groups[i])
+    keep <- sample(length(index), maxGroupSize)
+    remove[index[-keep]] <- TRUE
+  }
+  # number of sequences eliminated
+  cat("\n",paste("Number of sequences eliminated:",sum(remove)),"\n")
+
+  prune_dna = dna[!remove]
+  prune_tax = taxonomy[!remove]
+  outpruneTax = taxtable[!remove,]
+
+  writeXStringSet(prune_dna, paste(outputDIR, "prune_dna.fasta",sep="/"), format="fasta")
+  write.table(outpruneTax, paste(outputDIR, "prune_taxtable.csv",sep="/"), quote = FALSE, col.names=FALSE)
+
+  cat("\n",paste("Remaining groups:",length(prune_tax)),"\n")
+  cat("\n",paste("Remaining sequences:",length(prune_dna)),"\n")
+
+  outF = list(taxtable = outpruneTax, sequences = prune_dna)
+  return(outF)
 }
 
 
@@ -197,6 +259,7 @@ taxid_fun <- function(taxtable = taxtable, output = "./taxid.txt"){
 }
 
 
+
 #' IDTAXA db training (idtaxa training functions)
 #'
 #' @param taxtable Output from check_tax_fun function.
@@ -211,7 +274,7 @@ taxid_fun <- function(taxtable = taxtable, output = "./taxid.txt"){
 #' @export
 
 
-idtaxa_traindb <- function(taxtable = taxtable, taxid = taxid, seqs = "", prunedb = NULL, outputDIR = "./",
+idtaxa_traindb <- function(taxtable = taxtable, taxid = taxid, seqs = "", outputDIR = "./",
                            outputDBname = "newDB.rdata", returnval = FALSE){
 
   dna <- readDNAStringSet(seqs)
@@ -223,43 +286,10 @@ idtaxa_traindb <- function(taxtable = taxtable, taxid = taxid, seqs = "", pruned
   cat("\tTaxonomy\n")
   taxonomy <- paste( "Root", apply(taxtable, 1, paste, collapse = "; "), sep="; ")
 
-
-  if(!is.null(prunedb)){
-    cat("\n\tPruningDB\n")
-    #Prune DB
-    groups <- taxonomy
-    groupCounts <- table(groups)
-    u_groups <- names(groupCounts) # unique groups
-    #length(u_groups) # number of groups
-
-    #Pruning DB
-    maxGroupSize <- prunedb # max sequences per label (>= 1)
-    remove <- logical(length(dna))
-    for (i in which(groupCounts > maxGroupSize)) {
-      index <- which(groups==u_groups[i])
-      keep <- sample(length(index), maxGroupSize)
-      remove[index[-keep]] <- TRUE
-    }
-    # number of sequences eliminated
-    cat("\n",paste("Number of sequences eliminated:",sum(remove)),"\n")
-
-    prune_dna = dna[!remove]
-    prune_tax = taxonomy[!remove]
-
-    cat("\n",paste("Remaining groups:",length(prune_tax)),"\n")
-    cat("\n",paste("Remaining sequences:",length(prune_dna)),"\n")
-
-    cat("\nTrain classifier\n")
-    trainingSet <- LearnTaxa(prune_dna, prune_tax)
-    trainingSet
-
-  }else{
-    cat("\tNo Pruning\n")
     cat("\nTrain classifier\n")
     # train the classifier
     trainingSet <- LearnTaxa(dna, taxonomy, rank=taxid)
     trainingSet
-  }
 
   if(!dir.exists(outputDIR)){
     dir.create(outputDIR, recursive = TRUE)

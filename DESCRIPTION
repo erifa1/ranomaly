@@ -17,9 +17,11 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
 Imports:
+  backports,
+  XML,
+  vctrs,
   biomformat,
   Biostrings,
-  DECIPHER,
   ShortRead,
   dada2,
   decontam,
@@ -45,11 +47,13 @@ Imports:
   plotly,
   taxa,
   rmarkdown,
-  ranacapa
+  ranacapa,
+  DECIPHER,
+  mixOmics
 Remotes:
+  github::omegahat/XML,
   bioc::3.10/biomformat,
   bioc::3.10/Biostrings,
-  bioc::3.10/DECIPHER,
   bioc::3.10/ShortRead,
   bioc::3.10/dada2,
   bioc::3.10/decontam,
@@ -57,6 +61,10 @@ Remotes:
   bioc::3.10/phyloseq,
   bioc::3.10/microbiome,
   bioc::3.10/DESeq2,
+  bioc::3.10/DECIPHER,
+  bioc::3.10/mixmics,
   github::pmartinezarbizu/pairwiseAdonis/pairwiseAdonis,
   github::cpauvert/psadd,
-  github::gauravsk/ranacapa
+  github::gauravsk/ranacapa,
+  github::grunwaldlab/metacoder,
+  github::mixOmicsTeam/mixOmics
