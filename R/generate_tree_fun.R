@@ -24,14 +24,29 @@
 
 # DADA2 function
 
-generate_tree_fun <- function(dada_res = dada_res, output = "./tree", returnval=TRUE){
+generate_tree_fun <- function(dada_res = NULL, psobj = NULL, output = "./tree", returnval=TRUE, verbose=1){
 
+  if(verbose == 3){
+    invisible(flog.threshold(DEBUG))
+  } else {
+    invisible(flog.threshold(INFO))
+  }
 
-  flog.info('Generating tree...')
-  sequences <- getSequences(dada_res$seqtab.nochim)
-  names(sequences) <- sapply(sequences,digest,algo='md5')
+  if(!is.null(dada_res)){
+    flog.info('Generating tree...')
+    sequences <- getSequences(dada_res$seqtab.nochim)
+    names(sequences) <- sapply(sequences,digest,algo='md5')
+    sequences <- DNAStringSet(sequences)
+  }else if(!is.null(psobj)){
+    sequences <- refseq(data)
+  }
+  else{
+    flog.error('You must either provide dada_res or psobj argument.')
+    return(1)
+  }
+
   flog.info('Aligning sequences...')
-  alignment <- AlignSeqs(DNAStringSet(sequences),anchor=NA,processors=NULL)
+  alignment <- AlignSeqs(sequences,anchor=NA,processors=NULL)
   flog.info('Creating distance matrices...')
   phang.align <- phyDat(as(alignment, "matrix"), type="DNA")
   dm <- dist.ml(phang.align)
