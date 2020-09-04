@@ -8,7 +8,6 @@ idtaxa_traindb(
   taxtable = taxtable,
   taxid = taxid,
   seqs = "",
-  prunedb = NULL,
   outputDIR = "./",
   outputDBname = "newDB.rdata",
   returnval = FALSE
