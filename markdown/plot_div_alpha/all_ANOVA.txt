@@ -1,36 +1,36 @@
-INFO [2020-08-25 15:32:32] 
+INFO [2020-09-04 15:28:05] 
 
 ############
  Observed 
 ############
 
-INFO [2020-08-25 15:32:32] ############
+INFO [2020-09-04 15:28:05] ############
 ANOVA + pairwise wilcox test
 
-INFO [2020-08-25 15:32:32] 
+INFO [2020-09-04 15:28:05] 
 ##pvalues of pairwise wilcox test on  Observed with FDR correction 
 
 resAlpha[["Observed"]] <- list(anova = anova, wilcox_col1 = wilcox_col1)
-INFO [2020-08-25 15:32:32] 
+INFO [2020-09-04 15:28:05] 
 ##pvalues of pairwise wilcox test on  Observed with FDR correction 
 
-INFO [2020-08-25 15:32:32] ##pvalues of pairwise wilcox test on  Observed  with collapsed factors (no correction)
+INFO [2020-09-04 15:28:05] ##pvalues of pairwise wilcox test on  Observed  with collapsed factors (no correction)
 
-INFO [2020-08-25 15:32:32] 
+INFO [2020-09-04 15:28:05] 
 
 ############
  Shannon 
 ############
 
-INFO [2020-08-25 15:32:32] ############
+INFO [2020-09-04 15:28:05] ############
 ANOVA + pairwise wilcox test
 
-INFO [2020-08-25 15:32:32] 
+INFO [2020-09-04 15:28:05] 
 ##pvalues of pairwise wilcox test on  Shannon with FDR correction 
 
 resAlpha[["Shannon"]] <- list(anova = anova, wilcox_col1 = wilcox_col1)
-INFO [2020-08-25 15:32:32] 
+INFO [2020-09-04 15:28:05] 
 ##pvalues of pairwise wilcox test on  Shannon with FDR correction 
 
-INFO [2020-08-25 15:32:32] ##pvalues of pairwise wilcox test on  Shannon  with collapsed factors (no correction)
+INFO [2020-09-04 15:28:05] ##pvalues of pairwise wilcox test on  Shannon  with collapsed factors (no correction)
 

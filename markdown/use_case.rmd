@@ -21,15 +21,15 @@ library(DT)
 library(pander)
 devtools::load_all(".")
 ```
-We share this use case to show all features of rANOMALY packages that allow to highlight difference of microbial community between groups of samples. rANOMALY main features are : 
+We share this use case to show all features of rANOMALY packages that allow to highlight difference of microbial community between groups of samples. rANOMALY main features are :
 
 * ASV generation thanks to `dada2` algorithm
 
-* Taxonomic assignment thanks to IDTAXA from `DECIPHER` packages. rANOMALY allow to assign with up to 2 complementary reference database (eg. SILVA which generalist, DAIRYdb which is specific to dairy environments), keep the best and more confident taxonomic assignment, check for taxonomy incongruency like empty fields and multiple ancestors. 
+* Taxonomic assignment thanks to IDTAXA from `DECIPHER` packages. rANOMALY allow to assign with up to 2 complementary reference database (eg. SILVA which generalist, DAIRYdb which is specific to dairy environments), keep the best and more confident taxonomic assignment, check for taxonomy incongruency like empty fields and multiple ancestors.
 
-* Phyloseq format to handle datas and downstream statistical analysis. 
+* Phyloseq format to handle datas and downstream statistical analysis.
 
-* Decontamination step thanks to `decontam` package. rANOMALY allows to filter ASV (Amplicon Sequence Variant) dependings on ASV overall frequence (low abondance filter), and ASV prevalence (presence in 1 or more samples), specific filters like manual suppression of specific taxa are available to. 
+* Decontamination step thanks to `decontam` package. rANOMALY allows to filter ASV (Amplicon Sequence Variant) dependings on ASV overall frequence (low abondance filter), and ASV prevalence (presence in 1 or more samples), specific filters like manual suppression of specific taxa are available to.
 
 * Complete statistical analysis workflow: rarefaction curves, community composition plots, alpha/beta diversity analysis with associated statistical tests and multivariate analysis, and differential analysis using 3 three different methods (metacoder, DESeq2, metagenomeSeq).
 
@@ -149,7 +149,7 @@ To create a [phyloseq](https://joey711.github.io/phyloseq/) object, we need to m
 - `metadata` from `sample-metadata.csv`
 
 ```{r eval = FALSE}
-data = generate_phyloseq_fun(dada_res = dada_res, taxtable = tax.table, tree = tree, metadata = "./sample_metadata.csv")
+data = generate_phyloseq_fun(dada_res = dada_res, tax.table = tax.table, tree = tree, metadata = "./sample_metadata.csv")
 ```
 
 ```{r}
@@ -175,7 +175,7 @@ Our function integrates the basics ASV frequency (nb_reads_ASV/nb_total_reads) a
 As in our lab we had a known recurrent contaminant we included an option to filter out ASV based on they taxa names.
 
 ```{r eval=FALSE}
-data = decontam_fun(data = data, domain = "Bacteria", column = "type", ctrl_identifier = "control", spl_identifier = "sample", number = 100)
+data = decontam_fun(data = data, domain = "Bacteria", column = "type", ctrl_identifier = "control", spl_identifier = "sample", number = 100, krona= TRUE)
 ```
 
 Main outputs:
@@ -514,5 +514,3 @@ plsda_res$loadings$comp4
 `split_table_fun` allows to split the phyloseq object in multiple sub-object according to one column.
 
 `update_metadata_fun` allows you to easily modify `sample_data` part of the phyloseq object.
-
-

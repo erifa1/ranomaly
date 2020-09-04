@@ -78,7 +78,6 @@ decontam_fun <- function(data = data, domain = TRUE, output = "./decontam_out/",
   # CHECKING CONTROL SAMPLES
   if(skip == FALSE){
     df <- as.data.frame(sample_data(data))
-    print(column)
     samplesCol = df[, column];
     if(!is.null(batch)){
       df2 = df[,c(batch,column)]
@@ -236,9 +235,10 @@ decontam_fun <- function(data = data, domain = TRUE, output = "./decontam_out/",
 
   flog.info(paste("BEFORE FILTERING: ",nsamples(data), "samples and", ntaxa(data),"ASVs in otu table") )
   uniqTaxToDump <- unique(c(taxToDump0,taxToDump1,taxToDump2,taxToDump4))
+  flog.info(paste0(length(uniqTaxToDump), ' ASVs are going to be dumped.'))
   allASV <- taxa_names(data)
   uniqTaxToKeep <- setdiff(allASV,uniqTaxToDump)
-
+  flog.info(paste0(length(uniqTaxToKeep), ' ASVs to keep.'))
   dataKeep <- prune_taxa(uniqTaxToKeep,data)  #filtering
 
   TF = list(decontam=taxToDump0,freq=taxToDump1,prev=taxToDump2,unassigned=taxToDump4)

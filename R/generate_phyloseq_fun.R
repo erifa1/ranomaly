@@ -27,10 +27,17 @@
 generate_phyloseq_fun <- function(dada_res = dada_res, tax.table = tax.table, tree = tree, metadata = "",
                                   output = "./phyloseq/", verbose = 1, returnval = TRUE){
 
+
+  if(verbose == 3){
+    invisible(flog.threshold(DEBUG))
+  } else {
+    invisible(flog.threshold(INFO))
+  }
+
   flog.info("Loading sample metadata..")
   sampledata <- read.table(metadata, sep="\t",header=TRUE)
   rownames(sampledata) <- sampledata$sample.id
-  print(rownames(sampledata))
+  print(sampledata$sample.id)
   sample.metadata <- sample_data(sampledata)
   flog.info('Done.')
 
@@ -41,8 +48,17 @@ generate_phyloseq_fun <- function(dada_res = dada_res, tax.table = tax.table, tr
 
   flog.info("Sequences..")
   sequences <- getSequences(dada_res$seqtab.nochim)
+  flog.debug('Generate MD5 ids...')
   names(sequences) <- sapply(sequences,digest,algo='md5')
-  data <- phyloseq(dada_res$otu.table, tax.table, sample.metadata, phy_tree(tree), DNAStringSet(sequences))
+
+  if(is.null(tree)){
+    flog.info('Building phyloseq object without tree...')
+    data <- phyloseq(dada_res$otu.table, tax.table, sample.metadata, DNAStringSet(sequences))
+  } else{
+    flog.info('Building phyloseq object with tree...')
+    data <- phyloseq(dada_res$otu.table, tax.table, sample.metadata, phy_tree(tree), DNAStringSet(sequences))
+  }
+  flog.info('Done.')
   data_rel <- transform_sample_counts(data, function(x) x / sum(x) )
 
   if(!dir.exists(output)){
