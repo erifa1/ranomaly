@@ -28,9 +28,6 @@ launch_metacoder <- function(psobj, min, col, rank, title = "", plot1 = TRUE, si
 
   flog.info('Transform sample counts...')
 
-  normf = function(x, tot=max(sample_sums(psobj))){ tot*x/sum(x) }
-  psobj <- transform_sample_counts(psobj, normf)
-
   if(rank != '' & rank != 'ASV'){
     psobj <- tax_glom(psobj, taxrank=rank)
   }
@@ -40,6 +37,9 @@ launch_metacoder <- function(psobj, min, col, rank, title = "", plot1 = TRUE, si
   no_reads <- rowSums(obj$data$otu_table[, obj$data$sample_data$sample_id]) == 0
   obj <- filter_obs(obj, "otu_table", ! no_reads, drop_taxa = TRUE)
   if(nrow(obj$data$otu_table)==0){return(NULL)}
+
+  # Normalization
+  obj$data$otu_table <- calc_obs_props(obj, "otu_table")
 
   flog.info('Calculating taxon abundance...')
   obj$data$tax_abund <- calc_taxon_abund(obj, "otu_table",  cols = obj$data$sample_data$sample_id)

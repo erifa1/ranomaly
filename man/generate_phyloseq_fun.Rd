@@ -6,7 +6,7 @@
 \usage{
 generate_phyloseq_fun(
   dada_res = dada_res,
-  taxtable = tax.table,
+  tax.table = tax.table,
   tree = tree,
   metadata = "",
   output = "./phyloseq/",
@@ -17,8 +17,6 @@ generate_phyloseq_fun(
 \arguments{
 \item{dada_res}{Results of dada2_fun()}
 
-\item{taxtable}{Results of assign_taxo_fun()}
-
 \item{tree}{Results of generate_tree_fun()}
 
 \item{metadata}{Path of metadata file (tab separated with header)}
@@ -28,6 +26,8 @@ generate_phyloseq_fun(
 \item{verbose}{Verbose level. (1: quiet, 3: verbal)}
 
 \item{returnval}{Boolean to return values in console or not.}
+
+\item{taxtable}{Results of assign_taxo_fun()}
 }
 \value{
 Return a complete phyloseq object.

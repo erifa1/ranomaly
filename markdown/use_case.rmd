@@ -492,6 +492,13 @@ plsda_res$loadings$comp4
 
 `heatmap_fun` allows to plot relative abundance of more abundant taxas (20 by default). Use can choose which taxonomy rank to plot and the factor used to seprate plot.
 
+```{r heatmap, fig.align='center', results = "hide"}
+heatmap_plot = heatmap_fun(data = data, column1 = "souche_temps", top = 20, output = "./plot_heatmap/", rank = "Species")
+```
+
+```{r heatmapplot, fig.align='center'}
+ggplotly(heatmap_plot)
+```
 
 ## Shared taxa
 
