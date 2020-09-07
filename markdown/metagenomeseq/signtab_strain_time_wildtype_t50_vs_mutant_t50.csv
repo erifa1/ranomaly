@@ -1,0 +1,5 @@
+wildtype_t50_vs_mutant_t50	logFC	se	pvalues	adjPvalues	Domain	Phylum	Class	Order	Family
+4b9344cb7f7df3d60b7ee87b9f3fca8d	-7.27287604105821	0.948297921484908	1.73194791841524e-14	1.27009514017118e-13	k__Bacteria	p__Bacteroidetes	c__Bacteroidia	o__Bacteroidales	f__Bacteroidaceae
+296342a3e91b22f26e3751aa3181b576	-5.28291058458292	0.510528571159314	0	0	k__Bacteria	p__Actinobacteria	c__Coriobacteriia	o__Coriobacteriales	f__Atopobiaceae
+9b2055d9c43f7539761eb8e60bed9775	-1.54494365460367	0.444858162120773	0.000514885509079965	0.00283187029993981	k__Bacteria	p__Bacteria_phylum	c__Bacteria_class	o__Bacteria_order	f__Bacteria_family
+1a7f98473afa81b180af6085c63e5851	6.37016561338701	0.334710045749335	0	0	k__Bacteria	p__Firmicutes	c__Bacilli	o__Lactobacillales	f__Lactobacillaceae
