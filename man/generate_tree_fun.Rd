@@ -4,7 +4,13 @@
 \alias{generate_tree_fun}
 \title{Generate Phylogenetic Tree}
 \usage{
-generate_tree_fun(dada_res = dada_res, output = "./tree", returnval = TRUE)
+generate_tree_fun(
+  dada_res = NULL,
+  psobj = NULL,
+  output = "./tree",
+  returnval = TRUE,
+  verbose = 1
+)
 }
 \arguments{
 \item{dada_res}{Results of dada2_fun()}

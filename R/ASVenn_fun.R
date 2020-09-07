@@ -1,6 +1,6 @@
 #' ASVenn
 #'
-#' Function to create Venn Diagram of shared features 
+#' Function to create Venn Diagram of shared features
 #'
 #' @param data a phyloseq object (output from decontam or generate_phyloseq)
 #' @param output Output directory
@@ -12,7 +12,7 @@
 #' @param shared shared [TRUE] or exclusive [FALSE] mode.
 #'
 #'
-#' @return Export a venn diagram with corresponding tabulated file.
+#' @return Returns list with venn diagram and table with shared features. Exports a venn diagram with corresponding tabulated file.
 #'
 #' @importFrom glue glue
 #' @export

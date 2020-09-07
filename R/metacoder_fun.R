@@ -9,6 +9,8 @@
 #' @param title Title for figures output.
 #' @param plot1 Plot heattrees or not
 #' @param signif Plot only siignificant or not
+#'
+#' @importFrom metacoder calc_obs_props
 
 
 launch_metacoder <- function(psobj, min, col, rank, title = "", plot1 = TRUE, signif = TRUE){
@@ -201,7 +203,7 @@ launch_metacoder <- function(psobj, min, col, rank, title = "", plot1 = TRUE, si
 #' @param save.file Boolean whether to save output as files or not.
 #' @param verbose Set to 3 for debug.
 #'
-#' @return Export plots and CSV file listing significant differentialy abundant ASVs.
+#' @return Returns list with table of features and heattree plots for each comparison. Exports plots and CSV file listing significant differentialy abundant ASVs.
 #'
 #' @import phyloseq
 #' @import ggplot2

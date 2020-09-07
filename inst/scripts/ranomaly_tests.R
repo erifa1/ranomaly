@@ -57,3 +57,14 @@ phy2cyto_fun(data = data, output = "./cytoscape/", column1 = "souche_temps", rep
 
 
 plsda_fun(data = data, output = "./plsda/", column1 = "souche_temps", rank = "Species")
+
+ASVenn_fun(
+       data = data,
+       output = "./ASVenn/",
+       rank = "ASV",
+       column1 = "souche_temps",
+       subset = "",
+       lvls = "",
+       krona = "",
+       shared = TRUE
+     )

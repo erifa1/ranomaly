@@ -9,7 +9,7 @@
 #' @param comp Comma separated list of comparison to test. Comparisons are informed with a tilde (A~C,A~B,B~C). If empty, test all combination
 #'
 #'
-#' @return Export CSV files with significant differentialy abondant ASV.
+#' @return Returns list with table of features and plots for each comparison. Exports CSV files with significant differentialy abondant ASV.
 #'
 #' @import futile.logger
 #' @import phyloseq
