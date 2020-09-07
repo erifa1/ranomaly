@@ -364,12 +364,12 @@ out1 = metacoder_fun(data = data, output = "./metacoder", column1 = "souche_temp
 
 - Comparaison 1
 ```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE}
- out1$sauvage_t0_vs_mutant_t0$plot
+ out1$sauvage_t0_vs_mutant_t0$signif
 ```
 
 - Comparaison 2
 ```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE}
- out1$sauvage_t50_vs_mutant_t50$plot
+ out1$sauvage_t50_vs_mutant_t50$signif
 ```
 
 
@@ -505,6 +505,22 @@ ggplotly(heatmap_plot)
 * Venn Diagram
 
 `ASVenn_fun` allows to define shared taxa between specific condtitions (up to 5 conditions). It generates Venn Diagram and table informing presence of each ASV in each condition with taxonomy and sequence. Counts can be verified with this table. `rank` argument allows to generate output with upper taxonomy level taxas.
+
+```{r asvenn, results = "hide"}
+outvenn = ASVenn_fun(data = data,output = "./ASVenn/", rank = "ASV", column1 = "souche_temps", shared = TRUE)
+```
+
+* Venn diagram: 
+
+```{r}
+grid.draw(outvenn$venn_plot)
+```
+
+* Table:
+
+```{r}
+DT::datatable(outvenn$TABf, filter = "top", options = list(scrollX = TRUE))
+```
 
 * Cytoscape
 `phy2cyto_fun` allows to generate input files for cytoscape which is usefull to vizualise shared taxa.
