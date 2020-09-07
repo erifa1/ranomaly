@@ -1,5 +1,0 @@
-sauvage_t0_vs_mutant_t0	logFC	se	pvalues	adjPvalues	Domain	Phylum	Class	Order	Family
-4b9344cb7f7df3d60b7ee87b9f3fca8d	-4.61872729341427	1.47637739246238	0.00175749360711519	0.00966621483913355	k__Bacteria	p__Bacteroidetes	c__Bacteroidia	o__Bacteroidales	f__Bacteroidaceae
-7bb2998114eff0ccc874ab0ae8150c68	-4.57765258598748	1.14026256967264	5.9556773841285e-05	0.000682496106098496	k__unassigned	p__unassigned	c__unassigned	o__unassigned	f__unassigned
-d53b17476b2afe1a7c7a21ca946395e9	-3.73220150740213	0.931910010659932	6.20451005544087e-05	0.000682496106098496	k__Bacteria	p__Bacteroidetes	c__Bacteroidia	o__Bacteroidales	f__Bacteroidales_family
-1a7f98473afa81b180af6085c63e5851	4.23088853060389	1.09618997154457	0.000113558481523501	0.00083276219783901	k__Bacteria	p__Firmicutes	c__Bacilli	o__Lactobacillales	f__Lactobacillaceae
