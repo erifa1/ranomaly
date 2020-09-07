@@ -155,7 +155,7 @@ plsda_fun <- function(data = data, output = "./plsda/", column1 = "",
 
   outF[["loadings"]] = list()
   for (comp in 1:ncomp){
-  	plotLoadings(splsda.res, comp = comp, title = paste('Loadings on comp ',comp,sep=''), contrib = 'max', method = 'mean')
+  	plotLoadings(splsda.res, comp = comp, title = paste('Loadings on comp',comp,sep=''), contrib = 'max', method = 'mean')
     outF$loadings[[glue::glue("comp{comp}")]] <- recordPlot()
     invisible(dev.off())
 
