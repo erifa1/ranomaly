@@ -21,11 +21,11 @@ library(DT)
 library(pander)
 devtools::load_all(".")
 ```
-We share this use case to show all features of `rANOMALY` packages that allow to highlight difference of microbial community between groups of samples. `rANOMALY` main features are :
+We share this use case to show all features of `rANOMALY` packages that allow to highlight microbial community differences between groups of samples. `rANOMALY` main features are :
 
 * ASV generation thanks to `dada2` algorithm
 
-* Taxonomic assignment thanks to IDTAXA from `DECIPHER` packages. `rANOMALY` allow to assign with up to 2 complementary reference database (eg. SILVA which is generalist, DAIRYdb which is specific to dairy environments), keep the best and more confident taxonomic assignment, check for taxonomy incongruency like empty fields and multiple ancestors.
+* Taxonomic assignment thanks to `IDTAXA` from `DECIPHER` packages. `rANOMALY` allow to assign with up to 2 complementary reference database (eg. SILVA which is generalist, DAIRYdb which is specific to dairy environments), keep the best and more confident taxonomic assignment, check for taxonomy incongruency like empty fields and multiple ancestors.
 
 * `phyloseq` format to handle datas and downstream statistical analysis.
 
@@ -33,7 +33,7 @@ We share this use case to show all features of `rANOMALY` packages that allow to
 
 * Complete statistical analysis workflow: rarefaction curves, community composition plots, alpha/beta diversity analysis with associated statistical tests and multivariate analysis, and differential analysis using 3 three different methods (`metacoder`, `DESeq2`, `metagenomeSeq`).
 
-* At each steps plots and R objects are saved in folders to be able to relaunch the analysis and to exports plots.
+* At each steps, plots and R objects are saved in folders to be able to relaunch the analysis and to export plots.
 
 
 # Help
@@ -164,11 +164,11 @@ Main output:
 ## Decontamination
 
 The `decontam_fun` function uses [decontam](https://www.bioconductor.org/packages/release/bioc/html/decontam.html) R package with control samples to filter contaminants.
-The `decontam` package offers two main methods, frequency and prevalence (and then you can combine those methods). For frequency method, it is mandatory to have the DNA concentration of each sample in phyloseq (and hence in the `sample-metadata.csv`). In the prevalence method no need of DNA quantification, this method allows to compare presence/absence of ASV between real samples and control samples and then identify contaminants.
+The `decontam` package offers two main methods, frequency and prevalence (and then you can combine those methods). For frequency method, it is mandatory to have the DNA concentration of each sample in phyloseq (and hence in the `sample-metadata.csv`). The prevalence method does not need DNA quantification, this method allows to compare presence/absence of ASV between real samples and control samples and then identify contaminants.
 
 **Tips**: sequencing plateforms often quantify the DNA before sequencing, but do not automaticaly give the information. Just ask for it ;).
 
-Our function integrates the basics ASV frequency (nb_reads_ASV/nb_total_reads) and overall prevalence (nb_sample_ASV/nb_total_sample) filtering. We included an option to filter out ASV based on they taxa names (for known recurrent contaminants).
+Our function integrates the basics ASV frequency (nb_reads_ASV/nb_total_reads) and overall prevalence (nb_sample_ASV/nb_total_sample) filtering. We included an option to filter out ASV based on their taxa names (for known recurrent contaminants).
 
 ```{r eval=FALSE}
 data = decontam_fun(data = data, domain = "Bacteria", column = "type", ctrl_identifier = "control", spl_identifier = "sample", number = 100, krona= TRUE)
@@ -181,7 +181,7 @@ Main outputs:
 - `raw_asv-table.csv` & `relative_asv-table.csv`.
 - `venndiag_filtering.png`.
 
-![venndiag](./decontam_out/venndiag_filtering.png)
+![](./decontam_out/venndiag_filtering.png)
 
 # Plots, diversity and statistics
 
@@ -448,17 +448,18 @@ DT::datatable(resF$table, filter = "top", options = list(scrollX = TRUE))
 
 ### PLSDA (Partial Least Squares Discriminant Analysis)
 
-Our PLS-DA/sparse PLS-DA analysis is based on the [mixOmics package](http://mixomics.org/methods/pls-da/). The `plsda_res` function outputs a list of graphs and tables:
+Our PLS-DA/sparse PLS-DA analysis is based on the [mixOmics package](http://mixomics.org/methods/pls-da/). These are supervised classification methods. They allow to define most important features discriminating our groups. The `plsda_res` function outputs a list of graphs and tables:
 
 - `plsda$plotIndiv` ordination plot from the PLSDA analysis.
 
 - `splsda$plotIndiv` ordination plot from the sparse PLSDA analysis.
 
-- `loadings$comp{n}` all the loadings plots for each composant from the sPLSDA analysis.
+- `loadings$comp{n}` all the loadings plots for each composant from the sPLSDA analysis. Loadings weights are displayed and colors correspond to the group in which each feature has its maximum mean value.  
+
+- `splda.loading_table` Loading of all taxas for each composant.
 
 - `splsda$plotArrow` arrow plot of samples.
 
-- `splda.loading_table` Loading of all taxas for each composant.
 
 ```{r pslda, results = 'hide', warning = FALSE, message = FALSE}
 plsda_res <- plsda_fun(data = data, output = "./plsda_family/", column1 = "strain_time", rank = "Family")
@@ -467,6 +468,7 @@ plsda_res <- plsda_fun(data = data, output = "./plsda_family/", column1 = "strai
 ```{r splsda.plotIndiv}
 plsda_res$splsda.plotIndiv$graph
 ```
+
 
 ```{r plsda.loadings, fig.align='center'}
 knitr::include_graphics('plsda_family/splsda_loadings_strain_time_Family_comp1.png')
@@ -523,7 +525,7 @@ DT::datatable(outvenn$TABf, filter = "top", options = list(scrollX = TRUE))
 * Cytoscape
 `phy2cyto_fun` allows to generate input files for cytoscape which is usefull to vizualise shared taxa. You can see below an example of representation with Cytoscape on our data. Each nodes and arrows position and aesthetic can be easily modified. 
 
-![cytoscape](/home_pers/rifa/Images/cytoscape_anomaly.png)
+![](/home_pers/rifa/Images/cytoscape_anomaly.png)
 
 
 
