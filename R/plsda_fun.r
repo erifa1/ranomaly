@@ -159,7 +159,7 @@ plsda_fun <- function(data = data, output = "./plsda/", column1 = "",
     outF$loadings[[glue::glue("comp{comp}")]] <- recordPlot()
     invisible(dev.off())
 
-    png(paste(output,'/splsda_loadings_',column1,'_',rank,'_comp',comp,'.png',sep=''),width=480,height=480)
+    png(paste(output,'/splsda_loadings_',column1,'_',rank,'_comp',comp,'.png',sep=''),width=800,height=800)
     replayPlot(outF$loadings[[glue::glue("comp{comp}")]])
   	dev.off()
   }
