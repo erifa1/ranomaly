@@ -15,12 +15,13 @@
 #' @return Returns list with venn diagram and table with shared features. Exports a venn diagram with corresponding tabulated file.
 #'
 #' @importFrom glue glue
+#' @importFrom venn venn
 #' @export
 
 
 
 ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
-                            column1 = NULL, subset = "", lvls = "", krona = "",
+                            column1 = NULL, subset = "", lvls = NULL, krona = "",
                             shared = TRUE){
 
   invisible(flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger"))
@@ -124,6 +125,17 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
       grid.draw(venn.plot)
       invisible(dev.off())
 
+      # venn::venn(TF, col = rainbow(5), cex = 2, ggplot = TRUE)  #, zcol=rainbow(5)
+      # venn.plot <- recordPlot()
+      # invisible(dev.off())
+      #
+      # png(paste(output,'/',TITRE,'_venndiag.png',sep=''), width=20, height=20, units="cm", res=200)
+      # replayPlot(venn.plot)
+      # dev.off()
+
+      print("plotOK")
+
+
       ov <- calculate.overlap(TF)
       print(sapply(ov, length))
 
@@ -141,6 +153,7 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
         TABf=cbind.data.frame( TABtest_filt, TABf )
         names(TABf)[1] = names(TF)[j]
       }
+
       if(exists("refseq1")){
         TABf <- cbind(TABf,alltax[as.character(TABf$TABf),2], refseq1[as.character(TABf$TABf),])
         names(TABf) <- c(rev(names(TF)), "ASV", "taxonomy", "seq")
@@ -150,25 +163,28 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
       }
 
       write.table(TABf, paste(output,"/",TITRE,"_venn_table.csv",sep=""), sep="\t", quote=FALSE, row.names=FALSE)
-    } else if(mode == 2){
+    } else if(mode == 2){ # more than 5 environments
+      venn::venn(TF, col = rainbow(7)) #, zcol=rainbow(7)
+      venn.plot <- recordPlot()
+      invisible(dev.off())
+
       png(paste(output,'/',TITRE,'_venndiag.png',sep=''), width=20, height=20, units="cm", res=200)
-      venn.plot <- venn::venn(TF , zcol=rainbow(length(TF)))
-      #venn::venn(TF[c("LI","LA","EA","FI","TR","AI")] , zcol=rainbow(length(TF[c("LI","LA","EA","FI","TR","AI")])))
-      #venn::venn(TF[c("FI", "TR")] , zcol=rainbow(length(TF[c("FI", "TR")])))
+      replayPlot(venn.plot)
       dev.off()
-      ENVS = names(TF)
+
+      ENVS = names(TF)[1:7]  #maximum 7
       Tabf <- NULL; Tab1 <- NULL
       for(i in ENVS){
         tt = c(i, ENVS[ENVS != i])
         print(tt)
-        yy = Reduce(setdiff, TF[tt])
+        yy = Reduce(setdiff, TF[tt])  # setdiff(setdiff(tt[1], tt[2]), tt[3] )
         print(length(yy))
         Tab1 <- cbind(rep(i, length(yy)), alltax[yy,])
         Tabf <- rbind(Tabf, Tab1)
       }
-      yy <- Reduce(intersect, TF)
+      yy <- Reduce(intersect, TF[1:7]) #maximum 7
       Core <- cbind(rep("core", length(yy)), alltax[yy,])
-      TABf <- rbind(Core, Tabf)
+      TABf <- as.data.frame(rbind(Core, Tabf))
       write.table(TABf, paste(output,"/",TITRE,"_venn_table.csv",sep=""), sep="\t", quote=FALSE, row.names=FALSE)
     }
 
@@ -231,20 +247,30 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
 
   if(length(level1)>5){
     flog.info('Too much levels (max. 5) ...')
-    if(lvls == ""){
+    print(lvls)
+    if(is.null(lvls)){
       flog.info('Selecting 5 first levels ...')
-      # TF <- TF[c(1:5)]
-     res1 = VENNFUN(TF = TF, mode=2)
+      TF <- TF[1:5]
+      res1 = VENNFUN(TF = TF, mode=1)
     }else{
       flog.info(glue('Selecting {lvls} ...'))
       LVLs <- unlist(strsplit(lvls,","))
       TF <- TF[LVLs]
+      if(length(TF) <= 5){
+        flog.info(glue('mode 1 ...'))
+        res1 = VENNFUN(TF = TF, mode = 1)
+      }else{
+        flog.info(glue('mode 2 ...'))
+        res1 = VENNFUN(TF = TF, mode = 2)
+      }
     }
   } else {
+    print("< 5 levels")
+    print(lengnth(TF))
     res1 = VENNFUN(TF = TF)
   }
 
-  flog.info('Done ...')
-
+  flog.info('End ...')
+save(list = ls(all.names = TRUE), file = "debug_asvenn.rdata", envir = environment())
   return(res1)
 }

@@ -49,7 +49,8 @@ Imports:
   rmarkdown,
   ranacapa,
   DECIPHER,
-  mixOmics
+  mixOmics,
+  venn
 Remotes:
   github::omegahat/XML,
   bioc::3.10/biomformat,

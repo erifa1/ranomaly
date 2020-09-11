@@ -25,11 +25,15 @@ bars_fun2(data = data, Ord1 = "souche_temps", Fact1 = "souche_temps", rank="Genu
 bars_fun2(data = data_decontam, Ord1 = "souche_temps", Fact1 = "souche_temps", rank="Genus", top = 20)
 
 
+load("~/home-local-ssd/projets/anomaly/tests/decontam_out/robjects.Rdata")
 
 alpha1 = diversity_alpha_fun(data = data_decontam, output = "./plot_div_alpha/", column1 = "souche", column2 = "temps",
                     column3 = "", supcovs = "", measures = "Observed" )
 plotly::ggplotly(alpha1$plot) %>%
   layout(boxmode = "group")
+
+alpha1 = diversity_alpha_fun(data = data_decontam, output = "./plot_div_alpha/", column1 = "souche_temps",
+                      column3 = "", supcovs = "", measures = c("Observed", "Shannon") )
 
 
 beta1 = diversity_beta_light(psobj = data_decontam, rank = "ASV", col = "souche_temps", cov=NULL, dist0 = "bray", ord = "MDS")
@@ -58,13 +62,4 @@ phy2cyto_fun(data = data, output = "./cytoscape/", column1 = "souche_temps", rep
 
 plsda_fun(data = data, output = "./plsda/", column1 = "souche_temps", rank = "Species")
 
-ASVenn_fun(
-       data = data,
-       output = "./ASVenn/",
-       rank = "ASV",
-       column1 = "souche_temps",
-       subset = "",
-       lvls = "",
-       krona = "",
-       shared = TRUE
-     )
+test = ASVenn_fun(data = data, output = "./ASVenn/", rank = "ASV", column1 = "souche_temps",shared = TRUE)
