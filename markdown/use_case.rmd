@@ -21,19 +21,19 @@ library(DT)
 library(pander)
 devtools::load_all(".")
 ```
-We share this use case to show all features of `rANOMALY` packages that allow to highlight microbial community differences between groups of samples. `rANOMALY` main features are :
+We share this use case to show all features of `rANOMALY` package that allow to highlight microbial community differences between groups of samples. `rANOMALY` main features are :
 
-* ASV generation thanks to `dada2` algorithm
+* ASV (Amplpicon Sequence Variant) computation thanks to `dada2` algorithm
 
-* Taxonomic assignment thanks to `IDTAXA` from `DECIPHER` packages. `rANOMALY` allow to assign with up to 2 complementary reference database (eg. SILVA which is generalist, DAIRYdb which is specific to dairy environments), keep the best and more confident taxonomic assignment, check for taxonomy incongruency like empty fields and multiple ancestors.
+* Taxonomic assignment thanks to `IDTAXA` from `DECIPHER` package. `rANOMALY` allow to assign with up to 2 complementary reference databases (eg. SILVA which is generalist, DAIRYdb which is specific to dairy environments), keep the best and more confident taxonomic assignment, check for taxonomy incongruencies like empty fields or multiple ancestors.
 
-* `phyloseq` format to handle datas and downstream statistical analysis.
+* `phyloseq` format to handle data and downstream statistical analysis.
 
-* Decontamination step thanks to `decontam` package. `rANOMALY` allows to filter ASV (Amplicon Sequence Variant) dependings on ASV overall frequence (low abondance filter), and ASV prevalence (presence in 1 or more samples), specific filters like manual suppression of specific taxa are available to.
+* Decontamination step thanks to `decontam` package. `rANOMALY` allows to filter ASV depending on ASV overall frequency (low abundance filter), and ASV prevalence (presence in 1 or more samples), specific filters like manual suppression of specific taxa are available to.
 
-* Complete statistical analysis workflow: rarefaction curves, community composition plots, alpha/beta diversity analysis with associated statistical tests and multivariate analysis, and differential analysis using 3 three different methods (`metacoder`, `DESeq2`, `metagenomeSeq`).
+* Complete statistical analysis workflow: rarefaction curves, community composition plots, alpha/beta diversity analysis with associated statistical tests and multivariate analysis ; differential analysis using four different methods (`metacoder`, `DESeq2`, `metagenomeSeq`, `plsda`).
 
-* At each steps, plots and R objects are saved in folders to be able to relaunch the analysis and to export plots.
+* At each step, plots and R objects are returned in command line AND saved in folders to be able to relaunch the analysis and to export plots.
 
 
 # Help
@@ -44,9 +44,9 @@ Each function has a detailed help accessible in R via `?{function}`.
 
 The dataset can be downloaded via this [link](https://nextcloud.inrae.fr/s/Zx3iASe64x8oSoM).
 
-This tutorial assume that you have extracted all the read file in a folder named `reads` along with the `sample-metadata.csv` file.
+This tutorial assumes that you have extracted all the read file in a folder named `reads` along with the `sample-metadata.csv` file.
 
-We share a 24 samples test dataset extracted from rats feces at two different time (t0 & t50) and in two nutrition conditions. Rats were feeded with two strains of a particular bacteria (wild type & mutant). Also, extraction control sample (blank) are included too.
+We share a 24 DNA samples test dataset extracted from rats feces at two different time (t0 & t50) and in two nutrition conditions. Rats were fed with two strains of some bacteria (wild type & mutant). Also, extraction control sample (blank) are included.
 
 ```{r loading_metadata, warning = FALSE, message = TRUE}
 sm <- read.table("sample_metadata.csv", sep="\t",header=TRUE)
@@ -62,13 +62,13 @@ load("decontam_out/robjects.Rdata")
 ## ASV definition with DADA2
 
 The first step is the creation of ASVs thanks to the `dada2` package.
-In `rANOMALY`, only one function is needed to compute all the different steps require from this package. The function is designed to process illumina paired end sequences in fastq format.
+In `rANOMALY`, only one function is needed to compute all the different steps require from this package. The function is designed to process Illumina paired end sequences in fastq format.
 
 Sample names are extracted from the file name, from the beginning to the first underscore (_), so files must be formatted as followed :
 {sample-id1}_R1.fastq.gz
 {sample-id1}_R2.fastq.gz
 etc...
-Those must match the sample names stored in the sample metadata file.
+Those must match the sample names stored in `sample-metadata.csv` file.
 
 ```{r eval=FALSE}
 dada_res = dada2_fun(path="./reads", dadapool = "pseudo", compress=TRUE, plot=FALSE)
@@ -76,13 +76,13 @@ dada_res = dada2_fun(path="./reads", dadapool = "pseudo", compress=TRUE, plot=FA
 
 Main outputs:
 
-* `./dada2_out/read_tracking.csv` summarizes the read numbers after each filtering step.
+* `./dada2_out/read_tracking.csv` summarizes the read number after each filtering step.
 
-* `./dada2_out/raw_otu-table.csv` the raw ASV table
+* `./dada2_out/raw_otu-table.csv` the raw ASV table.
 
-* `./dada2_out/rep-seqs.fna`: fasta file with all representative sequences for each ASV
+* `./dada2_out/rep-seqs.fna`: fasta file with all representative sequences for each ASV.
 
-* `./dada2_out/robjects.Rdata` with saved dada_res list containing raw ASV table and representative sequences in objects `otu.table`, `seqtab.export` & `seqtab.nochim`.
+* `./dada2_out/robjects.Rdata` with saved `dada_res` list containing raw ASV table and representative sequences in objects `otu.table`, `seqtab.export` & `seqtab.nochim`.
 
 
 Read tracking table:
@@ -103,7 +103,7 @@ DT::datatable(read.table("dada2_out/read_tracking.csv",sep="\t",header=TRUE), fi
 
 ## Taxonomic assignment
 
-`assign_taxo_fun` function uses IDTAXA function from DECIPHER package, and allows to use 2 different databases. It keeps the best assignment on 2 criteria, resolution (depth in taxonomy assignment) and confidence. The final taxonomy is validated by multiple ancestors taxa and incongruity correction step.
+`assign_taxo_fun` function uses IDTAXA function from DECIPHER package, and allows to use 2 different databases. It keeps the best assignment on 2 criteria, resolution (depth in taxonomy assignment) and confidence. The final taxonomy is validated for multiple ancestors and incongruities correction step.
 
 We share the latest databases we use in the IDTAXA format in this [link](https://nextcloud.inrae.fr/s/YHi3fmDdEJt5cqR). You can also generate your own IDTAXA formatted database following those instructions and scripts we provide at  [this page](https://forgemia.inra.fr/umrf/ranomaly/-/wikis/idtaxa_db_proc).
 
@@ -168,7 +168,7 @@ The `decontam` package offers two main methods, frequency and prevalence (and th
 
 **Tips**: sequencing plateforms often quantify the DNA before sequencing, but do not automaticaly give the information. Just ask for it ;).
 
-Our function integrates the basics ASV frequency (nb_reads_ASV/nb_total_reads) and overall prevalence (nb_sample_ASV/nb_total_sample) filtering. We included an option to filter out ASV based on their taxa names (for known recurrent contaminants).
+Our function integrates the basic ASV frequency (nb_reads_ASV/nb_total_reads) and overall prevalence (nb_sample_ASV/nb_total_sample) filtering. We included an option to filter out ASV based on their taxa names (for known recurrent contaminants).
 
 ```{r eval=FALSE}
 data = decontam_fun(data = data, domain = "Bacteria", column = "type", ctrl_identifier = "control", spl_identifier = "sample", number = 100, krona= TRUE)
@@ -177,7 +177,7 @@ data = decontam_fun(data = data, domain = "Bacteria", column = "type", ctrl_iden
 Main outputs:
 - `robjects.Rdata` with contaminant filtered phyloseq object named `data`.
 - `Exclu_out.csv`  list of filtered ASVs for each filtering step.
-- Kronas plot before and after filtering.
+- Krona plot before and after filtering.
 - `raw_asv-table.csv` & `relative_asv-table.csv`.
 - `venndiag_filtering.png`.
 
@@ -190,7 +190,7 @@ We are currently developping a ShinyApp to visualize your data, sub-select your 
 
 ## Rarefaction curves
 
-In order to observe the sampling depth of each samples we start by plotting rarefactions curves. Those plots are generated by `plotly` which makes the plots interactive.
+In order to observe the sampling depth of each samples we start by plotting rarefactions curves. Those plots are generated by `plotly` which makes the plot interactive.
 
 ```{r rareproc, warning = FALSE, results='hide'}
 rareplot = rarefaction(data, "strain_time", 100 )
@@ -293,9 +293,9 @@ pander(alpha$Observed$wilcox_col2_collapsed)
 
 The `diversity_beta_fun` function is an exhaustive function allowing to generate all possible tests and ordination in one command.
 
-The `diversity_beta_light` function is equivalent to the first fonction but allows to generate specific tests and figures ready to publish in rmarkdown as in the example below. It is based on the vegan package function [`vegdist`](https://www.rdocumentation.org/packages/vegan/versions/2.4-2/topics/vegdist) for the distance calculation and [`ordinate`](https://www.rdocumentation.org/packages/phyloseq/versions/1.16.2/topics/ordinate) for the ordination plot.
+The `diversity_beta_light` function is equivalent to the first function but allows to generate specific tests and figures ready to publish in rmarkdown as in the example below. It is based on the vegan package function [`vegdist`](https://www.rdocumentation.org/packages/vegan/versions/2.4-2/topics/vegdist) for the distance calculation and [`ordinate`](https://www.rdocumentation.org/packages/phyloseq/versions/1.16.2/topics/ordinate) for the ordination plot.
 
-We include statiscal test to ease the interpretation of your results. Here we include permutational ANOVA to compare groups and test that the centroids and dispersion of the groups are equivalent for all groups. User can inform `col` and `cov` arguments to assess PERMANOVA to determine significant differences between groups (eg. factor "strain" here and covariable "time"). A pairwise-PERMANOVA is processed to determine which conditions are significantly different from another (based on p-value).
+We include statistical tests to ease the interpretation of your results. A permutational ANOVA to compare groups and test that centroids and dispersion of the groups are equivalent for all groups. User can inform `col` and `cov` arguments to assess PERMANOVA to determine significant differences between groups (eg. factor "strain" here and covariable "time"). A pairwise-PERMANOVA is processed to determine which condition is significantly different from another (based on p-value).
 
 As return, you will get an object that contains:
 
@@ -338,13 +338,13 @@ pander(beta_strain_time$pairwisepermanova)
 
 ## Differential analyses
 
-We choose three different methods to process differential analysis which is a key step of the workflow. The main advantage of the use of multiple methods is the cross validation of differentially abundant taxa between tested conditions.
+We choose three different methods to process differential analysis which is a key step of the workflow. The main advantage of the use of multiple methods is to cross validate differentially abundant taxa between tested conditions.
 
 ### Metacoder
 
-Metacoder is the most simple differential analysis tool of the three. Counts are normalized by total sum scaling to minimise the sample sequencing depth effect and metacoder use a Kruskal-Wallis test to determine significant difference between sample groups. The `metacoder_fun` function allows the user to choose the **taxonomic `rank`**, which factor to the test (`column1`), and a specific pairwise comparison (`comp`) to launch the differential analysis.
+Metacoder is the most simple differential analysis tool of the three. Counts are normalized by total sum scaling to minimize the sample sequencing depth effect and it uses a Kruskal-Wallis test to determine significant differences between sample groups. The `metacoder_fun` function allows the user to choose the **taxonomic `rank`**, which factor to the test (`column1`), and a specific pairwise comparison (`comp`) to launch the differential analysis.
 
-It also produces pretty graphical trees, representing the taxa present in both groups and coloring the branches depending on the group in which this taxa is more abundant. Two of those trees are produced, the raw one and the non significant features filtered one (p-value <= 0.05).
+It also produces pretty graphical trees, representing taxas present in both groups and coloring branches depending on the group in which this taxa is more abundant. Two of those trees are produced, the raw one and the non significant features filtered one (p-value <= 0.05).
 
 ```{r,warning = FALSE, message = FALSE,  fig.keep='all', fig.align='left', fig.width = 15, fig.height = 10, echo = TRUE, results = 'hide'}
 out1 = metacoder_fun(data = data, output = "./metacoder", column1 = "strain_time", rank = "Family", signif = TRUE, plottrees = TRUE, min ="10", comp = "wildtype_t50~mutant_t50,wildtype_t0~mutant_t0")
@@ -370,7 +370,7 @@ out1 = metacoder_fun(data = data, output = "./metacoder", column1 = "strain_time
 
 ### DESeq2
 
-DESeq2 is a widely used method, primarily for RNAseq applications, for assessing differentially expressed genes between controlled conditions. Its use for metabarcoding datas is sensibly the same. The `deseq2_fun` allows to process differential analysis as `metacoder_fun`, and users can choose the taxonomic rank, factor to test and which conditions to compare. DESeq2 algorithm uses negative binomial generalized linear models with VST normalization (Variance Stabilizing Transformation).
+DESeq2 is a widely used method, primarily for RNAseq applications, for assessing differentially expressed genes between controlled conditions. It use for metabarcoding datas is sensibly the same. The `deseq2_fun` allows to process differential analysis as `metacoder_fun`, and users can choose the taxonomic rank, factor to test and which conditions to compare. DESeq2 algorithm uses negative binomial generalized linear models with VST normalization (Variance Stabilizing Transformation).
 
 Main output is a list with :
 
@@ -389,7 +389,7 @@ DT::datatable(out2$wildtype_t50_vs_mutant_t50$table, filter = "top", options = l
 
 ### MetagenomeSeq
 
-MetagenomeSeq use a normalization method able to control for biases in measurements across taxonomics features and a mixture model taht implements a zero-inflated Gaussian distribution to account for varying depths of coverage. As `deseq2_fun`, `metagenomeseq_fun` returns table with statistics and plots with significant features for each comparison.
+MetagenomeSeq uses a normalization method able to control for biases in measurements across taxonomic features and a mixture model that implements a zero-inflated Gaussian distribution to account for varying depths of coverage. As `deseq2_fun`, `metagenomeseq_fun` returns a table with statistics and a plot with significant features for each comparison.
 
 
 ```{r,warning = FALSE, message = TRUE,  fig.keep='all', fig.align='left', echo = TRUE, results = "hide"}
@@ -404,7 +404,7 @@ DT::datatable(out3$wildtype_t50_vs_mutant_t50$table, filter = "top", options = l
 
 ### Aggregate methods
 
-The `aggregate_fun` function allows to merge the results from the three differential analysis methods used before, to obtain one unique table with all information of significant differentially abundant features.
+The `aggregate_fun` function allows to merge the results from the three differential analysis methods used before, to obtain one unique table with all informations of significant differentially abundant features.
 
 The generated table include the following informations :
 
@@ -416,13 +416,13 @@ The generated table include the following informations :
 
 * metagenomeSeq: differentially abundant with this method (0 no or 1 yes)
 
-* metacoder:differentialy abundant with this method (0 no or 1 yes)
+* metacoder: differentialy abundant with this method (0 no or 1 yes)
 
 * sumMethods: sum of methods in which feature is significant.
 
-* DESeqLFC: Log Fold Change value from DESeq2
+* DESeqLFC: Log Fold Change value as calculated in DESeq2
 
-* absDESeqLFC: absolute value of Log Fold Change value from DESeq2
+* absDESeqLFC: absolute value of Log Fold Change value as calculated in DESeq2
 
 * MeanRelAbcond1: Mean relative abundance in condition 1
 
@@ -454,9 +454,9 @@ Our PLS-DA/sparse PLS-DA analysis is based on the [mixOmics package](http://mixo
 
 - `splsda$plotIndiv` ordination plot from the sparse PLSDA analysis.
 
-- `loadings$comp{n}` all the loadings plots for each composant from the sPLSDA analysis. Loadings weights are displayed and colors correspond to the group in which each feature has its maximum mean value.  
+- `loadings$comp{n}` all the loadings plots for each component from the sPLSDA analysis. Loadings weights are displayed and colors correspond to the group in which each feature has its maximum mean value.  
 
-- `splda.loading_table` Loading of all taxas for each composant.
+- `splda.loading_table` Loading of all taxas for each component.
 
 - `splsda$plotArrow` arrow plot of samples.
 
@@ -490,7 +490,7 @@ knitr::include_graphics('plsda_family/splsda_loadings_strain_time_Family_comp4.p
 
 ## Heatmap
 
-`heatmap_fun` allows to plot relative abundance of more abundant taxas (20 by default). Use can choose which taxonomy rank to plot and the factor used to seprate plot.
+`heatmap_fun` allows to plot relative abundance of the top abundant taxas (20 by default). Users can choose which taxonomic rank to plot and the factor used to separate plots.
 
 ```{r heatmap, fig.align='center', results = "hide"}
 heatmap_plot = heatmap_fun(data = data, column1 = "strain_time", top = 20, output = "./plot_heatmap/", rank = "Species")
@@ -504,7 +504,7 @@ ggplotly(heatmap_plot)
 
 * Venn Diagram
 
-`ASVenn_fun` allows to define shared taxa between specific conditions (up to 5 conditions). It generates Venn Diagram and table informing presence of each ASV in each condition with taxonomy and sequence. Counts can be verified with this table. `rank` argument allows to generate output with upper taxonomy level taxas.
+`ASVenn_fun` allows to define shared taxa between specific conditions (up to 5 conditions). It generates a venn diagram and a table informing presence of each ASV in each condition with its taxonomy and sequence. Counts can be verified with this table. `rank` argument allows to generate output with desired taxonomic level.
 
 ```{r asvenn, results = "hide"}
 outvenn = ASVenn_fun(data = data,output = "./ASVenn/", rank = "ASV", column1 = "strain_time", shared = TRUE)
@@ -523,20 +523,20 @@ DT::datatable(outvenn$TABf, filter = "top", options = list(scrollX = TRUE))
 ```
 
 * Cytoscape
-`phy2cyto_fun` allows to generate input files for cytoscape which is usefull to vizualise shared taxa. You can see below an example of representation with Cytoscape on our data. Each nodes and arrows position and aesthetic can be easily modified. 
+`phy2cyto_fun` allows to generate input files (SIF format) for [Cytoscape](https://cytoscape.org/) which is useful to visualize shared taxa. You can see below an example of representation with Cytoscape on our test data. Each nodes and arrows position and aesthetic can be easily modified. 
 
-![](/home_pers/rifa/Images/cytoscape_anomaly.png)
+![](cytoscape/cytoscape_anomaly.png)
 
 
 
 ## Supplementary tools and features
 
-`csv2phyloseq_fun` allows to import the 4 files in tabulated format to generate phyloseq object ready to use with `rANOMALY`.
+`csv2phyloseq_fun` allows to import the 4 files (ASV, taxonomy, tree and sequences) in tabulated format to generate phyloseq object ready to use with `rANOMALY`.
 
-`assign_fasta_fun` is used to assign sequences from fasta files.
+`assign_fasta_fun` is used to assign sequences from any fasta files.
 
 `export_to_stamp_fun` allows you to generate input files for [STAMP](https://beikolab.cs.dal.ca/software/STAMP).
 
-`split_table_fun` allows to split the phyloseq object in multiple sub-object according to one column.
+`split_table_fun` allows to split the phyloseq object in multiple sub-object according to one factor (column).
 
 `update_metadata_fun` allows you to easily modify `sample_data` part of the phyloseq object.
