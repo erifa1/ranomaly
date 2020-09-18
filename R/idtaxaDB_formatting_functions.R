@@ -277,7 +277,11 @@ taxid_fun <- function(taxtable = taxtable, output = "./taxid.txt"){
 idtaxa_traindb <- function(taxtable = taxtable, taxid = taxid, seqs = "", outputDIR = "./",
                            outputDBname = "newDB.rdata", returnval = FALSE){
 
-  dna <- readDNAStringSet(seqs)
+   if(class(seqs) == "DNAStringSet" | class(seqs) == "RNAStringSet"){
+     dna = seqs
+   } else {
+     dna <- readDNAStringSet(seqs)
+   }
 
   if( any(rownames(taxtable) != names(dna)) ){
     stop("sequence IDS and taxonomy IDS do not exactly match... Check IDS and order.")

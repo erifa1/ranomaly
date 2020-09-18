@@ -279,7 +279,12 @@ decontam_fun <- function(data = data, domain = TRUE, output = "./decontam_out/",
   data <- dataKeep
   #NUMBER OF READS in samples
   flog.info(paste('Filtering samples with less than ',number,' reads...',sep=''))
-  flog.info(sample_data(prune_samples(sample_sums(data) < number, data))$sample.id)
+  save(list = ls(all.names = TRUE), file = "decontam_debug.rdata", envir = environment())
+  if(all(sample_sums(data) < number) == FALSE){
+    flog.info("No sample removed")
+  }else{
+    flog.info(sample_data(prune_samples(sample_sums(data) < number, data))$sample.id)
+  }
   data <- prune_samples(sample_sums(data) > number, data)
   flog.info('Done.')
   flog.info(paste("AFTER FILTERING: ",nsamples(data), "samples and", ntaxa(data),"ASVs in otu table") )

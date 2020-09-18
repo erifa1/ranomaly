@@ -10,7 +10,7 @@ ASVenn_fun(
   rank = "ASV",
   column1 = NULL,
   subset = "",
-  lvls = "",
+  lvls = NULL,
   krona = "",
   shared = TRUE
 )
@@ -33,7 +33,7 @@ ASVenn_fun(
 \item{shared}{shared [TRUE] or exclusive [FALSE] mode.}
 }
 \value{
-Export a venn diagram with corresponding tabulated file.
+Returns list with venn diagram and table with shared features. Exports a venn diagram with corresponding tabulated file.
 }
 \description{
 Function to create Venn Diagram of shared features

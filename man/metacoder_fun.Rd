@@ -39,7 +39,7 @@ metacoder_fun(
 \item{verbose}{Set to 3 for debug.}
 }
 \value{
-Export plots and CSV file listing significant differentialy abundant ASVs.
+Returns list with table of features and heattree plots for each comparison. Exports plots and CSV file listing significant differentialy abundant ASVs.
 }
 \description{
 Metacoder Differential Analysis wrapper.

@@ -27,7 +27,7 @@ metagenomeseq_fun(
 \item{comp}{Comma separated list of comparison to test. Comparisons are informed with a tilde (A~C,A~B,B~C). If empty, test all combination}
 }
 \value{
-Export CSV files with significant differentialy abondant ASV.
+Returns list with table of features and plots for each comparison. Export CSV files with significant differentialy abondant ASV.
 }
 \description{
 MEtaGenomeSeq Differential Analysis function.

@@ -16,6 +16,7 @@ dada2_fun(
   plot = FALSE,
   compress = FALSE,
   verbose = 1,
+  torrent_single = FALSE,
   returnval = TRUE
 )
 }
@@ -39,6 +40,8 @@ dada2_fun(
 \item{compress}{Reads files are compressed (.gz)}
 
 \item{verbose}{Verbose level. (1: quiet, 3: verbal)}
+
+\item{torrent_single}{Boolean to choose between Illumina Paired End SOP or Torrent Single End SOP. default: FALSE}
 
 \item{returnval}{Boolean to return values in console or not.}
 

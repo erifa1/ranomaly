@@ -3,6 +3,11 @@ devtools::load_all("~/home-local-ssd/repository/ranomaly/")
 
 dada_res = dada2_fun(path="~/home-local-ssd/projets/anomaly/reads_celine_anomaly", dadapool = "pseudo", compress=TRUE, plot=FALSE)
 
+#Torrent version
+dada_res = dada2_fun(path="./reads/", dadapool = "pseudo", compress=TRUE, plot=FALSE, torrent_single = TRUE)
+
+
+
 tax.table = assign_taxo_fun(dada_res = dada_res, id_db = "~/home-local-ssd/bank/SILVA_SSU_r132_March2018.RData" )
 
 tax.table = assign_taxo_fun(dada_res = dada_res, id_db = "~/home-local-ssd/bank/SILVA_SSU_r132_March2018.RData", output = "./idtaxa_debug/" , verbose = 3 )

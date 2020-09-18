@@ -3,6 +3,7 @@
 #' @param data a phyloseq object (output from decontam or generate_phyloseq)
 #' @param col The metadata column name you want to split the graph.
 #' @param step The number of steps you want your rarefaction plots to be done.
+#' @param ggplotly Output ggplotly version if TRUE.
 #'
 #' @return A plotly graph.
 #'
@@ -12,10 +13,15 @@
 #' @export
 
 
-rarefaction <- function(data = data, col = NULL, step = 100){
+rarefaction <- function(data = data, col = NULL, step = 100, ggplotly = TRUE){
   plot_rare <- ggrare(data, step = step, color = col, plot = FALSE)
-  plot_rare <- plot_rare + facet_wrap(col, ncol = 4) + theme_bw()
-  return(ggplotly(plot_rare))
+  plot_rare <- plot_rare + facet_wrap(col, ncol = 4) + theme_bw() +
+              theme(axis.text.x = element_text(angle = 45)) + theme(legend.position = "none")
+  if(ggplotly){
+    return(ggplotly(plot_rare))
+  }else{
+    return(plot_rare)
+  }
 }
 
 

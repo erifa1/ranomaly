@@ -4,7 +4,7 @@
 \alias{rarefaction}
 \title{Rarefaction plotly}
 \usage{
-rarefaction(data = data, col = NULL, step = 100)
+rarefaction(data = data, col = NULL, step = 100, ggplotly = TRUE)
 }
 \arguments{
 \item{data}{a phyloseq object (output from decontam or generate_phyloseq)}
@@ -12,6 +12,8 @@ rarefaction(data = data, col = NULL, step = 100)
 \item{col}{The metadata column name you want to split the graph.}
 
 \item{step}{The number of steps you want your rarefaction plots to be done.}
+
+\item{ggplotly}{Output ggplotly version if TRUE.}
 }
 \value{
 A plotly graph.
