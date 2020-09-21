@@ -16,7 +16,7 @@
 rarefaction <- function(data = data, col = NULL, step = 100, ggplotly = TRUE){
   plot_rare <- ggrare(data, step = step, color = col, plot = FALSE)
   plot_rare <- plot_rare + facet_wrap(col, ncol = 4) + theme_bw() +
-              theme(axis.text.x = element_text(angle = 45)) + theme(legend.position = "none")
+              theme(axis.text.x = element_text(angle = 45, hjust=1)) + theme(legend.position = "none")
   if(ggplotly){
     return(ggplotly(plot_rare))
   }else{

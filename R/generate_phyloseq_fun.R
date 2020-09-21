@@ -24,7 +24,7 @@
 
 # Generate Phyloseq
 
-generate_phyloseq_fun <- function(dada_res = dada_res, tax.table = tax.table, tree = tree, metadata = "",
+generate_phyloseq_fun <- function(dada_res = dada_res, tax.table = tax.table, tree = NULL, metadata = "",
                                   output = "./phyloseq/", verbose = 1, returnval = TRUE){
 
 

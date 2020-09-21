@@ -15,7 +15,7 @@ alphaPlot <- function(data = data, col1 = "", col2 = "", measures = c("Shannon")
   }
   p$layers <- p$layers[-1]
   p <- p + ggtitle('Alpha diversity indexes') +  geom_boxplot(alpha = 1, outlier.shape = NA) +
-    theme_bw() + theme(axis.text.x = element_text(angle = 45)) + theme(legend.position = "none")
+    theme_bw() + theme(axis.text.x = element_text(angle = 45, hjust=1)) + theme(legend.position = "none")
   flog.info('Done.')
   return(p)
 }

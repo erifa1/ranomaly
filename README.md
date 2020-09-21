@@ -35,7 +35,7 @@ installation.
 ## Tutorial
 
 Visit [the rANOMALY
-wikipage](https://forgemia.inra.fr/umrf/ranomaly/-/wikis/rANOMALY-wiki)
+wikipage](https://forgemia.inra.fr/umrf/ranomaly/-/wikis/home)
 
 ## Ressources
 
