@@ -346,7 +346,7 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
 
 
     out <- filterAndTrim(fwd = fnFs, filt = filtFs, maxN = 0, multithread = TRUE, verbose=TRUE, rm.phix = TRUE,
-      , maxEE = 2 , minLen = 280, compress=TRUE, trimLeft=20, trimRight = 20)
+      , maxEE = 5 , minLen = 280, compress=TRUE, trimLeft=20, trimRight = 20)
     row.names(out) = sample.names
 
     flog.info('Learning error model...')

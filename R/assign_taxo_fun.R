@@ -143,7 +143,7 @@ assign_taxo_fun <- function(dada_res = dada_res,  output = "./idtaxa/", id_db = 
       taxid[[nn]] = taxid[[nn]][1:7]
     }
   }
-  FeatNames = colnames(taxid)
+  FeatNames = colnames(taxid); if(is.null(FeatNames)){FeatNames = names(taxid)}
   taxid <- t(as.data.frame(taxid))
   row.names(taxid) = FeatNames
   flog.info('Done.')
