@@ -266,11 +266,11 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
     }
   } else {
     print("< 5 levels")
-    print(lengnth(TF))
+    print(length(TF))
     res1 = VENNFUN(TF = TF)
   }
 
   flog.info('End ...')
-save(list = ls(all.names = TRUE), file = "debug_asvenn.rdata", envir = environment())
+#save(list = ls(all.names = TRUE), file = "debug_asvenn.rdata", envir = environment())
   return(res1)
 }
