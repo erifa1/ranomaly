@@ -540,3 +540,9 @@ DT::datatable(outvenn$TABf, filter = "top", options = list(scrollX = TRUE))
 `split_table_fun` allows to split the phyloseq object in multiple sub-object according to one factor (column).
 
 `update_metadata_fun` allows you to easily modify `sample_data` part of the phyloseq object.
+
+# R Session info
+
+```{r}
+sessionInfo()
+```
