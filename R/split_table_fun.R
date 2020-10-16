@@ -14,12 +14,9 @@
 # Decontam Function
 
 split_table_fun <- function(data = data, output = "./", column1 = ""){
-
-  print(data)
   vector <- levels(as.factor( data.frame(sample_data(data)[,column1])[,1]) )
-  print(vector)
-
   data_tmp <- data
+  obj <- list()
   for (var in vector){
     data <- data_tmp
     fun <- paste('data <- subset_samples(data, ',column1,'=="',var,'")',sep='')
@@ -31,9 +28,8 @@ split_table_fun <- function(data = data, output = "./", column1 = ""){
     save(data, file=paste(output,'/split_',column1,'_',var,'/robjects.Rdata',sep=''))
     taxa.string <- apply(tax_table(data), 1, paste, collapse = ";")
     write.table(cbind(otu_table(data),"Consensus Lineage" = taxa.string),paste(output,'split_',column1,'_',var,"/raw_otu-table.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
-
+    fun <- glue('obj${var} <- data')
+    eval(parse(text=fun))
   }
-
-
-
+  return(obj)
 }
