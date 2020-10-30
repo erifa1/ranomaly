@@ -10,7 +10,9 @@ bars_fun(
   top = 10,
   Ord1 = NULL,
   Fact1 = NULL,
-  relative = TRUE
+  relative = TRUE,
+  outpath = "./",
+  outfile = "plot_compo.html"
 )
 }
 \arguments{
@@ -26,7 +28,9 @@ bars_fun(
 
 \item{relative}{Plot relative (TRUE, default) or raw abundance plot (FALSE)}
 
-\item{output}{Output directory}
+\item{outpath}{Output directory}
+
+\item{outfile}{Output file name}
 }
 \value{
 Exports barplots in an interactive plotly community plot

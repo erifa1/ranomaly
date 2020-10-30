@@ -34,7 +34,8 @@ rarefaction <- function(data = data, col = NULL, step = 100, ggplotly = TRUE){
 #' @param Ord1 Variable used to order sample (X axis)
 #' @param Fact1 Variable used to change X axis tick labels and color
 #' @param relative Plot relative (TRUE, default) or raw abundance plot (FALSE)
-#' @param output Output directory
+#' @param outpath Output directory
+#' @param outfile Output file name
 #'
 #' @return Exports barplots in an interactive plotly community plot
 #'
@@ -48,7 +49,7 @@ rarefaction <- function(data = data, col = NULL, step = 100, ggplotly = TRUE){
 #' @export
 
 
-bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 = NULL, relative = TRUE){
+bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 = NULL, relative = TRUE, outpath = "./", outfile="plot_compo.html"){
 
     # Fdata <- prune_samples(sample_names(r$data16S())[r$rowselect()], r$data16S())
     # Fdata <- prune_taxa(taxa_sums(Fdata) > 0, Fdata)
@@ -76,7 +77,7 @@ bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 =
     LL=list()
     # print(head(meltdat))
     # print(levels(meltdat$sample.id))
-
+    save(list = ls(all.names = TRUE), file = "debug.rdata", envir = environment())
     fun = glue( "xform <- list(categoryorder = 'array',
                     categoryarray = unique(meltdat$sample.id[order(meltdat${Ord1})]),
                     title = 'Samples',
@@ -125,6 +126,8 @@ if(relative){
   p1 <- subplot(p1, subp1, nrows = 2, shareX = T, heights=c(0.95,0.05)) %>%
     layout(xaxis = xform)
 }
+
+htmlwidgets::saveWidget(p1, glue::glue("{outpath}/{outfile}"))
 
 return(p1)
 

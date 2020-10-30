@@ -7,7 +7,7 @@
 generate_phyloseq_fun(
   dada_res = dada_res,
   tax.table = tax.table,
-  tree = tree,
+  tree = NULL,
   metadata = "",
   output = "./phyloseq/",
   verbose = 1,

@@ -27,9 +27,9 @@ dada2_fun(
 
 \item{outpath}{output .Rdata file name}
 
-\item{f_trunclen}{Forward read tuncate}
+\item{f_trunclen}{Forward read tuncate length (only for paired end 16S)}
 
-\item{r_trunclen}{Reverse read tuncate length}
+\item{r_trunclen}{Reverse read tuncate length (only for paired end 16S)}
 
 \item{f_primer}{Forward primer sequence (only for ITS)}
 

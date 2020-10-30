@@ -6,8 +6,8 @@
 #' @param path Read files folder path
 #' @param outpath output .Rdata file name
 #' @param pool option for dada function (FALSE, TRUE or "pseudo"), default is "pseudo". See ? dada.
-#' @param f_trunclen Forward read tuncate
-#' @param r_trunclen Reverse read tuncate length
+#' @param f_trunclen Forward read tuncate length (only for paired end 16S)
+#' @param r_trunclen Reverse read tuncate length (only for paired end 16S)
 #' @param f_primer Forward primer sequence (only for ITS)
 #' @param r_primer Reverse primer sequence (only for ITS)
 #' @param plot Plot all test or not
@@ -368,7 +368,12 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
 
 
     flog.info('Dereplicating fastq...')
-    filtFs <- sort(list.files(file.path(path, "filtered/"), pattern = ".fastq.gz$", full.names = TRUE))
+    if(compress){
+      filtFs <- sort(list.files(file.path(path, "filtered/"), pattern = ".fastq.gz$", full.names = TRUE))
+    }else{
+      filtFs <- sort(list.files(file.path(path, "filtered/"), pattern = ".fastq$", full.names = TRUE))
+    }
+
     names(filtFs) <- sample.names
     derepFs <- derepFastq(filtFs, verbose=TRUE)
     flog.info('Done.')
