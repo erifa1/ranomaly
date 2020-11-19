@@ -30,7 +30,6 @@ csv2phyloseq_fun <- function(otutable = NULL, taxtable = NULL, seq = NULL, metad
   stable <- read.table(seq, sep="\t", h=TRUE)
   sequences1 = DNAStringSet(stable[,-1])
   names(sequences1)=stable[,1]
-  save.image("debug.rdata")
 
 
   if(generateTree){

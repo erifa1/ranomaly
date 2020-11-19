@@ -30,7 +30,7 @@ phy2tsv_fun <- function(data = data, output = "./tsv_table/", rank = "ASV"){
     data_genus <- tax_glom(data, rank)
     ttable <- data_genus@tax_table@.Data
     otable <- as.data.frame(otu_table(data_genus))
-    # refseq1 <- as.data.frame(refseq(data_genus)); names(refseq1)="seq"
+    refseq1 <- as.data.frame(refseq(data_genus)); names(refseq1)="seq"
   }else{
     if(rank=="ASV"){
       flog.info(paste('ASV ...'))

@@ -34,8 +34,7 @@ rarefaction <- function(data = data, col = NULL, step = 100, ggplotly = TRUE){
 #' @param Ord1 Variable used to order sample (X axis)
 #' @param Fact1 Variable used to change X axis tick labels and color
 #' @param relative Plot relative (TRUE, default) or raw abundance plot (FALSE)
-#' @param outpath Output directory
-#' @param outfile Output file name
+#' @param outfile Output file name (absolute path)
 #'
 #' @return Exports barplots in an interactive plotly community plot
 #'
@@ -49,7 +48,7 @@ rarefaction <- function(data = data, col = NULL, step = 100, ggplotly = TRUE){
 #' @export
 
 
-bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 = NULL, relative = TRUE, outpath = "./", outfile="plot_compo.html"){
+bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 = NULL, relative = TRUE, outfile="plot_compo.html"){
 
     # Fdata <- prune_samples(sample_names(r$data16S())[r$rowselect()], r$data16S())
     # Fdata <- prune_taxa(taxa_sums(Fdata) > 0, Fdata)
@@ -77,7 +76,10 @@ bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 =
     LL=list()
     # print(head(meltdat))
     # print(levels(meltdat$sample.id))
-    save(list = ls(all.names = TRUE), file = "debug.rdata", envir = environment())
+    # save(list = ls(all.names = TRUE), file = "debug.rdata", envir = environment())
+
+    # TODO: Message d'erreur si factor n'est pas dans les sample_data
+
     fun = glue( "xform <- list(categoryorder = 'array',
                     categoryarray = unique(meltdat$sample.id[order(meltdat${Ord1})]),
                     title = 'Samples',
@@ -92,7 +94,6 @@ bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 =
     df1 <- cbind.data.frame(x=sdata[unique(meltdat$sample.id[order(meltdat[,Ord1])]), "sample.id"]@.Data[[1]],
                             g=sdata[unique(meltdat$sample.id[order(meltdat[,Ord1])]), Fact1]@.Data[[1]],
                             y=1)
-
     subp1 <- df1 %>% plot_ly(
       type = 'bar',
       x = ~x,
@@ -127,7 +128,9 @@ if(relative){
     layout(xaxis = xform)
 }
 
-htmlwidgets::saveWidget(p1, glue::glue("{outpath}/{outfile}"))
+# dir.create(outpath, recursive = TRUE)
+# htmlwidgets::saveWidget(p1, glue::glue("{outpath}/{outfile}"))
+htmlwidgets::saveWidget(p1, outfile)
 
 return(p1)
 
