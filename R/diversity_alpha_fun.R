@@ -6,6 +6,7 @@
 #'
 #' @return A plot.
 #'
+
 alphaPlot <- function(data = data, col1 = "", col2 = "", measures = c("Shannon")) {
   flog.info('Plotting ...')
   if(col2 == ''){
@@ -50,16 +51,22 @@ alphaPlotly <- function(data=data, alpha=alpha, col1='', col2='', measures=c("Sh
 #' @import ggplot2
 #' @importFrom nlme lme
 #' @importFrom glue glue
-#'
+#' @import futile.logger
 #' @export
 
 
 # Decontam Function
 
 diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", column1 = "", column2 = "",
-                                column3 = "", supcovs = "", measures = c("Observed","Shannon","Simpson","InvSimpson")){
+                                column3 = "", supcovs = "", measures = c("Observed","Shannon","Simpson","InvSimpson"), verbose = 1){
   if(!dir.exists(output)){
     dir.create(output, recursive=TRUE)
+  }
+
+  if(verbose == 3){
+    invisible(flog.threshold(DEBUG))
+  } else {
+    invisible(flog.threshold(INFO))
   }
 
   if(column1 == ""){
@@ -106,7 +113,7 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
     if(length(levels(as.factor(anova_data[,column1])))>1){
       flog.info('ANOVA ...')
       # variables <- paste(sep=" + ", "Depth", var1)
-      sink(paste(output,'/all_ANOVA.txt', sep=''), split = FALSE)
+      # sink(paste(output,'/all_ANOVA.txt', sep=''), split = FALSE)
 
       for (m in measures){
         flog.info(paste("\n\n############\n",m,"\n############\n"))
@@ -130,13 +137,12 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
         }
 
         flog.info("############\nANOVA + pairwise wilcox test\n")
-        flog.debug(f)
+        flog.debug(paste0('Formula: ',f))
         anova_res1 <- aov( as.formula(paste(f)), anova_data)
-        # print(anova_data)
-        # write.table(anova_data, paste(output,"/anovatable.csv", sep=""), sep="\t", row.names=FALSE)
-        # print(anova_res1)
-        anova <- summary(anova_res1)
-
+        print(anova_data)
+        print(anova_res1)
+        # anova <- summary(anova_res1)
+        # stop()
         # # post hoc test  commented du to conflict between LSD.test() and DESeq() function. #' @importFrom agricolae LSD.test
         # cat("############\npost hoc LSD.test\n")
         # if(column2 == ''){
@@ -155,7 +161,8 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
         # print(round(wilcox_res1$p.value,3))
         wilcox_col1 <- round(wilcox_res1$p.value,3)
         fun <- glue("resAlpha[[\"{m}\"]] <- list(anova = anova, wilcox_col1 = wilcox_col1)")
-        print(fun)
+        write.table(wilcox_col1, paste(output,"/anovatable.csv", sep=""), sep="\t", row.names=FALSE)
+        # print(fun)
         eval(parse(text=fun))
 
         if(column2 != ''){
@@ -174,13 +181,13 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
         }
         if(column3 != ''){
           cat("\n############\nANOVA repeated measures\n")
-          print(paste(f,"+ Error(",column3,")"))
+          # print(paste(f,"+ Error(",column3,")"))
           anova_res <- aov( as.formula(paste(f,"+ Error(",column3,")")), anova_data)
           res <- summary(anova_res)
           anovarepeat = res
 
           cat("\n############\nMixed effects models (nlme::lme)\n")
-          print(paste("lme1 = anova(lme(as.formula(",f,"), random = ~1 | ",column3,", data = anova_data, method = 'ML') )", sep=""))
+          # print(paste("lme1 = anova(lme(as.formula(",f,"), random = ~1 | ",column3,", data = anova_data, method = 'ML') )", sep=""))
           fun <- paste( "lme1 = anova(lme(as.formula(",f,"), random = ~1 | ",column3,", data = anova_data, method = 'ML') ) ", sep="")
           eval(parse(text=fun))
 
@@ -189,7 +196,7 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
           eval(parse(text=fun))
         }
       }
-      sink()
+      # sink()
 
     }else{flog.info('Factor with less than 2 levels, no test ...'); print(levels(as.factor(anova_data[,column1])))}
     flog.info('Done.')

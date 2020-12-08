@@ -15,6 +15,7 @@
 #' @param verbose Verbose level. (1: quiet, 3: verbal)
 #' @param torrent_single Boolean to choose between Illumina Paired End SOP or Torrent Single End SOP. default: FALSE
 #' @param returnval Boolean to return values in console or not.
+#' @param paired Boolean for Illumina Paired End Reads.
 #'
 #' @return Return raw otu table in phyloseq object and export it in an Rdata file.
 #'
@@ -33,7 +34,7 @@
 
 dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_trunclen = 240, r_trunclen = 240, dadapool = "pseudo",
                       f_primer = "GCATCGATGAAGAACGCAGC", r_primer = "TCCTCCGCTTWTTGWTWTGC", plot = FALSE, compress = FALSE, verbose = 1,
-                      torrent_single = FALSE,returnval = TRUE){
+                      torrent_single = FALSE,returnval = TRUE, paired = TRUE){
 
   if(verbose == 3){
     invisible(flog.threshold(DEBUG))
@@ -50,7 +51,7 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
   }
   flog.info('Done.')
 
-  if(torrent_single == FALSE){
+  if(paired == TRUE){
     flog.info('###ILLUMINA PAIRED END SOP')
 
     if(compress==TRUE){
@@ -94,8 +95,8 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
       fnFs.filtN <- file.path(path, "filtN", basename(fnFs)) # Put N-filterd files in filtN/ subdirectory
       fnRs.filtN <- file.path(path, "filtN", basename(fnRs))
 
-      print(fnFs.filtN)
-      print(fnRs.filtN)
+      # print(fnFs.filtN)
+      # print(fnRs.filtN)
 
       flog.info('filterAndTrim...')
       # if(! dir.exists(paste(path,'/filtN',sep=''))){
@@ -217,18 +218,6 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
       names(filtFs) <- sample.names
       names(filtRs) <- sample.names
 
-      # print(head(fnFs))
-      # print(head(fnRs))
-      # print(head(filtFs))
-      # print(head(filtRs))
-      #
-      # print(head(f_trunclen))
-      # print(head(r_trunclen))
-      #
-      # print(compress)
-
-      # -------------------------------------------------------------------------
-
 
       flog.info('Filtering reads...')
 
@@ -252,7 +241,7 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
       flog.info('Plotting 2 ...')
       pf2 <- plotErrors(errF, nominalQ=TRUE)
       pr2 <- plotErrors(errR, nominalQ=TRUE)
-      print("plotOK")
+      # print("plotOK")
       ggsave(paste(outpath,'/err_plot_f.png',sep=''), plot=pf2)
       ggsave(paste(outpath,'/err_plot_f.png',sep=''), plot=pr2)
       flog.info('Done.')
@@ -325,7 +314,7 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
 
 
   }else{
-    flog.info('### TORRENT SINGLE END SOP')
+    flog.info('### SINGLE END SOP')
 
     if(compress==TRUE){
       fnFs <- sort(list.files(path, pattern = ".fastq.gz", full.names = TRUE))
@@ -356,7 +345,6 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
     if(plot){
       flog.info('Plotting 2 ...')
       pf2 <- plotErrors(errF, nominalQ=TRUE)
-      print("plotOK")
       ggsave(paste(outpath,'/err_plot_f.png',sep=''), plot=pf2)
       flog.info('Done.')
     }
@@ -368,13 +356,23 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
 
 
     flog.info('Dereplicating fastq...')
-    filtFs <- sort(list.files(file.path(path, "filtered/"), pattern = ".fastq.gz$", full.names = TRUE))
+    if(compress==TRUE){
+      filtFs <- sort(list.files(file.path(path, "filtered/"), pattern = ".fastq.gz$", full.names = TRUE))
+    } else{
+      filtFs <- sort(list.files(file.path(path, "filtered/"), pattern = ".fastq$", full.names = TRUE))
+    }
+
     names(filtFs) <- sample.names
     derepFs <- derepFastq(filtFs, verbose=TRUE)
     flog.info('Done.')
 
     flog.info('dada2...')
-    dadaFs <- dada(derepFs, err=errF, multithread=TRUE, pool="pseudo", selfConsist=FALSE, HOMOPOLYMER_GAP_PENALTY=-1, BAND_SIZE=32)
+    if(torrent_single == TRUE){
+      dadaFs <- dada(derepFs, err=errF, multithread=TRUE, pool=dadapool, selfConsist=FALSE, HOMOPOLYMER_GAP_PENALTY=-1, BAND_SIZE=32)
+    }
+    else{
+      dadaFs <- dada(derepFs, err=errF, multithread=TRUE, pool=dadapool, selfConsist=FALSE)
+    }
     stockFs <- sapply(dadaFs, getN)
     flog.info('Done.')
 
@@ -384,7 +382,7 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
     seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
 
     nn = row.names(out)
-    print(rownames(stockFs))
+
 
     # seqtab.nochim = rename_rownames(seqtab.nochim)
 

@@ -38,7 +38,7 @@
 
 # Decontam Function
 
-decontam_fun <- function(data = data, domain = TRUE, output = "./decontam_out/", number = 4000, prev = 2, freq = 0.00005,
+decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_out/", number = 4000, prev = 2, freq = 0.00005,
                          column = "", ctrl_identifier = "control", spl_identifier = "sample", batch = NULL, plot = FALSE,
                          method = "prevalence", threshold = 0.1, concentration = NULL, verbose = 1, unassigned = FALSE,
                          skip = FALSE, manual_cont_rank = "Genus", manual_cont = NULL, krona = FALSE, returnval=TRUE){

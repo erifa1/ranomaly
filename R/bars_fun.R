@@ -34,10 +34,8 @@ rarefaction <- function(data = data, col = NULL, step = 100, ggplotly = TRUE){
 #' @param Ord1 Variable used to order sample (X axis)
 #' @param Fact1 Variable used to change X axis tick labels and color
 #' @param relative Plot relative (TRUE, default) or raw abundance plot (FALSE)
-#' @param output Output directory
 #'
-#' @return Exports barplots in an interactive plotly community plot
-#'
+#' @return Returns barplots in an interactive plotly community plot
 #'
 #' @import plotly
 #' @importFrom microbiome aggregate_top_taxa
@@ -83,7 +81,7 @@ bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 =
                     tickmode = 'array',
                     tickvals = 0:nrow(sdata),
                     ticktext = sdata[unique(meltdat$sample.id[order(meltdat${Ord1})]), '{Fact1}']@.Data[[1]],
-                    tickangle = -45)")
+                    tickangle = -90)")
     eval(parse(text=fun))
 
     # subplot to vizualize groups
@@ -113,17 +111,17 @@ if(relative){
   meltdat$variable = factor(meltdat$variable, levels= c("Other", tt[tt!="Other"]))
 
   p1=plot_ly(meltdat, x = ~sample.id, y = ~value, type = 'bar', name = ~variable, color = ~variable) %>% #, color = ~variable
-    layout(title="Relative abundance", yaxis = list(title = 'Relative abundance'), xaxis = xform, barmode = 'stack')
+    layout(title="Relative abundance", yaxis = list(title = 'Relative abundance'), xaxis = xform, barmode = 'stack', widh = 1500)
 
   p1 <- subplot(p1, subp1, nrows = 2, shareX = T, heights=c(0.95,0.05)) %>%
-    layout(xaxis = xform)
+    layout(xaxis = xform, widh = 1500)
 }else{
   #raw abundance
   p1=plot_ly(meltdat, x = ~sample.id, y = ~value, type = 'bar', name = ~variable, color = ~variable) %>% #, color = ~variable
-    layout(title="Raw abundance", yaxis = list(title = 'Raw abundance'), xaxis = xform, barmode = 'stack')
+    layout(title="Raw abundance", yaxis = list(title = 'Raw abundance'), xaxis = xform, barmode = 'stack', widh = 1500)
 
   p1 <- subplot(p1, subp1, nrows = 2, shareX = T, heights=c(0.95,0.05)) %>%
-    layout(xaxis = xform)
+    layout(xaxis = xform, widh = 1500)
 }
 
 return(p1)

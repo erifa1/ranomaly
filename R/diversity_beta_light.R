@@ -90,7 +90,7 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
     }
 
     write.table(resBC$aov.tab, file=paste0(output,'/',col,'_permANOVA.txt'), sep="\t")
-    write.table(resBC2$aov.tab, file=paste0(output,'/',col,'pairwisepermANOVA.txt'), sep="\t")
+    write.table(resBC2, file=paste0(output,'/',col,'pairwisepermANOVA.txt'), sep="\t")
 
     resBeta$permanova = resBC$aov.tab
     resBeta$pairwisepermanova = resBC2
