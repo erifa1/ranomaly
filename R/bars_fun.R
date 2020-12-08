@@ -130,7 +130,9 @@ if(relative){
 
 # dir.create(outpath, recursive = TRUE)
 # htmlwidgets::saveWidget(p1, glue::glue("{outpath}/{outfile}"))
-htmlwidgets::saveWidget(p1, outfile)
+if(!is.null(outfile)){
+  htmlwidgets::saveWidget(p1, outfile)
+}
 
 return(p1)
 

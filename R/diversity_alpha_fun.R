@@ -43,6 +43,7 @@ alphaPlotly <- function(data=data, alpha=alpha, col1='', col2='', measures=c("Sh
 #' @param column3 Column name of subjects in case of repeated mesures (mixed model)
 #' @param supcovs One or more supplementary covariables to test in anova (provided as comma separated vector)
 #' @param measures Diversity indices (provided as comma separated vector)
+#' @param verbose Boolean
 #'
 #' @return Return plots and tests as list and export them in the output directory.
 #'
@@ -57,7 +58,14 @@ alphaPlotly <- function(data=data, alpha=alpha, col1='', col2='', measures=c("Sh
 # Decontam Function
 
 diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", column1 = "", column2 = "",
-                                column3 = "", supcovs = "", measures = c("Observed","Shannon","Simpson","InvSimpson")){
+                                column3 = "", supcovs = "", measures = c("Observed","Shannon","Simpson","InvSimpson"), verbose = TRUE){
+  if(verbose){
+    invisible(flog.threshold(INFO))
+  } else {
+    invisible(flog.threshold(ERROR))
+  }
+
+
   if(!dir.exists(output)){
     dir.create(output, recursive=TRUE)
   }
@@ -103,7 +111,7 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
 
     anova_data <- cbind(sample_data(data), resAlpha$alphatable)
     anova_data$Depth <- sample_sums(data)
-    if(length(levels(as.factor(anova_data[,column1])))>1){
+    if(length(levels(as.factor(anova_data[,column1])))>1 & mean(table(anova_data[,column1])) != 1 ){
       flog.info('ANOVA ...')
       # variables <- paste(sep=" + ", "Depth", var1)
       sink(paste(output,'/all_ANOVA.txt', sep=''), split = FALSE)
@@ -191,7 +199,7 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
       }
       sink()
 
-    }else{flog.info('Factor with less than 2 levels, no test ...'); print(levels(as.factor(anova_data[,column1])))}
+    }else{flog.info('Factor with less than 2 levels, no test ...'); flog.info(levels(as.factor(anova_data[,column1])))}
     flog.info('Done.')
 
 

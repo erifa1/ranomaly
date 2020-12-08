@@ -26,8 +26,10 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
 
   invisible(flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger"))
 
-  if(!dir.exists(output)){
-    dir.create(output, recursive=TRUE)
+  if(!is.null(output)){
+    if(!dir.exists(output)){
+      dir.create(output, recursive=TRUE)
+    }
   }
 
 
@@ -146,7 +148,6 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
     ttable <- as.data.frame(subtaxdata@tax_table@.Data)
     fttable = cbind.data.frame(rep(1,nrow(ttable)),ttable)
     fttable$ASV = row.names(fttable)
-    dir.create("00test")
     flog.info('Write Krona table ...')
     krona_tab=paste(output,"/",TITRE,"_",krona, "_krona.txt", sep="")
     write.table(fttable, krona_tab, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t")
@@ -218,9 +219,11 @@ VENNFUN <- function(TF = TF, mode = 1, TITRE = TITRE, output = "./", refseq1 = N
     venn.plot <- recordPlot()
     invisible(dev.off())
 
-    png(paste(output,'/',TITRE,'_venndiag.png',sep=''), width=20, height=20, units="cm", res=200)
-    replayPlot(venn.plot)
-    dev.off()
+    if(!is.null(output)){
+      png(paste(output,'/',TITRE,'_venndiag.png',sep=''), width=20, height=20, units="cm", res=200)
+      replayPlot(venn.plot)
+      dev.off()
+    }
 
     print("plotOK")
 
@@ -253,7 +256,9 @@ VENNFUN <- function(TF = TF, mode = 1, TITRE = TITRE, output = "./", refseq1 = N
       }
     }
 
-    write.table(TABf, paste(output,"/",TITRE,"_venn_table.csv",sep=""), sep="\t", quote=FALSE, row.names=FALSE)
+    if(!is.null(output)){
+      write.table(TABf, paste(output,"/",TITRE,"_venn_table.csv",sep=""), sep="\t", quote=FALSE, row.names=FALSE)
+    }
   } else if(mode == 2){ # more than 5 environments
     venn::venn(TF, zcol = rainbow(7), ilcs = 2, sncs = 2) #, col=rainbow(7)
     venn.plot <- recordPlot()
@@ -289,7 +294,9 @@ VENNFUN <- function(TF = TF, mode = 1, TITRE = TITRE, output = "./", refseq1 = N
     }
     TABf <- as.data.frame(rbind(Core, Tabf))
     names(TABf) = paste("V", 1:ncol(TABf), sep="")
-    write.table(TABf, paste(output,"/",TITRE,"_venn_table.csv",sep=""), sep="\t", quote=FALSE, row.names=FALSE)
+    if(!is.null(output)){
+      write.table(TABf, paste(output,"/",TITRE,"_venn_table.csv",sep=""), sep="\t", quote=FALSE, row.names=FALSE)
+    }
   }
 
   LL=list()
