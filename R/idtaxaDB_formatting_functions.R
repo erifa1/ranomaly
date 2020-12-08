@@ -69,7 +69,7 @@ check_tax_fun <- function(taxtable = taxtable, output = NULL, verbose=3, returnv
   print("Check taxonomy consistency...")
   # Check for multiple ancestors at each rank, choose first occurence for each problematic taxon
   sink(paste('./check_tax_fun.log', sep=""), split = TRUE)
-  for(rank in 6:2){
+  for(rank in 7:2){
     if(verbose==3){flog.info(paste(colnames(taxtable)[rank],".",sep=""))}
 
     stockLres = 100; nloop=1
@@ -105,7 +105,11 @@ check_tax_fun <- function(taxtable = taxtable, output = NULL, verbose=3, returnv
           ); cat("\n")
           #Change taxonomy with final ftax. the most common in taxtable
           for(j in row.names(taxtable[taxtable[,rank]==i,])){
-            taxtable[j,] = c(ftax, taxtable[j,(rank+1):ncol(taxtable)])
+            if(rank == 7){
+              taxtable[j,] = ftax
+            }else{
+              taxtable[j,] = c(ftax, taxtable[j,(rank+1):ncol(taxtable)])
+            }
           }
         }
       }
@@ -140,7 +144,7 @@ check_tax_fun <- function(taxtable = taxtable, output = NULL, verbose=3, returnv
 
 prune_db_fun <- function(taxtable = taxtable, seqs = "", prunedb=10, outputDIR = "./"){
 
-  if(class(seqs) == "DNAStringSet"){
+  if(class(seqs) == "DNAStringSet"|class(seqs) == "RNAStringSet"){
     dna = seqs
   } else {
     dna <- readDNAStringSet(seqs)

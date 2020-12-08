@@ -6,14 +6,15 @@
 #' @param path Read files folder path
 #' @param outpath output .Rdata file name
 #' @param pool option for dada function (FALSE, TRUE or "pseudo"), default is "pseudo". See ? dada.
-#' @param f_trunclen Forward read tuncate
-#' @param r_trunclen Reverse read tuncate length
+#' @param f_trunclen Forward read tuncate length (only for paired end 16S)
+#' @param r_trunclen Reverse read tuncate length (only for paired end 16S)
 #' @param f_primer Forward primer sequence (only for ITS)
 #' @param r_primer Reverse primer sequence (only for ITS)
 #' @param plot Plot all test or not
 #' @param compress Reads files are compressed (.gz)
 #' @param verbose Verbose level. (1: quiet, 3: verbal)
 #' @param torrent_single Boolean to choose between Illumina Paired End SOP or Torrent Single End SOP. default: FALSE
+#' @param torrent_trim Sequence length to trim at 3' and 5' for single end torrent data. (0 = no trim)
 #' @param returnval Boolean to return values in console or not.
 #' @param paired Boolean for Illumina Paired End Reads.
 #'
@@ -335,7 +336,7 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
 
 
     out <- filterAndTrim(fwd = fnFs, filt = filtFs, maxN = 0, multithread = TRUE, verbose=TRUE, rm.phix = TRUE,
-      , maxEE = 5 , minLen = 280, compress=TRUE, trimLeft=20, trimRight = 20)
+      , maxEE = 5 , minLen = 100, compress=TRUE, trimLeft=torrent_trim, trimRight = torrent_trim)
     row.names(out) = sample.names
 
     flog.info('Learning error model...')
@@ -367,13 +368,21 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
     flog.info('Done.')
 
     flog.info('dada2...')
+
     if(torrent_single == TRUE){
       dadaFs <- dada(derepFs, err=errF, multithread=TRUE, pool=dadapool, selfConsist=FALSE, HOMOPOLYMER_GAP_PENALTY=-1, BAND_SIZE=32)
     }
     else{
       dadaFs <- dada(derepFs, err=errF, multithread=TRUE, pool=dadapool, selfConsist=FALSE)
     }
-    stockFs <- sapply(dadaFs, getN)
+
+
+    if(length(filtFs)<2){
+      stockFs <- getUniques(dadaFs)
+    }else{
+      stockFs <- sapply(dadaFs, getN)
+    }
+
     flog.info('Done.')
 
     seqtab <- makeSequenceTable(dadaFs)
@@ -381,22 +390,24 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
     flog.info('Removing chimeras...')
     seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
 
-    nn = row.names(out)
-
-
-    # seqtab.nochim = rename_rownames(seqtab.nochim)
-
-    track <- cbind.data.frame(out, stockFs[nn], rowSums(seqtab.nochim)[nn])
+    if(length(filtFs)<2){
+      track <- c(out, sum(stockFs), rowSums(seqtab.nochim)[1])
+      names(track) <- c("input", "filtered", "denoisedF", "nonchim")
+    }else{
+      nn = row.names(out)
+      print(rownames(stockFs))
+      track <- cbind.data.frame(out, stockFs[nn], rowSums(seqtab.nochim)[nn])
+      colnames(track) <- c("input", "filtered", "denoisedF", "nonchim")
+      head(track)
+    }
     # If processing a single sample, remove the sapply calls: e.g. replace sapply(dadaFs, getN) with getN(dadaFs)
-    colnames(track) <- c("input", "filtered", "denoisedF", "nonchim")
-    head(track)
-
     write.table(track, paste(outpath,"/read_tracking.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
 
     seqtab.export <- seqtab.nochim
     colnames(seqtab.export) <- sapply(colnames(seqtab.export), digest::digest, algo="md5")
 
     otu.table <- phyloseq::otu_table(t(seqtab.export), taxa_are_rows = TRUE)
+    colnames(otu.table) = sample.names
 
     flog.info('Writing raw tables.')
     write.table(cbind(t(seqtab.export), "Sequence" = colnames(seqtab.nochim)), paste(outpath,"/raw_otu-table.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
@@ -411,9 +422,9 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
     flog.info('Saving R objects.')
     save(dada_res, file=paste(outpath,'/robjects.Rdata',sep=''))
 
+    flog.info('Finish.')
     if(returnval) {return(dada_res)}
 
-    flog.info('Finish.')
 
 
   }

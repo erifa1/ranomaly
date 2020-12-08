@@ -9,6 +9,7 @@ csv2phyloseq_fun(
   taxtable = NULL,
   seq = NULL,
   metadata = NULL,
+  generateTree = FALSE,
   output = "./csv2phyloseq/",
   returnval = TRUE
 )

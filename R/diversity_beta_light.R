@@ -58,7 +58,7 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
 
   # Figure
   resBeta = list()
-  p1 <- plot_samples(data_rank, ordinate(data_rank, ord0, dist0), color = col ) + theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}")) + stat_ellipse()
+  p1 <- plot_samples(data_rank, ordinate(data_rank, ord0, dist0), color = col, shape = cov1[1] ) + theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}")) + stat_ellipse()
   # plot(p1)
 
   resBeta$plot = p1

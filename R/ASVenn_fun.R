@@ -26,8 +26,10 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
 
   invisible(flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger"))
 
-  if(!dir.exists(output)){
-    dir.create(output, recursive=TRUE)
+  if(!is.null(output)){
+    if(!dir.exists(output)){
+      dir.create(output, recursive=TRUE)
+    }
   }
 
 
@@ -71,7 +73,7 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
   TFtax <- list()
   if(!is.null(refseq(data, errorIfNULL=FALSE))){
     refseq1 <- as.data.frame(refseq(data)); names(refseq1)="seq"
-  }else{flog.info('No Tree ...')}
+  }else{refseq1 = NULL; flog.info('No Tree ...')}
   databak <- data
   for(i in 1:length(level1)){
     databak -> data
@@ -113,89 +115,6 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
 
 
   flog.info('Plotting ...')
-  VENNFUN <- function(TF = TF, mode = 1){
-    if(mode==1){
-      venn.plot <- venn.diagram(TF, filename = NULL, col = "black",
-                                fill = rainbow(length(TF)), alpha = 0.50,
-                                cex = 1.5, cat.col = 1, lty = "blank",
-                                cat.cex = 1.8, cat.fontface = "bold",
-                                margin = 0.1, main=TITRE, main.cex=2.5,
-                                fontfamily ="Arial",main.fontfamily="Arial",cat.fontfamily="Arial") #cat.dist = 0.09,
-      png(paste(output,'/',TITRE,'_venndiag.png',sep=''), width=20, height=20, units="cm", res=200)
-      grid.draw(venn.plot)
-      invisible(dev.off())
-
-      # venn::venn(TF, col = rainbow(5), cex = 2, ggplot = TRUE)  #, zcol=rainbow(5)
-      # venn.plot <- recordPlot()
-      # invisible(dev.off())
-      #
-      # png(paste(output,'/',TITRE,'_venndiag.png',sep=''), width=20, height=20, units="cm", res=200)
-      # replayPlot(venn.plot)
-      # dev.off()
-
-      print("plotOK")
-
-
-      ov <- calculate.overlap(TF)
-      print(sapply(ov, length))
-
-      flog.info('Calculating lists ...')
-      uniqTax = TABf = unique(do.call(c,TF))
-      for (j in 1:length(TF)){
-        TABtest = TF[[j]]
-        TABtest_filt=rep(0, length(uniqTax))
-        for (i in 1:length(uniqTax)) {
-          featureI = uniqTax[i]
-          res=grep( paste('^',featureI,'$', sep="" ) , TABtest)
-          if(length(res)>0){TABtest_filt[i]=length(res)
-          }
-        }
-        TABf=cbind.data.frame( TABtest_filt, TABf )
-        names(TABf)[1] = names(TF)[j]
-      }
-
-      if(exists("refseq1")){
-        TABf <- cbind(TABf,alltax[as.character(TABf$TABf),2], refseq1[as.character(TABf$TABf),])
-        names(TABf) <- c(rev(names(TF)), "ASV", "taxonomy", "seq")
-      }else{
-        TABf <- cbind(TABf,alltax[as.character(TABf$TABf),2])
-        names(TABf) <- c(rev(names(TF)), "ASV", "taxonomy")
-      }
-
-      write.table(TABf, paste(output,"/",TITRE,"_venn_table.csv",sep=""), sep="\t", quote=FALSE, row.names=FALSE)
-    } else if(mode == 2){ # more than 5 environments
-      venn::venn(TF, col = rainbow(7)) #, zcol=rainbow(7)
-      venn.plot <- recordPlot()
-      invisible(dev.off())
-
-      png(paste(output,'/',TITRE,'_venndiag.png',sep=''), width=20, height=20, units="cm", res=200)
-      replayPlot(venn.plot)
-      dev.off()
-
-      ENVS = names(TF)[1:7]  #maximum 7
-      Tabf <- NULL; Tab1 <- NULL
-      for(i in ENVS){
-        tt = c(i, ENVS[ENVS != i])
-        print(tt)
-        yy = Reduce(setdiff, TF[tt])  # setdiff(setdiff(tt[1], tt[2]), tt[3] )
-        print(length(yy))
-        Tab1 <- cbind(rep(i, length(yy)), alltax[yy,])
-        Tabf <- rbind(Tabf, Tab1)
-      }
-      yy <- Reduce(intersect, TF[1:7]) #maximum 7
-      Core <- cbind(rep("core", length(yy)), alltax[yy,])
-      TABf <- as.data.frame(rbind(Core, Tabf))
-      write.table(TABf, paste(output,"/",TITRE,"_venn_table.csv",sep=""), sep="\t", quote=FALSE, row.names=FALSE)
-    }
-
-    LL=list()
-    LL$venn_plot = venn.plot
-    LL$TABf = TABf
-    return(LL)
-  }
-# End VENNFUN
-
-
 
   # Specific use to screen taxonomic composition of shared taxa...
   if(krona != ""){
@@ -229,7 +148,6 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
     ttable <- as.data.frame(subtaxdata@tax_table@.Data)
     fttable = cbind.data.frame(rep(1,nrow(ttable)),ttable)
     fttable$ASV = row.names(fttable)
-    dir.create("00test")
     flog.info('Write Krona table ...')
     krona_tab=paste(output,"/",TITRE,"_",krona, "_krona.txt", sep="")
     write.table(fttable, krona_tab, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t")
@@ -251,26 +169,138 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
     if(is.null(lvls)){
       flog.info('Selecting 5 first levels ...')
       TF <- TF[1:5]
-      res1 = VENNFUN(TF = TF, mode=1)
+      res1 = VENNFUN(TF = TF, mode=1, TITRE = TITRE, output = output, refseq1 = refseq1, alltax = alltax)
     }else{
       flog.info(glue('Selecting {lvls} ...'))
       LVLs <- unlist(strsplit(lvls,","))
       TF <- TF[LVLs]
       if(length(TF) <= 5){
         flog.info(glue('mode 1 ...'))
-        res1 = VENNFUN(TF = TF, mode = 1)
+        res1 = VENNFUN(TF = TF, mode = 1, TITRE = TITRE, output = output, refseq1 = refseq1, alltax = alltax)
       }else{
         flog.info(glue('mode 2 ...'))
-        res1 = VENNFUN(TF = TF, mode = 2)
+        res1 = VENNFUN(TF = TF, mode = 2, TITRE = TITRE, output = output, refseq1 = refseq1, alltax = alltax)
       }
     }
   } else {
     print("< 5 levels")
     print(length(TF))
-    res1 = VENNFUN(TF = TF)
+    res1 = VENNFUN(TF = TF, TITRE = TITRE, output = output, refseq1 = refseq1 , alltax = alltax)
   }
 
   flog.info('End ...')
 #save(list = ls(all.names = TRUE), file = "debug_asvenn.rdata", envir = environment())
   return(res1)
+}
+
+
+#' VENNFUN
+#'
+#' Plotting Venn Function and table of shared feature generation
+#'
+#' @param TF list containing vectors to plot.
+#' @param mode = 1: length(TF)<=5, mode = 2 5<length(TF)<7
+#' @param TITRE
+#' @param output
+#' @param refseq1
+#' @param alltax
+#'
+#'
+#' @return Exports a venn diagram with corresponding tabulated file.
+#'
+#' @importFrom glue glue
+#' @importFrom venn venn
+#' @export
+
+
+VENNFUN <- function(TF = TF, mode = 1, TITRE = TITRE, output = "./", refseq1 = NULL, alltax=NULL){
+  if(mode==1){
+    venn::venn(TF, zcol = rainbow(7), ilcs = 2, sncs = 2) #, col=rainbow(7)
+    venn.plot <- recordPlot()
+    invisible(dev.off())
+
+    if(!is.null(output)){
+      png(paste(output,'/',TITRE,'_venndiag.png',sep=''), width=20, height=20, units="cm", res=200)
+      replayPlot(venn.plot)
+      dev.off()
+    }
+
+    print("plotOK")
+
+
+    ov <- calculate.overlap(TF)
+    print(sapply(ov, length))
+
+    flog.info('Calculating lists ...')
+    uniqTax = TABf = unique(do.call(c,TF))
+    for (j in 1:length(TF)){
+      TABtest = TF[[j]]
+      TABtest_filt=rep(0, length(uniqTax))
+      for (i in 1:length(uniqTax)) {
+        featureI = uniqTax[i]
+        res=grep( paste('^',featureI,'$', sep="" ) , TABtest)
+        if(length(res)>0){TABtest_filt[i]=length(res)
+        }
+      }
+      TABf=cbind.data.frame( TABtest_filt, TABf )
+      names(TABf)[1] = names(TF)[j]
+    }
+
+    if(!is.null(alltax)){
+      if(!is.null(refseq1)){
+        TABf <- cbind(TABf,alltax[as.character(TABf$TABf),2], refseq1[as.character(TABf$TABf),])
+        names(TABf) <- c(rev(names(TF)), "ASV", "taxonomy", "seq")
+      }else{
+        TABf <- cbind(TABf,alltax[as.character(TABf$TABf),2])
+        names(TABf) <- c(rev(names(TF)), "ASV", "taxonomy")
+      }
+    }
+
+    if(!is.null(output)){
+      write.table(TABf, paste(output,"/",TITRE,"_venn_table.csv",sep=""), sep="\t", quote=FALSE, row.names=FALSE)
+    }
+  } else if(mode == 2){ # more than 5 environments
+    venn::venn(TF, zcol = rainbow(7), ilcs = 2, sncs = 2) #, col=rainbow(7)
+    venn.plot <- recordPlot()
+    invisible(dev.off())
+
+    png(paste(output,'/',TITRE,'_venndiag.png',sep=''), width=20, height=20, units="cm", res=200)
+    replayPlot(venn.plot)
+    dev.off()
+
+
+    ENVS = na.omit(names(TF)[1:7])  #maximum 7
+    Tabf <- NULL; Tab1 <- NULL
+    # Exclusive
+    for(i in ENVS){
+      tt = c(i, ENVS[ENVS != i])
+      print(tt)
+      yy = Reduce(setdiff, TF[tt])  # setdiff(setdiff(tt[1], tt[2]), tt[3] )
+      print(length(yy))
+      if(!is.null(alltax)){
+        Tab1 <- cbind(yy, rep(i, length(yy)), alltax[yy,])
+      }else{
+        Tab1 <- cbind(yy, rep(i, length(yy)))
+      }
+      Tabf <- rbind(Tabf, Tab1)
+    }
+
+    #Core
+    yy <- Reduce(intersect, TF[ENVS]) #maximum 7
+    if(!is.null(alltax)){
+      Core <- cbind(yy, rep("core", length(yy)), alltax[yy,])
+    }else{
+      Core <- cbind(yy, rep("core", length(yy)))
+    }
+    TABf <- as.data.frame(rbind(Core, Tabf))
+    names(TABf) = paste("V", 1:ncol(TABf), sep="")
+    if(!is.null(output)){
+      write.table(TABf, paste(output,"/",TITRE,"_venn_table.csv",sep=""), sep="\t", quote=FALSE, row.names=FALSE)
+    }
+  }
+
+  LL=list()
+  LL$venn_plot = venn.plot
+  LL$TABf = TABf
+  return(LL)
 }

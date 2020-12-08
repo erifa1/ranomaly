@@ -46,7 +46,7 @@ rarefaction <- function(data = data, col = NULL, step = 100, ggplotly = TRUE){
 #' @export
 
 
-bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 = NULL, relative = TRUE){
+bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 = NULL, relative = TRUE, outfile="plot_compo.html"){
 
     # Fdata <- prune_samples(sample_names(r$data16S())[r$rowselect()], r$data16S())
     # Fdata <- prune_taxa(taxa_sums(Fdata) > 0, Fdata)
@@ -74,6 +74,9 @@ bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 =
     LL=list()
     # print(head(meltdat))
     # print(levels(meltdat$sample.id))
+    # save(list = ls(all.names = TRUE), file = "debug.rdata", envir = environment())
+
+    # TODO: Message d'erreur si factor n'est pas dans les sample_data
 
     fun = glue( "xform <- list(categoryorder = 'array',
                     categoryarray = unique(meltdat$sample.id[order(meltdat${Ord1})]),
@@ -89,7 +92,6 @@ bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 =
     df1 <- cbind.data.frame(x=sdata[unique(meltdat$sample.id[order(meltdat[,Ord1])]), "sample.id"]@.Data[[1]],
                             g=sdata[unique(meltdat$sample.id[order(meltdat[,Ord1])]), Fact1]@.Data[[1]],
                             y=1)
-
     subp1 <- df1 %>% plot_ly(
       type = 'bar',
       x = ~x,
@@ -122,6 +124,12 @@ if(relative){
 
   p1 <- subplot(p1, subp1, nrows = 2, shareX = T, heights=c(0.95,0.05)) %>%
     layout(xaxis = xform, widh = 1500)
+}
+
+# dir.create(outpath, recursive = TRUE)
+# htmlwidgets::saveWidget(p1, glue::glue("{outpath}/{outfile}"))
+if(!is.null(outfile)){
+  htmlwidgets::saveWidget(p1, outfile)
 }
 
 return(p1)

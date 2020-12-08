@@ -279,7 +279,6 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
   data <- dataKeep
   #NUMBER OF READS in samples
   flog.info(paste('Filtering samples with less than ',number,' reads...',sep=''))
-  save(list = ls(all.names = TRUE), file = "decontam_debug.rdata", envir = environment())
   if(all(sample_sums(data) < number) == FALSE){
     flog.info("No sample removed")
   }else{
