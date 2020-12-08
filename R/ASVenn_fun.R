@@ -264,9 +264,11 @@ VENNFUN <- function(TF = TF, mode = 1, TITRE = TITRE, output = "./", refseq1 = N
     venn.plot <- recordPlot()
     invisible(dev.off())
 
-    png(paste(output,'/',TITRE,'_venndiag.png',sep=''), width=20, height=20, units="cm", res=200)
-    replayPlot(venn.plot)
-    dev.off()
+    if(!is.null(output)){
+      png(paste(output,'/',TITRE,'_venndiag.png',sep=''), width=20, height=20, units="cm", res=200)
+      replayPlot(venn.plot)
+      dev.off()
+    }
 
 
     ENVS = na.omit(names(TF)[1:7])  #maximum 7
