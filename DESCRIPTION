@@ -63,7 +63,7 @@ Remotes:
   bioc::3.10/microbiome,
   bioc::3.10/DESeq2,
   bioc::3.10/DECIPHER,
-  bioc::3.10/mixmics,
+  bioc::3.10/mixOmics,
   github::pmartinezarbizu/pairwiseAdonis/pairwiseAdonis,
   github::cpauvert/psadd,
   github::gauravsk/ranacapa,

@@ -149,7 +149,7 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
         anova_res1 <- aov( as.formula(paste(f)), anova_data)
         print(anova_data)
         print(anova_res1)
-        # anova <- summary(anova_res1)
+        aov1 <- summary(anova_res1)
         # stop()
         # # post hoc test  commented du to conflict between LSD.test() and DESeq() function. #' @importFrom agricolae LSD.test
         # cat("############\npost hoc LSD.test\n")
@@ -168,7 +168,7 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
         eval(parse(text = fun))
         # print(round(wilcox_res1$p.value,3))
         wilcox_col1 <- round(wilcox_res1$p.value,3)
-        fun <- glue("resAlpha[[\"{m}\"]] <- list(anova = anova, wilcox_col1 = wilcox_col1)")
+        fun <- glue("resAlpha[[\"{m}\"]] <- list(anova = aov1, wilcox_col1 = wilcox_col1)")
         write.table(wilcox_col1, paste(output,"/anovatable.csv", sep=""), sep="\t", row.names=FALSE)
         # print(fun)
         eval(parse(text=fun))
