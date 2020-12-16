@@ -452,7 +452,7 @@ plot_samples <- function(physeq, ordination, axes=c(1, 2), color = NULL,
       rep_map <- aes_string(x=x, y=y, label=replicate, color = NULL, shape = NULL)
     }
     p <- p + geom_text(rep_map, data = sampleCoordinates,
-                       size=4, vjust=1.5)
+                       size=10, vjust=1.5)
   }
 
   ## Optionally add a title to the plot
