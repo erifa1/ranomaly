@@ -227,13 +227,22 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
     if(nrow(TABbar)){
       TABbar$tax = ttax[as.character(TABbar$ListAllOtu),rank]
 
-      png(paste(output,'/topDiffbarplot_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.png',sep=''), width=20, height=20, units="cm", res=200)
+      # png(paste(output,'/topDiffbarplot_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.png',sep=''), width=20, height=20, units="cm", res=200)
       pbarplot <- p <-ggplot(data=TABbar, aes(x=reorder(tax, -abs(DESeqLFC)), y=DESeqLFC, fill=Condition ) ) +
-        geom_bar(stat="identity", alpha = 0.7) + ggtitle(paste(combinaisons[,col],collapse="_vs_")) + labs(x='Features') +
+        geom_bar(stat="identity", alpha = 1) + ggtitle(paste(combinaisons[,col],collapse="_vs_")) + labs(x='Features') +
         coord_flip() + theme_bw() +
-        scale_y_continuous(minor_breaks = seq(-1E4 , 1E4, 1), breaks = seq(-1E4, 1E4, 5))
-      print(p)
-      dev.off()
+        scale_y_continuous(minor_breaks = seq(-1E4 , 1E4, 1), breaks = seq(-1E4, 1E4, 5)) +
+        theme(axis.text.x = element_text(angle = 45, hjust=1),
+        axis.text=element_text(size=12),
+        axis.title=element_text(size=16,face="bold"),
+        strip.text.x = element_text(size = 18,face="bold"),
+        title=element_text(size=16,face="bold"))
+      # print(p)
+      # dev.off()
+
+      ggsave(paste(output,'/topDiffbarplot_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.eps',sep='')
+        , plot=pbarplot, height = 20, width = 20, units="cm", dpi = 500, device="eps")
+
 
 
       outF[[paste(combinaisons[,col],collapse="_vs_")]] = list(plot = p)

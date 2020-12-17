@@ -58,10 +58,20 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
 
   # Figure
   resBeta = list()
-  p1 <- plot_samples(data_rank, ordinate(data_rank, ord0, dist0), color = col, shape = cov1[1] ) + theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}")) + stat_ellipse()
+  if(!is.null(cov)){
+  p1 <- plot_samples(data_rank, ordinate(data_rank, ord0, dist0), color = col, shape = cov1[1] ) +
+  theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}")) + stat_ellipse()
+}else{
+  p1 <- plot_samples(data_rank, ordinate(data_rank, ord0, dist0), color = col) +
+  theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}")) + stat_ellipse()
+}
   # plot(p1)
 
-  resBeta$plot = p1
+  resBeta$plot = p1 + theme(axis.text.x = element_text(angle = 45, hjust=1),
+  legend.position = "none",axis.text=element_text(size=18),
+  axis.title=element_text(size=16,face="bold"),
+  strip.text.x = element_text(size = 18,face="bold"),
+  title=element_text(size=16,face="bold"))
 
   if(tests){
     otable = otu_table(data_rank)
@@ -91,6 +101,8 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
 
     write.table(resBC$aov.tab, file=paste0(output,'/',col,'_permANOVA.txt'), sep="\t")
     write.table(resBC2, file=paste0(output,'/',col,'pairwisepermANOVA.txt'), sep="\t")
+
+    ggsave(glue::glue("{output}/beta_diversity.eps"), plot=resBeta$plot, height = 15, width = 30, units="cm", dpi = 500, device="eps")
 
     resBeta$permanova = resBC$aov.tab
     resBeta$pairwisepermanova = resBC2

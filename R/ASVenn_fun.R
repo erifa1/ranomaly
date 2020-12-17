@@ -33,7 +33,7 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
   }
 
 
-  #Check phyloseq object named data
+  #Check phyloseq object named data exists
   if(!any(ls()=="data")){
     for(i in ls()){
       fun <- paste("cLS <- class(",i,")")
@@ -74,28 +74,27 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
   if(!is.null(refseq(data, errorIfNULL=FALSE))){
     refseq1 <- as.data.frame(refseq(data)); names(refseq1)="seq"
   }else{refseq1 = NULL; flog.info('No Tree ...')}
+  if(rank!="ASV"){
+    flog.info(glue::glue("Glom phyloseq object to {rank} rank..."))
+    ;data <- tax_glom(data, rank)
+  }
+  print(data)
+
   databak <- data
   for(i in 1:length(level1)){
     databak -> data
     LOC=as.character(level1[i])
-    print(LOC)
+    # print(LOC)
     fun <- paste("data <- subset_samples(data, ",column1," %in% '",LOC,"')",sep="")
     eval(parse(text=fun))
-    if(rank=="ASV"){
-      print("ASV")
-      sp_data = data
-      sp_data <- prune_taxa(taxa_sums(sp_data) > 0, sp_data)
-    }else{
-      print(rank)
-      sp_data <- tax_glom(data, rank)
-      sp_data <- prune_taxa(taxa_sums(sp_data) > 0, sp_data)
-      cat(LOC,ntaxa(sp_data)," ", rank, " \n")
-    }
+
+    # print(rank)
+    sp_data <- prune_taxa(taxa_sums(data) > 0, data)
+    # cat(LOC,ntaxa(sp_data)," ", rank, " \n")
 
     ttable <- sp_data@tax_table@.Data
     otable <- as.data.frame(otu_table(sp_data))
     # print(nrow(ttable))
-
     if(!any(rownames(ttable) == rownames(otable))){flog.info("Different order in otu table and tax table");quit()}
 
     TT = cbind(otable,ttable)
@@ -162,6 +161,7 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
 
   TFbak <- TF <- sapply(TFtax, row.names)
   names(TFbak) = names(TF) = level1
+  # print( length(unique(unlist(TF))) )
 
   if(length(level1)>5){
     flog.info('Too much levels (max. 5) ...')
@@ -184,7 +184,7 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
     }
   } else {
     print("< 5 levels")
-    print(length(TF))
+    print(lapply(TF, length))
     res1 = VENNFUN(TF = TF, TITRE = TITRE, output = output, refseq1 = refseq1 , alltax = alltax)
   }
 
