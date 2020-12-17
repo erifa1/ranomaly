@@ -15,6 +15,8 @@
 #' @param verbose Verbose level. (1: quiet, 3: verbal)
 #' @param torrent_single Boolean to choose between Illumina Paired End SOP or Torrent Single End SOP. default: FALSE
 #' @param torrent_trim Sequence length to trim at 3' and 5' for single end torrent data. (0 = no trim)
+#' @param trim_l Trim left size.
+#' @param trim_r Trim right size.
 #' @param returnval Boolean to return values in console or not.
 #' @param paired Boolean for Illumina Paired End Reads.
 #'
@@ -35,7 +37,7 @@
 
 dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_trunclen = 240, r_trunclen = 240, dadapool = "pseudo",
                       f_primer = "GCATCGATGAAGAACGCAGC", r_primer = "TCCTCCGCTTWTTGWTWTGC", plot = FALSE, compress = FALSE, verbose = 1,
-                      torrent_single = FALSE,returnval = TRUE, paired = TRUE){
+                      torrent_single = FALSE,returnval = TRUE, paired = TRUE, trim_l=15, trim_r=0){
 
   if(verbose == 3){
     invisible(flog.threshold(DEBUG))
@@ -224,7 +226,7 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
 
 
       out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen=c(f_trunclen,r_trunclen),
-      maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE, trimLeft=15,
+      maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE, trimLeft=trim_l,
       compress=compress, multithread=TRUE)
 
       flog.info('Done.')
@@ -336,7 +338,7 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
 
 
     out <- filterAndTrim(fwd = fnFs, filt = filtFs, maxN = 0, multithread = TRUE, verbose=TRUE, rm.phix = TRUE,
-      , maxEE = 5 , minLen = 100, compress=TRUE, trimLeft=torrent_trim, trimRight = torrent_trim)
+      , maxEE = 5 , minLen = 100, compress=TRUE, trimLeft=trim_l, trimRight=trim_r )
     row.names(out) = sample.names
 
     flog.info('Learning error model...')

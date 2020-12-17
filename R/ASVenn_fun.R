@@ -260,9 +260,9 @@ VENNFUN <- function(TF = TF, mode = 1, TITRE = TITRE, output = "./", refseq1 = N
       write.table(TABf, paste(output,"/",TITRE,"_venn_table.csv",sep=""), sep="\t", quote=FALSE, row.names=FALSE)
     }
   } else if(mode == 2){ # more than 5 environments
-    venn::venn(TF, zcol = rainbow(7), ilcs = 2, sncs = 2) #, col=rainbow(7)
-    venn.plot <- recordPlot()
-    invisible(dev.off())
+    venn.plot <- venn::venn(TF, zcol = rainbow(7), ilcs = 2, sncs = 2, ggplot=TRUE) #, col=rainbow(7)
+    # venn.plot <- recordPlot()
+    # invisible(dev.off())
 
     if(!is.null(output)){
       png(paste(output,'/',TITRE,'_venndiag.png',sep=''), width=20, height=20, units="cm", res=200)
