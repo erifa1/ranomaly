@@ -152,8 +152,7 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
         flog.info("############\nANOVA + pairwise wilcox test\n")
         flog.debug(paste0('Formula: ',f))
         anova_res1 <- aov( as.formula(paste(f)), anova_data)
-        print(anova_data)
-        print(anova_res1)
+
         aov1 <- summary(anova_res1)
         # stop()
         # # post hoc test  commented du to conflict between LSD.test() and DESeq() function. #' @importFrom agricolae LSD.test

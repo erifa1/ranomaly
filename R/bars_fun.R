@@ -114,22 +114,22 @@ if(relative){
   otable=apply(otable,2, function(x){Tot=sum(x); x/Tot})
   dat= as.data.frame(t(otable))
   dat <- cbind.data.frame(sdata, dat)
-  meltdat = data.table::melt(dat, id.vars=1:ncol(sdata))
+  meltdat = reshape2::melt(dat, id.vars=1:ncol(sdata))
   tt=levels(meltdat$variable)
   meltdat$variable = factor(meltdat$variable, levels= c("Other", tt[tt!="Other"]))
 
   p1=plot_ly(meltdat, x = ~sample.id, y = ~value, type = 'bar', name = ~variable, color = ~variable) %>% #, color = ~variable
-    layout(title="Relative abundance", yaxis = list(title = 'Relative abundance'), xaxis = xform, barmode = 'stack', widh = 1500)
+    layout(title="Relative abundance", yaxis = list(title = 'Relative abundance'), xaxis = xform, barmode = 'stack')
 
   p1 <- subplot(p1, subp1, nrows = 2, shareX = T, heights=c(0.95,0.05)) %>%
-    layout(xaxis = xform, widh = 1500)
+    layout(xaxis = xform)
 }else{
   #raw abundance
   p1=plot_ly(meltdat, x = ~sample.id, y = ~value, type = 'bar', name = ~variable, color = ~variable) %>% #, color = ~variable
-    layout(title="Raw abundance", yaxis = list(title = 'Raw abundance'), xaxis = xform, barmode = 'stack', widh = 1500)
+    layout(title="Raw abundance", yaxis = list(title = 'Raw abundance'), xaxis = xform, barmode = 'stack')
 
   p1 <- subplot(p1, subp1, nrows = 2, shareX = T, heights=c(0.95,0.05)) %>%
-    layout(xaxis = xform, widh = 1500)
+    layout(xaxis = xform)
 }
 
 # dir.create(outpath, recursive = TRUE)
