@@ -40,4 +40,4 @@ wikipage](https://forgemia.inra.fr/umrf/ranomaly/-/wikis/home)
 ## Ressources
 
 IDTAXA formatted references databases for 16S and ITS are [available
-here](https://nextcloud.inrae.fr/apps/files/?dir=/ranomaly.data/idtaxa_db&fileid=1675490).
+here](https://nextcloud.inrae.fr/s/YHi3fmDdEJt5cqR).
