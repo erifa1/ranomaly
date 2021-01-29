@@ -329,7 +329,6 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
     #sample name
     get.sample.name <- function(fname) strsplit(basename(fname), "_")[[1]][1]
     sample.names <- unname(sapply(fastq.names, get.sample.name))
-
     if(compress==TRUE){
       filtFs <- file.path(path, "filtered", paste0(sample.names, "_filt.fastq.gz"))
     }else{
@@ -338,7 +337,7 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
 
 
     out <- filterAndTrim(fwd = fnFs, filt = filtFs, maxN = 0, multithread = TRUE, verbose=TRUE, rm.phix = TRUE,
-      , maxEE = 5 , minLen = 100, compress=TRUE, trimLeft=trim_l, trimRight=trim_r )
+      , maxEE = 5 , minLen = 100, compress=compress, trimLeft=trim_l, trimRight=trim_r )
     row.names(out) = sample.names
 
     flog.info('Learning error model...')

@@ -435,7 +435,7 @@ plot_samples <- function(physeq, ordination, axes=c(1, 2), color = NULL,
   ## Mapping section
   p <- ggplot(DF, aes_string(x = x, y = y, color = color, shape = shape))
   ## Plot building
-  p <- p + geom_point(na.rm = TRUE)
+  p <- p + geom_point(na.rm = TRUE, size = 3)
 
   ## Add the text labels
   if( !is.null(label) ){
@@ -452,7 +452,7 @@ plot_samples <- function(physeq, ordination, axes=c(1, 2), color = NULL,
       rep_map <- aes_string(x=x, y=y, label=replicate, color = NULL, shape = NULL)
     }
     p <- p + geom_text(rep_map, data = sampleCoordinates,
-                       size=10, vjust=1.5)
+                       size=8, vjust=1.5)
   }
 
   ## Optionally add a title to the plot
