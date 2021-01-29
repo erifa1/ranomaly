@@ -67,7 +67,8 @@ generate_phyloseq_fun <- function(dada_res = dada_res, tax.table = tax.table, tr
     flog.info('Done.')
   }
   flog.info('Saving R objects.')
-  save(data, data_rel, file=paste(output,'/robjects.Rdata',sep=''))
+  save(data, file=paste(output,'/robjects.Rdata',sep=''))
+  save(data_rel, file=paste(output,'/robjects_relative.Rdata',sep=''))
   flog.info('Finish.')
 
   if(returnval){return(data)}
