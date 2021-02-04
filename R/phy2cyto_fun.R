@@ -5,6 +5,7 @@
 #' @param output Output directory
 #' @param column1 A metadata column (among sample_variables(data)).
 #' @param repl Replicates column.
+#' @param displayedRank The rank that will be in the node table.
 #' @param verbose Verbose level. (1: quiet, 3: verbal)
 #'
 #' @return Export files ready to use with Cytoscape
@@ -15,7 +16,7 @@
 
 
 
-phy2cyto_fun <- function(data = data, output = "./cytoscape/", column1 = NULL, repl = NULL, verbose = 1){
+phy2cyto_fun <- function(data = data, output = "./cytoscape/", column1 = NULL, repl = NULL, displayedRank='Phylum', verbose = 1){
 
   if(!dir.exists(output)){
     dir.create(output, recursive=TRUE)
@@ -64,7 +65,7 @@ phy2cyto_fun <- function(data = data, output = "./cytoscape/", column1 = NULL, r
     node_table[node_table$attribute=="source","freq"] = 0.75*max(na.omit(node_table$freq))
 
     node_table$tax = "source"
-    node_table[node_table$attribute == "cible","tax"] = tax_table(data1)[as.character(node_table[node_table$attribute == "cible",1]),"Phylum"]
+    node_table[node_table$attribute == "cible","tax"] = tax_table(data1)[as.character(node_table[node_table$attribute == "cible",1]),displayedRank]
 
 
     write.table(as.data.frame(node_table), glue("{output}/node_tab1.tsv"), sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
