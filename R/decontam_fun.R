@@ -208,7 +208,6 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
   taxToKeep2 <- rownames(prevdf)[(prevdf$Prevalence >= prev)]
   taxToDump2 <- rownames(prevdf)[(prevdf$Prevalence < prev)]
 
-  data_rel <- transform_sample_counts(data, function(x) x / sum(x) )
   flog.info('Done.')
 
   #UNASSIGNED TAXA
@@ -317,10 +316,12 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
   write.table(cbind(otu_table(data),"Consensus Lineage" = apply(tax_table(data), 1, paste, collapse = ";"), "sequences"=as.data.frame(refseq(data)) ), paste(output,"/raw_otu-table.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
 
   flog.info('Writing relative tables.')
+  data_rel <- transform_sample_counts(data, function(x) x / sum(x) )
   write.table(cbind(otu_table(data_rel),"Consensus Lineage" = apply(tax_table(data_rel), 1, paste, collapse = ";"), "sequences"=as.data.frame(refseq(data_rel))),paste(output,"/relative_otu-table.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
 
   flog.info('Saving R objects.')
-  save(data, data_rel, file=paste(output,'/robjects.Rdata',sep=''))
+  save(data, file=paste(output,'/robjects.Rdata',sep=''))
+  save(data_rel, file=paste(output,'/robjects_relative.Rdata',sep=''))
 
   if(krona){
     flog.info('Generating Krona.')

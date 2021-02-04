@@ -46,7 +46,7 @@ rarefaction <- function(data = data, col = NULL, step = 100, ggplotly = TRUE){
 #' @import plotly
 #' @importFrom microbiome aggregate_top_taxa
 #' @importFrom reshape2 melt
-#'
+#' @importFrom gtools mixedsort
 #'
 #'
 #' @export
@@ -85,18 +85,19 @@ bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 =
     # TODO: Message d'erreur si factor n'est pas dans les sample_data
 
     fun = glue( "xform <- list(categoryorder = 'array',
-                    categoryarray = unique(meltdat$sample.id[order(meltdat${Ord1})]),
+                    categoryarray = unique(meltdat$sample.id[gtools::mixedorder(meltdat${Ord1})]),
                     title = 'Samples',
                     tickmode = 'array',
                     tickvals = 0:nrow(sdata),
-                    ticktext = sdata[unique(meltdat$sample.id[order(meltdat${Ord1})]), '{Fact1}']@.Data[[1]],
+                    ticktext = sdata[unique(meltdat$sample.id[gtools::mixedorder(meltdat${Ord1})]), '{Fact1}']@.Data[[1]],
                     tickangle = -90)")
     eval(parse(text=fun))
 
     # subplot to vizualize groups
     # print(head(sdata))
-    df1 <- cbind.data.frame(x=sdata[unique(meltdat$sample.id[order(meltdat[,Ord1])]), "sample.id"]@.Data[[1]],
-                            g=sdata[unique(meltdat$sample.id[order(meltdat[,Ord1])]), Fact1]@.Data[[1]],
+
+    df1 <- cbind.data.frame(x=sdata[unique(meltdat$sample.id[gtools::mixedorder(meltdat[,Ord1])]), "sample.id"]@.Data[[1]],
+                            g=sdata[unique(meltdat$sample.id[gtools::mixedorder(meltdat[,Ord1])]), Fact1]@.Data[[1]],
                             y=1)
     subp1 <- df1 %>% plot_ly(
       type = 'bar',

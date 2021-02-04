@@ -171,9 +171,10 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
       TF <- TF[1:5]
       res1 = VENNFUN(TF = TF, mode=1, TITRE = TITRE, output = output, refseq1 = refseq1, alltax = alltax)
     }else{
+      print(names(TF))
       flog.info(glue('Selecting {lvls} ...'))
       LVLs <- unlist(strsplit(lvls,","))
-      TF <- TF[LVLs]
+      TF <- TF[match(LVLs, names(TF))]
       if(length(TF) <= 5){
         flog.info(glue('mode 1 ...'))
         res1 = VENNFUN(TF = TF, mode = 1, TITRE = TITRE, output = output, refseq1 = refseq1, alltax = alltax)
@@ -183,9 +184,14 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
       }
     }
   } else {
-    print("< 5 levels")
-    print(lapply(TF, length))
-    res1 = VENNFUN(TF = TF, TITRE = TITRE, output = output, refseq1 = refseq1 , alltax = alltax)
+      print("< 5 levels")
+    if(!is.null(lvls)){
+      flog.info(glue('Selecting {lvls} ...'))
+      LVLs <- unlist(strsplit(lvls,","))
+      print(c("coucou", LVLs))
+      TF <- TF[match(LVLs, names(TF))]
+    }
+    res1 = VENNFUN(TF = TF, mode = 1, TITRE = TITRE, output = output, refseq1 = refseq1, alltax = alltax)
   }
 
   flog.info('End ...')
@@ -260,16 +266,16 @@ VENNFUN <- function(TF = TF, mode = 1, TITRE = TITRE, output = "./", refseq1 = N
       write.table(TABf, paste(output,"/",TITRE,"_venn_table.csv",sep=""), sep="\t", quote=FALSE, row.names=FALSE)
     }
   } else if(mode == 2){ # more than 5 environments
-    venn.plot <- venn::venn(TF, zcol = rainbow(7), ilcs = 2, sncs = 2, ggplot=TRUE) #, col=rainbow(7)
-    # venn.plot <- recordPlot()
-    # invisible(dev.off())
+
+    venn.plot <- venn::venn(TF, zcol = rainbow(7), ilcs = 2, sncs = 2) #, col=rainbow(7)
+    venn.plot <- recordPlot()
+    invisible(dev.off())
 
     if(!is.null(output)){
       png(paste(output,'/',TITRE,'_venndiag.png',sep=''), width=20, height=20, units="cm", res=200)
       replayPlot(venn.plot)
       dev.off()
     }
-
 
     ENVS = na.omit(names(TF)[1:7])  #maximum 7
     Tabf <- NULL; Tab1 <- NULL
@@ -280,17 +286,16 @@ VENNFUN <- function(TF = TF, mode = 1, TITRE = TITRE, output = "./", refseq1 = N
       yy = Reduce(setdiff, TF[tt])  # setdiff(setdiff(tt[1], tt[2]), tt[3] )
       print(length(yy))
       if(!is.null(alltax)){
-        Tab1 <- cbind(yy, rep(i, length(yy)), alltax[yy,])
+        Tab1 <- cbind(yy, rep(i, length(yy)), alltax[yy,1])
       }else{
         Tab1 <- cbind(yy, rep(i, length(yy)))
       }
       Tabf <- rbind(Tabf, Tab1)
     }
-
     #Core
     yy <- Reduce(intersect, TF[ENVS]) #maximum 7
     if(!is.null(alltax)){
-      Core <- cbind(yy, rep("core", length(yy)), alltax[yy,])
+      Core <- cbind(yy, rep("core", length(yy)), alltax[yy,1])
     }else{
       Core <- cbind(yy, rep("core", length(yy)))
     }
