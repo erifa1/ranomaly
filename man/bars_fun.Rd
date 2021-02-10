@@ -10,8 +10,8 @@ bars_fun(
   top = 10,
   Ord1 = NULL,
   Fact1 = NULL,
+  split = FALSE,
   relative = TRUE,
-  outpath = "./",
   outfile = "plot_compo.html"
 )
 }
@@ -26,14 +26,12 @@ bars_fun(
 
 \item{Fact1}{Variable used to change X axis tick labels and color}
 
+\item{split}{if TRUE make a facet_wrap like grouped by Fact1}
+
 \item{relative}{Plot relative (TRUE, default) or raw abundance plot (FALSE)}
-
-\item{outpath}{Output directory}
-
-\item{outfile}{Output file name}
 }
 \value{
-Exports barplots in an interactive plotly community plot
+Returns barplots in an interactive plotly community plot
 }
 \description{
 Barplots plotly

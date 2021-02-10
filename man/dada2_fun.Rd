@@ -17,7 +17,10 @@ dada2_fun(
   compress = FALSE,
   verbose = 1,
   torrent_single = FALSE,
-  returnval = TRUE
+  returnval = TRUE,
+  paired = TRUE,
+  trim_l = 15,
+  trim_r = 0
 )
 }
 \arguments{
@@ -45,7 +48,15 @@ dada2_fun(
 
 \item{returnval}{Boolean to return values in console or not.}
 
+\item{paired}{Boolean for Illumina Paired End Reads.}
+
+\item{trim_l}{Trim left size.}
+
+\item{trim_r}{Trim right size.}
+
 \item{pool}{option for dada function (FALSE, TRUE or "pseudo"), default is "pseudo". See ? dada.}
+
+\item{torrent_trim}{Sequence length to trim at 3' and 5' for single end torrent data. (0 = no trim)}
 }
 \value{
 Return raw otu table in phyloseq object and export it in an Rdata file.

@@ -9,6 +9,7 @@ phy2cyto_fun(
   output = "./cytoscape/",
   column1 = NULL,
   repl = NULL,
+  displayedRank = "Phylum",
   verbose = 1
 )
 }
@@ -20,6 +21,8 @@ phy2cyto_fun(
 \item{column1}{A metadata column (among sample_variables(data)).}
 
 \item{repl}{Replicates column.}
+
+\item{displayedRank}{The rank that will be in the node table.}
 
 \item{verbose}{Verbose level. (1: quiet, 3: verbal)}
 }

@@ -6,7 +6,7 @@
 \usage{
 decontam_fun(
   data = data,
-  domain = TRUE,
+  domain = "Bacteria",
   output = "./decontam_out/",
   number = 4000,
   prev = 2,
