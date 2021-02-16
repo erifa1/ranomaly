@@ -22,11 +22,11 @@ bars_fun(
 
 \item{top}{Number of top taxa to plot}
 
-\item{Ord1}{Variable used to order sample (X axis) or split the barplot if split = TRUE.}
+\item{Ord1}{Variable used to order sample (X axis) or split the barplot if split = TRUE}
 
 \item{Fact1}{Variable used to change X axis tick labels and color (when split = FALSE)}
 
-\item{split}{if TRUE make a facet_wrap like grouped by Ord1}
+\item{split}{if TRUE make a facet_wrap like grouped by Ord1 (default FALSE)}
 
 \item{relative}{Plot relative (TRUE, default) or raw abundance plot (FALSE)}
 }
