@@ -11,7 +11,8 @@ diversity_alpha_fun(
   column2 = "",
   column3 = "",
   supcovs = "",
-  measures = c("Observed", "Shannon", "Simpson", "InvSimpson")
+  measures = c("Observed", "Shannon", "Simpson", "InvSimpson"),
+  verbose = TRUE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ diversity_alpha_fun(
 \item{supcovs}{One or more supplementary covariables to test in anova (provided as comma separated vector)}
 
 \item{measures}{Diversity indices (provided as comma separated vector)}
+
+\item{verbose}{Boolean}
 }
 \value{
 Return plots and tests as list and export them in the output directory.

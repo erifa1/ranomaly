@@ -10,8 +10,8 @@ bars_fun(
   top = 10,
   Ord1 = NULL,
   Fact1 = NULL,
+  split = FALSE,
   relative = TRUE,
-  outpath = "./",
   outfile = "plot_compo.html"
 )
 }
@@ -22,18 +22,16 @@ bars_fun(
 
 \item{top}{Number of top taxa to plot}
 
-\item{Ord1}{Variable used to order sample (X axis)}
+\item{Ord1}{Variable used to order sample (X axis) or split the barplot if split = TRUE}
 
-\item{Fact1}{Variable used to change X axis tick labels and color}
+\item{Fact1}{Variable used to change X axis tick labels and color (when split = FALSE)}
+
+\item{split}{if TRUE make a facet_wrap like grouped by Ord1 (default FALSE)}
 
 \item{relative}{Plot relative (TRUE, default) or raw abundance plot (FALSE)}
-
-\item{outpath}{Output directory}
-
-\item{outfile}{Output file name}
 }
 \value{
-Exports barplots in an interactive plotly community plot
+Returns barplots in an interactive plotly community plot
 }
 \description{
 Barplots plotly
