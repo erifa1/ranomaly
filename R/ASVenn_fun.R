@@ -51,7 +51,7 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
     print_help(opt_parser)
     flog.info("You must provide a factor:")
     print(names(sample_data(data)))
-    quit()
+    stop()
   }
 
   #Subset data
@@ -65,6 +65,18 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
     TITRE=paste(column1)
   }
 
+  if(length(lvls)==0){
+    flog.error('You must provide levels...')
+    stop()
+  } else if(length(lvls)>5){
+    flog.error('Venn diagram is limited to 5 levels')
+    stop()
+  } else{
+    if(!all(lvls %in% na.omit(levels(as.factor(sample_data(data)[,column1]@.Data[[1]])) ))){
+      flog.error('Your levels are not present in metadata...')
+      stop()
+    }
+  }
 
   #Nombre d'espèce par matrice
   flog.info('Parsing factor ...')
@@ -78,41 +90,47 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
     flog.info(glue::glue("Glom phyloseq object to {rank} rank..."))
     ;data <- tax_glom(data, rank)
   }
-  print(data)
+  # print(data)
 
   databak <- data
-  for(i in 1:length(level1)){
+  for(i in 1:length(lvls)){
     databak -> data
-    LOC=as.character(level1[i])
-    # print(LOC)
+    LOC=as.character(lvls[i])
+    print(LOC)
     fun <- paste("data <- subset_samples(data, ",column1," %in% '",LOC,"')",sep="")
     eval(parse(text=fun))
 
     # print(rank)
     sp_data <- prune_taxa(taxa_sums(data) > 0, data)
     # cat(LOC,ntaxa(sp_data)," ", rank, " \n")
-
+    print(data)
     ttable <- sp_data@tax_table@.Data
     otable <- as.data.frame(otu_table(sp_data))
     # print(nrow(ttable))
+
     if(!any(rownames(ttable) == rownames(otable))){flog.info("Different order in otu table and tax table");quit()}
 
     TT = cbind(otable,ttable)
-    TFdata[[i]] <- TT
-    TFtax[[i]] <- cbind(row.names(TT), as.character(apply(TT[,colnames(ttable)], 1, paste, collapse=";") ) ) #c("Kingdom","Phylum","Class","Order","Family","Genus","Species")
-    row.names(TFtax[[i]]) = TFtax[[i]][,1]
+
+    TFdata[[lvls[i]]] <- TT
+    TFtax[[lvls[i]]] <- cbind(row.names(TT), as.character(apply(TT[,colnames(ttable)], 1, paste, collapse=";") ) ) #c("Kingdom","Phylum","Class","Order","Family","Genus","Species")
+    row.names(TFtax[[lvls[i]]]) = TFtax[[lvls[i]]][,1]
+
     # write.table(TT, paste(output,"/otu_table_sp_",LOC,".csv",sep=""), sep="\t", quote=FALSE, col.names=NA)
 
   }
-
-
+  # print(names(TFtax))
+  # print(TFdata)
+  print(str(TFtax))
+  # stop()
   ## Venn diag
   flog.info('Defining unique taxa ...')
   alltax <- do.call(rbind, TFtax)
   alltax <- alltax[!duplicated(alltax[,1]),]
   row.names(alltax)=alltax[,1]
-
-
+  # print(alltax)
+  # stop()
+  # print(alltax)
   flog.info('Plotting ...')
 
   # Specific use to screen taxonomic composition of shared taxa...
@@ -159,19 +177,27 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
 
 
 
-  TFbak <- TF <- sapply(TFtax, row.names)
-  names(TFbak) = names(TF) = level1
+  TFbak <- TF <- sapply(TFtax, row.names, simplify = FALSE)
+
+  print(str(lvls))
+  print(str(TFbak))
+  # colnames(TFbak) = colnames(TF) = level1
+  names(TFbak) = names(TF) = lvls
+  # print(names(TFbak))
+  # print(TFbak)
+  # stop()
+  # print(TF)
   # print( length(unique(unlist(TF))) )
 
-  if(length(level1)>5){
+  if(length(lvls)>5){
     flog.info('Too much levels (max. 5) ...')
-    print(lvls)
+    # print(lvls)
     if(is.null(lvls)){
       flog.info('Selecting 5 first levels ...')
       TF <- TF[1:5]
       res1 = VENNFUN(TF = TF, mode=1, TITRE = TITRE, output = output, refseq1 = refseq1, alltax = alltax)
     }else{
-      print(names(TF))
+      # print(names(TF))
       flog.info(glue('Selecting {lvls} ...'))
       LVLs <- unlist(strsplit(lvls,","))
       TF <- TF[match(LVLs, names(TF))]
@@ -188,7 +214,6 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
     if(!is.null(lvls)){
       flog.info(glue('Selecting {lvls} ...'))
       LVLs <- unlist(strsplit(lvls,","))
-      print(c("coucou", LVLs))
       TF <- TF[match(LVLs, names(TF))]
     }
     res1 = VENNFUN(TF = TF, mode = 1, TITRE = TITRE, output = output, refseq1 = refseq1, alltax = alltax)
@@ -235,7 +260,7 @@ VENNFUN <- function(TF = TF, mode = 1, TITRE = TITRE, output = "./", refseq1 = N
 
 
     ov <- calculate.overlap(TF)
-    print(sapply(ov, length))
+    # print(sapply(ov, length))
 
     flog.info('Calculating lists ...')
     uniqTax = TABf = unique(do.call(c,TF))
@@ -282,9 +307,9 @@ VENNFUN <- function(TF = TF, mode = 1, TITRE = TITRE, output = "./", refseq1 = N
     # Exclusive
     for(i in ENVS){
       tt = c(i, ENVS[ENVS != i])
-      print(tt)
+      # print(tt)
       yy = Reduce(setdiff, TF[tt])  # setdiff(setdiff(tt[1], tt[2]), tt[3] )
-      print(length(yy))
+      # print(length(yy))
       if(!is.null(alltax)){
         Tab1 <- cbind(yy, rep(i, length(yy)), alltax[yy,1])
       }else{
