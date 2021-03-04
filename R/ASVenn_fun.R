@@ -159,7 +159,7 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
 
 
 
-  TFbak <- TF <- sapply(TFtax, row.names)
+  TFbak <- TF <- sapply(TFtax, row.names, simplify = FALSE)
   names(TFbak) = names(TF) = level1
   # print( length(unique(unlist(TF))) )
 

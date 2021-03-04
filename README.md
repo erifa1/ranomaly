@@ -52,3 +52,10 @@ Callahan, Benjamin J., Paul J. McMurdie, Michael J. Rosen, Andrew W. Han, Amy Jo
 McMurdie, Paul J., et Susan Holmes. « Phyloseq: An R Package for Reproducible Interactive Analysis and Graphics of Microbiome Census Data ». PLOS ONE 8, nᵒ 4 (22 avril 2013): e61217. https://doi.org/10.1371/journal.pone.0061217.
 
 Murali, Adithya, Aniruddha Bhargava, et Erik S. Wright. « IDTAXA: a novel approach for accurate taxonomic classification of microbiome sequences ». Microbiome 6, nᵒ 1 (9 août 2018): 140. https://doi.org/10.1186/s40168-018-0521-5.
+
+## Licence
+ <img src="https://forgemia.inra.fr/umrf/ranomaly/-/blob/master/inst/misc/etalab5.png" width="50"> [ETALAB](https://www.etalab.gouv.fr/wp-content/uploads/2018/11/open-licence.pdf)
+GPL 3.0
+
+## Copyright
+2021 INRA
