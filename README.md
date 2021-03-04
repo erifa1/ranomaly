@@ -54,7 +54,7 @@ McMurdie, Paul J., et Susan Holmes. « Phyloseq: An R Package for Reproducible 
 Murali, Adithya, Aniruddha Bhargava, et Erik S. Wright. « IDTAXA: a novel approach for accurate taxonomic classification of microbiome sequences ». Microbiome 6, nᵒ 1 (9 août 2018): 140. https://doi.org/10.1186/s40168-018-0521-5.
 
 ## Licence
- <img src="https://forgemia.inra.fr/umrf/ranomaly/-/blob/master/inst/misc/etalab5.png" width="50">
+
  ![etalab](inst/misc/etalab5.png "etalab") [ETALAB](https://www.etalab.gouv.fr/wp-content/uploads/2018/11/open-licence.pdf)
 GPL 3.0
 
