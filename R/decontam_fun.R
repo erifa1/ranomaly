@@ -189,6 +189,7 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
     } else {
       flog.info('Decontam step skipped or too few control samples (less than 3)...')
       taxToDump0 = NULL
+      skip=TRUE
     }
   }else{taxToDump0 = NULL} #-k skip all decontam
 
@@ -285,7 +286,7 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
   }
   data <- prune_samples(sample_sums(data) > number, data)
   flog.info('Done.')
-  flog.info(paste("AFTER FILTERING: ",nsamples(data), "samples and", ntaxa(data),"ASVs in otu table") )
+
 
 
   ##TAXA to remove manually
@@ -305,12 +306,13 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
   }
 
   ##Remove Control samples for next analysis
-  if(column != ""){
+  if(column != "" && skip==FALSE){
+    flog.info('Subsetting controls samples.')
     fun <- paste("data <- subset_samples(data, ",column," %in% '",spl_identifier,"')",sep="")
     eval(parse(text=fun))
   }
 
-
+  flog.info(paste("AFTER FILTERING: ",nsamples(data), "samples and", ntaxa(data),"ASVs in otu table") )
 
   flog.info('Writing raw tables.')
   write.table(cbind(otu_table(data),"Consensus Lineage" = apply(tax_table(data), 1, paste, collapse = ";"), "sequences"=as.data.frame(refseq(data)) ), paste(output,"/raw_otu-table.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
