@@ -7,7 +7,7 @@
 #' @param asv_names sequences IDs in same order.
 #' @param confidence Bootstrap threshold 0...100
 #'
-#' @return return taxonomic assignment of given sequences. 
+#' @return return taxonomic assignment of given sequences.
 #' @import futile.logger
 #' @import DECIPHER
 
@@ -17,7 +17,7 @@
 idTaxa_assign = function(db_file, dna, asv_names, confidence){
   flog.info(paste('Using database ',db_file,sep=''))
   toto <- load(db_file)
-  ids <- IdTaxa(dna, trainingSet, strand="top", processors=NULL, verbose=TRUE)
+  ids <- IdTaxa(dna, trainingSet, strand="both", processors=NULL, verbose=TRUE)
   names(ids) <- asv_names
   flog.info("Confidence filtering...")
   IDCONF = as.numeric(confidence)

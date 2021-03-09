@@ -76,11 +76,6 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
     dir.create(output, recursive=TRUE)
   }
 
-  if(verbose == 3){
-    invisible(flog.threshold(DEBUG))
-  } else {
-    invisible(flog.threshold(INFO))
-  }
 
   if(column1 == ""){
     flog.error('You need to provide at least one column.')

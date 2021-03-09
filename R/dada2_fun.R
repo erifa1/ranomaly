@@ -19,6 +19,7 @@
 #' @param trim_r Trim right size.
 #' @param returnval Boolean to return values in console or not.
 #' @param paired Boolean for Illumina Paired End Reads.
+#' @param orient_torrent Forward primer sequence to orient all reads to same strand.
 #'
 #' @return Return raw otu table in phyloseq object and export it in an Rdata file.
 #'
@@ -37,7 +38,8 @@
 
 dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_trunclen = 240, r_trunclen = 240, dadapool = "pseudo",
                       f_primer = "GCATCGATGAAGAACGCAGC", r_primer = "TCCTCCGCTTWTTGWTWTGC", plot = FALSE, compress = FALSE, verbose = 1,
-                      torrent_single = FALSE,returnval = TRUE, paired = TRUE, trim_l=15, trim_r=0){
+                      torrent_single = FALSE,returnval = TRUE, paired = TRUE, trim_l=15, trim_r=0, orient_torrent = NULL){
+  if(torrent_single == TRUE & is.null(orient_torrent)){stop("Need forward primer to orient TORRENT reads...")}
 
   if(verbose == 3){
     invisible(flog.threshold(DEBUG))
@@ -335,9 +337,13 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
       filtFs <- file.path(path, "filtered", paste0(sample.names, "_filt.fastq"))
     }
 
-
-    out <- filterAndTrim(fwd = fnFs, filt = filtFs, maxN = 0, multithread = TRUE, verbose=TRUE, rm.phix = TRUE,
-      , maxEE = 5 , minLen = 100, compress=compress, trimLeft=trim_l, trimRight=trim_r )
+    if(torrent_single == TRUE){
+      out <- filterAndTrim(fwd = fnFs, filt = filtFs, maxN = 0, multithread = TRUE, verbose=TRUE, rm.phix = TRUE,
+        , maxEE = 5 , minLen = 100, compress=compress, trimLeft=trim_l, trimRight=trim_r, orient.fwd = orient_torrent)
+    }else{
+      out <- filterAndTrim(fwd = fnFs, filt = filtFs, maxN = 0, multithread = TRUE, verbose=TRUE, rm.phix = TRUE,
+        , maxEE = 5 , minLen = 100, compress=compress, trimLeft=trim_l, trimRight=trim_r )
+    }
     row.names(out) = sample.names
 
     flog.info('Learning error model...')
