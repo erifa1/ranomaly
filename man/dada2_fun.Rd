@@ -20,7 +20,8 @@ dada2_fun(
   returnval = TRUE,
   paired = TRUE,
   trim_l = 15,
-  trim_r = 0
+  trim_r = 0,
+  orient_torrent = NULL
 )
 }
 \arguments{
@@ -53,6 +54,8 @@ dada2_fun(
 \item{trim_l}{Trim left size.}
 
 \item{trim_r}{Trim right size.}
+
+\item{orient_torrent}{Forward primer sequence to orient all reads to same strand.}
 
 \item{pool}{option for dada function (FALSE, TRUE or "pseudo"), default is "pseudo". See ? dada.}
 
