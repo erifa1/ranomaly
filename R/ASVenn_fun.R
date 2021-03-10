@@ -78,6 +78,21 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
     }
   }
 
+
+  if(length(lvls)==0){
+    flog.error('You must provide levels...')
+    stop()
+  } else if(length(lvls)>5){
+    flog.error('Venn diagram is limited to 5 levels')
+    stop()
+  } else{
+    if(!all(lvls %in% na.omit(levels(as.factor(sample_data(data)[,column1]@.Data[[1]])) ))){
+      flog.error('Your levels are not present in metadata...')
+      stop()
+    }
+  }
+
+
   #Nombre d'espèce par matrice
   flog.info('Parsing factor ...')
   level1 <- na.omit(levels(as.factor(sample_data(data)[,column1]@.Data[[1]])) )
@@ -178,15 +193,7 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
 
 
   TFbak <- TF <- sapply(TFtax, row.names, simplify = FALSE)
-
-  print(str(lvls))
-  print(str(TFbak))
-  # colnames(TFbak) = colnames(TF) = level1
-  names(TFbak) = names(TF) = lvls
-  # print(names(TFbak))
-  # print(TFbak)
-  # stop()
-  # print(TF)
+  names(TFbak) = names(TF) = level1
   # print( length(unique(unlist(TF))) )
 
   if(length(lvls)>5){
