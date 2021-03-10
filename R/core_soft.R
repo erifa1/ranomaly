@@ -9,6 +9,8 @@
 #' @param prev prevalence threshold of microbiome::core_members function
 #'
 #' @importFrom microbiome transform core_members
+#'
+#' @export
 
 
 core_soft_fun <- function(data = NULL, fact = NULL, group = NULL, freq = 0.001, prev = 0.5, rank = "ASV"){
@@ -63,6 +65,8 @@ core_soft_fun <- function(data = NULL, fact = NULL, group = NULL, freq = 0.001, 
 #'
 #' @param inlist Output of core_soft_fun() function
 #' @param part which part of microbiome to output (core, soft or transit)
+#'
+#' @export
 
 list_venn_fun <- function(inlist = NULL, part="core"){
   if(! any(part == c("core", "soft", "transit"))){stop("Choose 'core', 'soft' or 'transit' for 'part' argument")}
