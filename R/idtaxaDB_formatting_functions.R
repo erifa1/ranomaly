@@ -101,15 +101,17 @@ check_tax_fun <- function(taxtable = taxtable, output = NULL, rank = 7, verbose=
           ftax <- names(uniqTax2[order(uniqTax2,decreasing=TRUE)])[1]
           ftax <- unlist(strsplit(ftax,";"))
 
+
           cat( glue::glue( "CORRECTED :
                       {paste(ftax, collapse = ';')}" )
           ); cat("\n")
           #Change taxonomy with final ftax. the most common in taxtable
           for(j in row.names(taxtable[taxtable[,rk]==i,])){
             if(rk == 7){
+              # print(ftax)
               taxtable[j,] = ftax
             }else{
-              taxtable[j,] = c(ftax, taxtable[j,(rk+1):ncol(taxtable)])
+              taxtable[j,] = c(ftax, as.matrix(taxtable[j,(rk+1):ncol(taxtable)]) )
             }
           }
         }
