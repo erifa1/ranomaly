@@ -59,4 +59,4 @@ Murali, Adithya, Aniruddha Bhargava, et Erik S. Wright. « IDTAXA: a novel appr
 GPL 3.0
 
 ## Copyright
-2021 INRA
+2021 INRAE
