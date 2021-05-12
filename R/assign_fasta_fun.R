@@ -45,11 +45,12 @@ idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", co
   }
 
   if(length(db_list)>1){
+    # Multiple references
     flog.info('Merging all annotations...')
 
     Fannot = list()
     for (seq_name in names(dna)){
-      print(seq_name)
+      if(verbose == 3){message(seq_name)}
       # create list
       L1=list(); L2=list()
       for (i in 1:length(db_list)){
@@ -59,12 +60,12 @@ idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", co
 
       depth1 = sapply(L1, length)
       if ( all(depth1 == 0) ){
-        print("unassigned")
+        if(verbose == 3){message("unassigned")}
         Fannot[[seq_name]]$taxon = rep("unassigned", 8)
         Fannot[[seq_name]]$confidence = rep(0, 8)
       } else {
         if(length(unique(depth1)) == 1){
-          print("best conf")
+          if(verbose == 3){message("best conf")}
         #if same assignation depth, test on confidence
         last_rank <- length(taxid_list[[1]][[seq_name]]$taxon)
         conf1 = sapply(L2, function(x){x[last_rank]})
@@ -73,19 +74,19 @@ idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", co
 
           if( any( table(depth1) > 1 ) ){
             # if some equal depth
-            print("some equal depth, best conf")
+            if(verbose == 3){message("some equal depth, best conf")}
             last_rank <- max(sapply(L1, length))
             maxDepth_list = L2[which(depth1 == max(depth1))]
             conf1 = sapply(L2, function(x){x[last_rank]}); conf1[is.na(conf1)] = 0
             Fannot[[seq_name]] <- taxid_list[[which(conf1 == max(conf1))]][[seq_name]]
           }else{
             #if all different assignation depth
-            print("best depth")
+            if(verbose == 3){message("best depth")}
             Fannot[[seq_name]] <- taxid_list[[which(depth1 == max(depth1))]][[seq_name]]
           }
         }
       }
-      print(length(Fannot))
+      if(verbose == 3){message(length(Fannot))}
     }
     flog.info('Done.')
 
@@ -113,7 +114,7 @@ idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", co
     colnames(final_tax_table)=c("ASV",db_list, "FINAL", "sequences")
     write.table(final_tax_table, paste(output,"/allDB_tax_table.csv",sep=""), quote = FALSE, sep = "\t", row.names = FALSE)
 
-    # Keep merged assignment (taxid_list[[3]])
+    # Keep merged assignment (Fannot)
     taxid <- sapply(Fannot, function(x) {
       taxa <- rep(NA,7)
       assign <- x$taxon
@@ -127,7 +128,6 @@ idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", co
       return(taxa)
     })
 
-    # taxid <- as.data.frame(taxid)
 
   }else{
     # One DB assignment
@@ -163,33 +163,27 @@ idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", co
   names(taxid) <- c("Domain", "Phylum", "Class", "Order", "Family", "Genus", "Species")
   flog.info("Filling missing taxonomy ranks...")
   PREFIX = c("k__","p__","c__","o__","f__","g__","s__")
-
+  # handling possible prefix
   noprefix_taxid = taxid[grep("k__",taxid[,1], invert = TRUE),]
   prefix_taxid = taxid[grep("k__",taxid[,1]),]
 
-  noprefix_taxid = fill_tax_fun(noprefix_taxid, prefix = FALSE)
-  noprefix_taxid = as.data.frame( t(apply(noprefix_taxid, 1, function(x){ paste(PREFIX, x, sep="")})), stringAsFactors = FALSE)
-  names(noprefix_taxid) = names(taxid)
+  if(nrow(noprefix_taxid) != 0){
+    noprefix_taxid = fill_tax_fun(noprefix_taxid, prefix = FALSE)
+    noprefix_taxid = as.data.frame( t(apply(noprefix_taxid, 1, function(x){ paste(PREFIX, x, sep="")})), stringAsFactors = FALSE)
+    names(noprefix_taxid) = names(taxid)
+  }
 
-  prefix_taxid = fill_tax_fun(prefix_taxid, prefix = TRUE)
-
+  if(nrow(prefix_taxid) != 0){
+    prefix_taxid = fill_tax_fun(prefix_taxid, prefix = TRUE)
+  }
   filled_taxid = rbind.data.frame(noprefix_taxid, prefix_taxid)
+
   tax.table = filled_taxid[names(dna),]
 
-  # if( length(grep("p__",taxid[,2])) == 0 ){
-  #   taxid = fill_tax_fun(taxid, prefix = FALSE)
-  #   taxid = as.data.frame( t(apply(taxid, 1, function(x){ paste(PREFIX, x, sep="")})), stringAsFactors = FALSE)
-  # }else{
-  #   taxid = fill_tax_fun(taxid, prefix = TRUE)
-  # }
   flog.info('Done.')
 
-  # names(taxid) <- c("Domain", "Phylum", "Class", "Order", "Family", "Genus", "Species")
-  # tax.table <- tax_table(as.matrix(taxid))
-
-
   flog.info("Check taxonomy consistency...")
-  tax.tablecheck = check_tax_fun(tax.table, output = NULL, verbose = 3)
+  tax.tablecheck = check_tax_fun(tax.table, output = NULL, rank = 6, verbose = 3)
   flog.info("Done.")
 
   #Output table 2

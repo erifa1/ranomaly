@@ -67,7 +67,6 @@ fill_tax_fun <- function(taxtable = taxtable, prefix = TRUE){
 
 check_tax_fun <- function(taxtable = taxtable, output = NULL, rank = 7, verbose=3, returnval = TRUE){
   RANKS = c("_domain","_phylum","_class","_order","_family","_genus","_species")
-  print("Check taxonomy consistency...")
   # Check for multiple ancestors at each rank, choose first occurence for each problematic taxon
   sink(paste('./check_tax_fun.log', sep=""), split = TRUE)
   for(rk in rank:2){
