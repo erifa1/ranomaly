@@ -29,6 +29,8 @@ bars_fun(
 \item{split}{if TRUE make a facet_wrap like grouped by Ord1 (default FALSE)}
 
 \item{relative}{Plot relative (TRUE, default) or raw abundance plot (FALSE)}
+
+\item{outfile}{Output html file.}
 }
 \value{
 Returns barplots in an interactive plotly community plot

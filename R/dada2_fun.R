@@ -5,7 +5,7 @@
 #' @param amplicon Choose amplipcon "16S" or "ITS"
 #' @param path Read files folder path
 #' @param outpath output .Rdata file name
-#' @param pool option for dada function (FALSE, TRUE or "pseudo"), default is "pseudo". See ? dada.
+#' @param dadapool option for dada function (FALSE, TRUE or "pseudo"), default is "pseudo". See ? dada.
 #' @param f_trunclen Forward read tuncate length (only for paired end 16S)
 #' @param r_trunclen Reverse read tuncate length (only for paired end 16S)
 #' @param f_primer Forward primer sequence (only for ITS)

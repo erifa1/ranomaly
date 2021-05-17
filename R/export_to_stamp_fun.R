@@ -4,7 +4,7 @@
 #'
 #' @param data a phyloseq object (output from decontam or generate_phyloseq)
 #' @param output Output directory
-#' @param correc If TRUE, correct metadata to replace most common special characters (eg. é -> e), save the new file in meta_stampOK.tsv.
+#' @param correc If TRUE, correct metadata to replace most common special characters, save the new file in meta_stampOK.tsv.
 #'
 #' @return Export 2 text files ready to use with STAMP.
 #'

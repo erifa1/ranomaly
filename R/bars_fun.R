@@ -41,6 +41,7 @@ rarefaction <- function(data = data, col = NULL, step = 100, ggplotly = TRUE){
 #' @param Fact1 Variable used to change X axis tick labels and color (when split = FALSE)
 #' @param split if TRUE make a facet_wrap like grouped by Ord1 (default FALSE)
 #' @param relative Plot relative (TRUE, default) or raw abundance plot (FALSE)
+#' @param outfile Output html file.
 #'
 #' @return Returns barplots in an interactive plotly community plot
 #'

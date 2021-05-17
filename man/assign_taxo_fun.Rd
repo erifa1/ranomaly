@@ -10,7 +10,8 @@ assign_taxo_fun(
   id_db = "/PathToDB/UNITE_idtaxa.Rdata",
   confidence = 50,
   verbose = 1,
-  returnval = TRUE
+  returnval = TRUE,
+  ncpu = NULL
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ assign_taxo_fun(
 \item{verbose}{Verbose level. (1: quiet, 3: verbal)}
 
 \item{returnval}{Boolean to return values in console or not.}
+
+\item{ncpu}{Number of cpus to use.}
 }
 \value{
 Return a taxonomy table with multiple ancestor checking and incongruence checking when 2 databases are used.

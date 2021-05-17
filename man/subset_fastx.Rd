@@ -40,5 +40,5 @@ subset_fastx(
 Output fastx files in the output directory
 }
 \description{
-Allows subset fastq or fasta files at a given threshold. This fonction can convert fastq to fasta.
+Allows subset fastq or fasta files at a given threshold. This function can convert fastq to fasta.
 }

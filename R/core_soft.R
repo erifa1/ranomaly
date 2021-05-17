@@ -7,6 +7,7 @@
 #' @param group Choose which level of the factor, if NULL generate a list for each level.
 #' @param freq frequence threshold of microbiome::core_members function
 #' @param prev prevalence threshold of microbiome::core_members function
+#' @param rank Taxonomy rank.
 #'
 #' @importFrom microbiome transform core_members
 #'

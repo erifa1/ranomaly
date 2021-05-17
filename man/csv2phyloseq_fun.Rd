@@ -23,6 +23,8 @@ csv2phyloseq_fun(
 
 \item{metadata}{Tabulated metadata file path.}
 
+\item{generateTree}{Boolean to generate the phylogenetic tree.}
+
 \item{output}{Output directory}
 
 \item{returnval}{Boolean to return values in console or not.}

@@ -5,6 +5,7 @@
 #' @param taxtable Tabulated taxonomy table file path.
 #' @param seq Tabulated sequence file path.
 #' @param metadata Tabulated metadata file path.
+#' @param generateTree Boolean to generate the phylogenetic tree.
 #' @param output Output directory
 #' @param returnval Boolean to return values in console or not.
 #'

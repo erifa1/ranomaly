@@ -12,6 +12,7 @@
 #' @param verbose Verbose level. (1: quiet, 3: verbal)
 #' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
 #' @param comp Comparison to test. Comma separated and comparisons are informed with a tilde (A~C,A~B,B~C). If empty, test all combination.
+#' @param returnval Boolean for function to return values.
 #'
 #' @return Export final CSV files, barplot with top significant ASV and Venn Digramm.
 #'

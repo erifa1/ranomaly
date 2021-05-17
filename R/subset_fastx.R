@@ -1,6 +1,6 @@
 #' subset_fastx
 #'
-#' Allows subset fastq or fasta files at a given threshold. This fonction can convert fastq to fasta.
+#' Allows subset fastq or fasta files at a given threshold. This function can convert fastq to fasta.
 #'
 #' @param path Path to the fastq files directory
 #' @param format fasta or fastq format are allowed.
@@ -36,7 +36,7 @@ subset_fastx <- function(path = NULL, format = "fastq", outformat = "fastq", out
       writeXStringSet(X, glue::glue("{output}/{L2[i]}.{outformat}"), format = outformat, compress=compress)
       return("Done")
     }
-    
+
     if(length(X)>nbseq){
       if(random){
         if(!is.null(seed)){set.seed(seed)}
