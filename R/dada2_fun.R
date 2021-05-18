@@ -31,8 +31,18 @@
 #' @import futile.logger
 #' @import digest
 #' @import phyloseq
+#' @import stringr
 #' @export
 
+
+
+get.sample.name <- function(fname){
+  # res <- stringr::str_match(basename(fname), "^(.*)_R[12]\\.fastq\\.gz$")
+  # tt <- res[1,2]
+  tt <- strsplit(basename(fname), "_")[[1]][1]
+
+  return(tt)
+}
 
 # DADA2 function
 
@@ -70,8 +80,8 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
     }
 
     flog.debug("File list...")
-    flog.debug(fnFs)
-    flog.debug(fnRs)
+    flog.debug(length(fnFs))
+    flog.debug(length(fnRs))
     flog.info('Done.')
 
     if(amplicon=="ITS"){
@@ -104,11 +114,11 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
       # print(fnRs.filtN)
 
       flog.info('filterAndTrim...')
-      # if(! dir.exists(paste(path,'/filtN',sep=''))){
-      filterAndTrim(fwd = fnFs, filt = fnFs.filtN, rev = fnRs, filt.rev = fnRs.filtN, maxN = 0, multithread = TRUE, verbose=TRUE, rm.phix = TRUE, compress=compress)
-      # }else{
-      #   flog.info('Filtered files exist, skipping...')
-      # }
+      if(! dir.exists(paste(path,'/filtN',sep=''))){
+        filterAndTrim(fwd = fnFs, filt = fnFs.filtN, rev = fnRs, filt.rev = fnRs.filtN, maxN = 0, multithread = TRUE, verbose=TRUE, rm.phix = TRUE, compress=compress)
+      }else{
+        flog.info('Filtered files exist, skipping...')
+      }
 
       flog.info('Done.')
 
@@ -174,7 +184,8 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
       cutRs <- sort(list.files(path.cut, pattern = "_R2.fastq", full.names = TRUE))
 
       # Extract sample names, assuming filenames have format:
-      get.sample.name <- function(fname) strsplit(basename(fname), "_")[[1]][1]
+
+      # get.sample.name <- function(fname) strsplit(basename(fname), "_")[[1]][1]
       sample.names <- unname(sapply(cutFs, get.sample.name))
       #head(sample.names)
 
@@ -188,6 +199,15 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
 
       names(filtFs) <- sample.names
       names(filtRs) <- sample.names
+
+      flog.debug(length(cutFs))
+      print(head(cutFs))
+      flog.debug(length(filtFs))
+      print(head(filtFs))
+      flog.debug(length(cutRs))
+      print(head(cutRs))
+      flog.debug(length(filtRs))
+      print(head(filtRs))
 
       out <- filterAndTrim(cutFs, filtFs, cutRs, filtRs, maxN = 0, maxEE = c(2, 2),
       truncQ = 2, minLen = 50, compress = FALSE, multithread = TRUE)  # on windows, set multithread = FALSE
@@ -209,7 +229,9 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
       flog.debug(length(fnFs))
       flog.debug(length(fnRs))
 
-      sample.names <- sapply(strsplit(basename(fnFs), "_"), `[`, 1)
+      sample.names <- unname(sapply(fnFs, get.sample.name))
+      flog.debug(head(sample.names))
+      # sample.names <- sapply(strsplit(basename(fnFs), "_"), `[`, 1)
 
       if(compress){
         filtFs <- file.path(path, "filtered", paste0(sample.names, "_F_filt.fastq.gz"))
