@@ -3,7 +3,9 @@
 #'
 #'
 #' @param dada_res Results of dada2_fun()
-#' @param output Output directory
+#' @param output Output directory.
+#' @param psobj Phyloseq object with sequences.
+#' @param verbose Verbosity level.
 #' @param returnval Boolean to return values in console or not.
 #'
 #' @return Return a formatted tree object ready to use in phyloseq.

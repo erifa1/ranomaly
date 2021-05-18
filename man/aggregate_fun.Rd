@@ -38,6 +38,8 @@ aggregate_fun(
 \item{rank}{Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)}
 
 \item{comp}{Comparison to test. Comma separated and comparisons are informed with a tilde (A~C,A~B,B~C). If empty, test all combination.}
+
+\item{returnval}{Boolean for function to return values.}
 }
 \value{
 Export final CSV files, barplot with top significant ASV and Venn Digramm.

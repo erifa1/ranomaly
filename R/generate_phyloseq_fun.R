@@ -3,7 +3,7 @@
 #'
 #'
 #' @param dada_res Results of dada2_fun()
-#' @param taxtable Results of assign_taxo_fun()
+#' @param tax.table Results of assign_taxo_fun()
 #' @param tree Results of generate_tree_fun()
 #' @param metadata Path of metadata file (tab separated with header)
 #' @param output Output directory

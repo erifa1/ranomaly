@@ -18,7 +18,13 @@ VENNFUN(
 
 \item{mode}{= 1: length(TF)<=5, mode = 2 5<length(TF)<7}
 
-\item{alltax}{}
+\item{TITRE}{Plot title.}
+
+\item{output}{Output path.}
+
+\item{refseq1}{Reference sequences.}
+
+\item{alltax}{Taxonomy table.}
 }
 \value{
 Exports a venn diagram with corresponding tabulated file.

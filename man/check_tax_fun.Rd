@@ -7,6 +7,7 @@
 check_tax_fun(
   taxtable = taxtable,
   output = NULL,
+  rank = 7,
   verbose = 3,
   returnval = TRUE
 )
@@ -15,6 +16,8 @@ check_tax_fun(
 \item{taxtable}{Output from fill_tax_table function.}
 
 \item{output}{output path}
+
+\item{rank}{Deepest taxonomy rank at which correction begin (7 for Species, 6 for Genus etc...).}
 
 \item{verbose}{verbose mode}
 

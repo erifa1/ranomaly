@@ -20,7 +20,8 @@ dada2_fun(
   returnval = TRUE,
   paired = TRUE,
   trim_l = 15,
-  trim_r = 0
+  trim_r = 0,
+  orient_torrent = NULL
 )
 }
 \arguments{
@@ -33,6 +34,8 @@ dada2_fun(
 \item{f_trunclen}{Forward read tuncate length (only for paired end 16S)}
 
 \item{r_trunclen}{Reverse read tuncate length (only for paired end 16S)}
+
+\item{dadapool}{option for dada function (FALSE, TRUE or "pseudo"), default is "pseudo". See ? dada.}
 
 \item{f_primer}{Forward primer sequence (only for ITS)}
 
@@ -54,7 +57,7 @@ dada2_fun(
 
 \item{trim_r}{Trim right size.}
 
-\item{pool}{option for dada function (FALSE, TRUE or "pseudo"), default is "pseudo". See ? dada.}
+\item{orient_torrent}{Forward primer sequence to orient all reads to same strand.}
 
 \item{torrent_trim}{Sequence length to trim at 3' and 5' for single end torrent data. (0 = no trim)}
 }

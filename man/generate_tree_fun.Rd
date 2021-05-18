@@ -15,9 +15,13 @@ generate_tree_fun(
 \arguments{
 \item{dada_res}{Results of dada2_fun()}
 
-\item{output}{Output directory}
+\item{psobj}{Phyloseq object with sequences.}
+
+\item{output}{Output directory.}
 
 \item{returnval}{Boolean to return values in console or not.}
+
+\item{verbose}{Verbosity level.}
 }
 \value{
 Return a formatted tree object ready to use in phyloseq.

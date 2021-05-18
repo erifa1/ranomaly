@@ -4,7 +4,7 @@
 \alias{idTaxa_assign}
 \title{IDTAXA assign}
 \usage{
-idTaxa_assign(db_file, dna, asv_names, confidence)
+idTaxa_assign(db_file, dna, asv_names, confidence, ncpu = NULLS)
 }
 \arguments{
 \item{db_file}{Path to IDTAXA formatted database file.}
@@ -14,6 +14,8 @@ idTaxa_assign(db_file, dna, asv_names, confidence)
 \item{asv_names}{sequences IDs in same order.}
 
 \item{confidence}{Bootstrap threshold 0...100}
+
+\item{ncpu}{Number of cpu to use}
 }
 \value{
 return taxonomic assignment of given sequences.

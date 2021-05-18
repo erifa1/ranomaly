@@ -97,12 +97,12 @@ phy2cyto_fun <- function(data = data, output = "./cytoscape/", column1 = NULL, r
           LINKS = cbind(rep(asv, length(srcs)), glue("type_{srcs}"), srcs)
         }
       } else{
-        #sinon partage et création d'un lien pour chaque environnement source.
+        #sinon partage et creation d'un lien pour chaque environnement source.
         LINKS = NULL
         for(rep in reps){
           sdat3 = sdat2[sdat2[,repl]==rep,]
           srcs = as.character(unique(sdat3[,column1]))
-          # Lien seulement si l'asv présent dans même sample à 2 environnements ou plus
+          # Lien seulement si l'asv present dans meme sample a 2 environnements ou plus
           if(length(srcs)>1){
             link = cbind(rep(asv, length(srcs)), glue("type_{srcs}"), srcs)
             # print(glue("{rep} {srcs} envs"))

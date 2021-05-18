@@ -55,6 +55,7 @@ fill_tax_fun <- function(taxtable = taxtable, prefix = TRUE){
 #'
 #' @param taxtable Output from fill_tax_table function.
 #' @param output output path
+#' @param rank Deepest taxonomy rank at which correction begin (7 for Species, 6 for Genus etc...).
 #' @param verbose verbose mode
 #' @param returnval Boolean to return values in console or not.
 
@@ -64,23 +65,23 @@ fill_tax_fun <- function(taxtable = taxtable, prefix = TRUE){
 
 
 
-check_tax_fun <- function(taxtable = taxtable, output = NULL, verbose=3, returnval = TRUE){
+check_tax_fun <- function(taxtable = taxtable, output = NULL, rank = 7, verbose=3, returnval = TRUE){
   RANKS = c("_domain","_phylum","_class","_order","_family","_genus","_species")
   print("Check taxonomy consistency...")
   # Check for multiple ancestors at each rank, choose first occurence for each problematic taxon
   sink(paste('./check_tax_fun.log', sep=""), split = TRUE)
-  for(rank in 7:2){
-    if(verbose==3){flog.info(paste(colnames(taxtable)[rank],".",sep=""))}
+  for(rk in rank:2){
+    if(verbose==3){flog.info(paste(colnames(taxtable)[rk],".",sep=""))}
 
     stockLres = 100; nloop=1
     while(max(stockLres)>1){
       if(verbose==3){flog.info(paste("Loop",nloop,".",sep=""))}
       stockLres = NULL
-      allTax = apply(taxtable[,1:rank] ,1, function(x){paste(x, collapse = ";")})
+      allTax = apply(taxtable[,1:rk] ,1, function(x){paste(x, collapse = ";")})
       uniqTax <- unique(allTax)
 
       #Test if unique Genus has unique taxonomy.
-      for (i in unique(taxtable[,rank])){
+      for (i in unique(taxtable[,rk])){
         # if(verbose==3){flog.info(paste(i,".",sep=""))}
         res=grep( paste(';',i,'$', sep="" ) , uniqTax)
         stockLres = c(stockLres,length(res))
@@ -89,7 +90,7 @@ check_tax_fun <- function(taxtable = taxtable, output = NULL, verbose=3, returnv
           cat("\n");print(i);
                       print(uniqTax[res]);
 
-          tax2 <- apply(taxtable[taxtable[,rank]==i,1:rank], 1, function(x){paste(x, collapse = ";")})
+          tax2 <- apply(taxtable[taxtable[,rk]==i,1:rk], 1, function(x){paste(x, collapse = ";")})
           #Taxonomy with no filltax function annotation are chosen first.
           nofill = !grepl(paste(RANKS, collapse = "|"), tax2, ignore.case = FALSE, perl = FALSE, fixed = FALSE)
           if(all(nofill == FALSE)){
@@ -104,11 +105,11 @@ check_tax_fun <- function(taxtable = taxtable, output = NULL, verbose=3, returnv
                       {paste(ftax, collapse = ';')}" )
           ); cat("\n")
           #Change taxonomy with final ftax. the most common in taxtable
-          for(j in row.names(taxtable[taxtable[,rank]==i,])){
-            if(rank == 7){
+          for(j in row.names(taxtable[taxtable[,rk]==i,])){
+            if(rk == 7){
               taxtable[j,] = ftax
             }else{
-              taxtable[j,] = c(ftax, taxtable[j,(rank+1):ncol(taxtable)])
+              taxtable[j,] = c(ftax, taxtable[j,(rk+1):ncol(taxtable)])
             }
           }
         }
@@ -135,8 +136,8 @@ check_tax_fun <- function(taxtable = taxtable, output = NULL, verbose=3, returnv
 #' @param taxtable data.frame
 #' @param seqs path to fasta file or readDNAStringSet
 #' @param prunedb maximum number of sequences per unique taxa.
-#' @param outputDIR
-#' @output
+#' @param outputDIR Output directory.
+
 
 #' @return List with taxonomy table and corresponding sequences.
 #'

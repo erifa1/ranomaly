@@ -6,6 +6,7 @@
 #' @param dna A ‘DNAStringSet’ of unaligned sequences.
 #' @param asv_names sequences IDs in same order.
 #' @param confidence Bootstrap threshold 0...100
+#' @param ncpu Number of cpu to use
 #'
 #' @return return taxonomic assignment of given sequences.
 #' @import futile.logger
@@ -14,10 +15,10 @@
 #' @export
 
 
-idTaxa_assign = function(db_file, dna, asv_names, confidence){
+idTaxa_assign = function(db_file, dna, asv_names, confidence, ncpu = NULLS){
   flog.info(paste('Using database ',db_file,sep=''))
   toto <- load(db_file)
-  ids <- IdTaxa(dna, trainingSet, strand="both", processors=NULL, verbose=TRUE)
+  ids <- IdTaxa(dna, trainingSet, strand="both", processors=ncpu, verbose=TRUE)
   names(ids) <- asv_names
   flog.info("Confidence filtering...")
   IDCONF = as.numeric(confidence)

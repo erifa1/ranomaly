@@ -234,10 +234,10 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
 #'
 #' @param TF list containing vectors to plot.
 #' @param mode = 1: length(TF)<=5, mode = 2 5<length(TF)<7
-#' @param TITRE
-#' @param output
-#' @param refseq1
-#' @param alltax
+#' @param TITRE Plot title.
+#' @param output Output path.
+#' @param refseq1 Reference sequences.
+#' @param alltax Taxonomy table.
 #'
 #'
 #' @return Exports a venn diagram with corresponding tabulated file.

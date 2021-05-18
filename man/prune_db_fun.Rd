@@ -12,6 +12,8 @@ prune_db_fun(taxtable = taxtable, seqs = "", prunedb = 10, outputDIR = "./")
 \item{seqs}{path to fasta file or readDNAStringSet}
 
 \item{prunedb}{maximum number of sequences per unique taxa.}
+
+\item{outputDIR}{Output directory.}
 }
 \value{
 List with taxonomy table and corresponding sequences.
