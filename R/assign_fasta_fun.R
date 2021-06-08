@@ -21,7 +21,7 @@ idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", co
 
   if(!dir.exists(output)){
     flog.debug('Creating output directory...')
-    dir.create(output)
+    dir.create(output, recursive = TRUE)
     flog.debug('Done.')
   }
 
