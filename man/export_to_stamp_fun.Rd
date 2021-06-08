@@ -11,7 +11,7 @@ export_to_stamp_fun(data = data, output = "./stamp/", correc = FALSE)
 
 \item{output}{Output directory}
 
-\item{correc}{If TRUE, correct metadata to replace most common special characters (eg. é -> e), save the new file in meta_stampOK.tsv.}
+\item{correc}{If TRUE, correct metadata to replace most common special characters, save the new file in meta_stampOK.tsv.}
 }
 \value{
 Export 2 text files ready to use with STAMP.

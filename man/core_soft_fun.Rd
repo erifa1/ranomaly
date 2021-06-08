@@ -23,6 +23,8 @@ core_soft_fun(
 \item{freq}{frequence threshold of microbiome::core_members function}
 
 \item{prev}{prevalence threshold of microbiome::core_members function}
+
+\item{rank}{Taxonomy rank.}
 }
 \description{
 Define core microbiome, soft micriome and transitory microbiome.

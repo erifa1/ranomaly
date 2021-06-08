@@ -137,8 +137,8 @@ check_tax_fun <- function(taxtable = taxtable, output = NULL, rank = 7, verbose=
 #' @param taxtable data.frame
 #' @param seqs path to fasta file or readDNAStringSet
 #' @param prunedb maximum number of sequences per unique taxa.
-#' @param outputDIR
-#' @output
+#' @param outputDIR Output directory.
+
 
 #' @return List with taxonomy table and corresponding sequences.
 #'

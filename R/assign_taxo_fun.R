@@ -8,6 +8,7 @@
 #' @param verbose Verbose level. (1: quiet, 3: verbal)
 #' @param confidence Bootstrap threshold 0...100
 #' @param returnval Boolean to return values in console or not.
+#' @param ncpu Number of cpus to use.
 #'
 #'
 #' @return Return a taxonomy table with multiple ancestor checking and incongruence checking when 2 databases are used.
@@ -22,7 +23,7 @@
 
 
 
-assign_taxo_fun <- function(dada_res = dada_res,  output = "./idtaxa/", id_db = "/PathToDB/UNITE_idtaxa.Rdata", confidence = 50, verbose = 1, returnval = TRUE){
+assign_taxo_fun <- function(dada_res = dada_res,  output = "./idtaxa/", id_db = "/PathToDB/UNITE_idtaxa.Rdata", confidence = 50, verbose = 1, returnval = TRUE, ncpu=NULL){
 
 
   if(verbose == 3){

@@ -134,18 +134,13 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
     # write.table(TT, paste(output,"/otu_table_sp_",LOC,".csv",sep=""), sep="\t", quote=FALSE, col.names=NA)
 
   }
-  # print(names(TFtax))
-  # print(TFdata)
-  print(str(TFtax))
-  # stop()
+
   ## Venn diag
   flog.info('Defining unique taxa ...')
   alltax <- do.call(rbind, TFtax)
   alltax <- alltax[!duplicated(alltax[,1]),]
   row.names(alltax)=alltax[,1]
-  # print(alltax)
-  # stop()
-  # print(alltax)
+
   flog.info('Plotting ...')
 
   # Specific use to screen taxonomic composition of shared taxa...
@@ -158,6 +153,7 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
     TF2 <- list(env1, others1)
     names(TF2) <- c(krona, "others")
     #Venn 2
+    # pdf(NULL)
     venn.plot <- venn.diagram(TF2, filename = NULL, col = "black",
                               fill = rainbow(length(TF2)), alpha = 0.50,
                               cex = 1.5, cat.col = 1, lty = "blank",
@@ -193,7 +189,7 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
 
 
   TFbak <- TF <- sapply(TFtax, row.names, simplify = FALSE)
-  names(TFbak) = names(TF) = level1
+  names(TFbak) = names(TF) = lvls
   # print( length(unique(unlist(TF))) )
 
   if(length(lvls)>5){
@@ -238,10 +234,10 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
 #'
 #' @param TF list containing vectors to plot.
 #' @param mode = 1: length(TF)<=5, mode = 2 5<length(TF)<7
-#' @param TITRE
-#' @param output
-#' @param refseq1
-#' @param alltax
+#' @param TITRE Plot title.
+#' @param output Output path.
+#' @param refseq1 Reference sequences.
+#' @param alltax Taxonomy table.
 #'
 #'
 #' @return Exports a venn diagram with corresponding tabulated file.
@@ -253,7 +249,8 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
 
 VENNFUN <- function(TF = TF, mode = 1, TITRE = TITRE, output = "./", refseq1 = NULL, alltax=NULL){
   if(mode==1){
-    venn::venn(TF, zcol = rainbow(7), ilcs = 2, sncs = 2) #, col=rainbow(7)
+    # pdf(NULL)
+    venn::venn(TF, zcol = rainbow(7), ilcs = 2, sncs = 2, ggplot = FALSE) #, col=rainbow(7)
     venn.plot <- recordPlot()
     invisible(dev.off())
 
@@ -298,8 +295,8 @@ VENNFUN <- function(TF = TF, mode = 1, TITRE = TITRE, output = "./", refseq1 = N
       write.table(TABf, paste(output,"/",TITRE,"_venn_table.csv",sep=""), sep="\t", quote=FALSE, row.names=FALSE)
     }
   } else if(mode == 2){ # more than 5 environments
-
-    venn.plot <- venn::venn(TF, zcol = rainbow(7), ilcs = 2, sncs = 2) #, col=rainbow(7)
+    # pdf(NULL)
+    venn.plot <- venn::venn(TF, zcol = rainbow(7), ilcs = 2, sncs = 2, ggplot = FALSE) #, col=rainbow(7)
     venn.plot <- recordPlot()
     invisible(dev.off())
 
