@@ -15,7 +15,7 @@
 #' @export
 
 
-idTaxa_assign = function(db_file, dna, asv_names, confidence, ncpu = NULLS){
+idTaxa_assign = function(db_file, dna, asv_names, confidence, ncpu = NULL){
   flog.info(paste('Using database ',db_file,sep=''))
   toto <- load(db_file)
   ids <- IdTaxa(dna, trainingSet, strand="both", processors=ncpu, verbose=TRUE)
