@@ -18,7 +18,9 @@
 #' @export
 
 idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", confidence = 50, verbose = 1, returnval = TRUE){
-
+  if(verbose == 3){
+    flog.threshold(DEBUG)
+  }
   if(!dir.exists(output)){
     flog.debug('Creating output directory...')
     dir.create(output, recursive = TRUE)
@@ -50,7 +52,8 @@ idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", co
 
     Fannot = list()
     for (seq_name in names(dna)){
-      if(verbose == 3){message(seq_name)}
+      flog.debug(seq_name)
+      
       # create list
       L1=list(); L2=list()
       for (i in 1:length(db_list)){
@@ -60,33 +63,35 @@ idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", co
 
       depth1 = sapply(L1, length)
       if ( all(depth1 == 0) ){
-        if(verbose == 3){message("unassigned")}
+        flog.debug("unassigned")
         Fannot[[seq_name]]$taxon = rep("unassigned", 8)
         Fannot[[seq_name]]$confidence = rep(0, 8)
-      } else {
+      }
+      else {
         if(length(unique(depth1)) == 1){
-          if(verbose == 3){message("best conf")}
-        #if same assignation depth, test on confidence
-        last_rank <- length(taxid_list[[1]][[seq_name]]$taxon)
-        conf1 = sapply(L2, function(x){x[last_rank]})
-        Fannot[[seq_name]] <- taxid_list[[which(conf1 == max(conf1))[1]]][[seq_name]] # ..[1] in case of same depth / same conf.
-        } else {
-
+          flog.debug("best conf")
+          #if same assignation depth, test on confidence
+          last_rank <- length(taxid_list[[1]][[seq_name]]$taxon)
+          conf1 = sapply(L2, function(x){x[last_rank]})
+          Fannot[[seq_name]] <- taxid_list[[which(conf1 == max(conf1))[1]]][[seq_name]] # ..[1] in case of same depth / same conf.
+        }
+        else {
           if( any( table(depth1) > 1 ) ){
             # if some equal depth
-            if(verbose == 3){message("some equal depth, best conf")}
+            flog.debug("some equal depth, best conf")
             last_rank <- max(sapply(L1, length))
             maxDepth_list = L2[which(depth1 == max(depth1))]
             conf1 = sapply(L2, function(x){x[last_rank]}); conf1[is.na(conf1)] = 0
             Fannot[[seq_name]] <- taxid_list[[which(conf1 == max(conf1))]][[seq_name]]
-          }else{
+          }
+          else{
             #if all different assignation depth
-            if(verbose == 3){message("best depth")}
+            flog.debug("best depth")
             Fannot[[seq_name]] <- taxid_list[[which(depth1 == max(depth1))]][[seq_name]]
           }
         }
       }
-      if(verbose == 3){message(length(Fannot))}
+      flog.debug(paste('length Fannot:',length(Fannot)))
     }
     flog.info('Done.')
 
@@ -94,22 +99,23 @@ idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", co
     #Process output table with different assignations.
     all_annot_tab = data.frame(row.names=names(taxid_list[[1]]))
     for (i in 1:length(db_list)){
-      if(i<3){print(db_list[i])}else{print("Final")}
+
       ALLassign <- sapply(taxid_list[[i]],function (id) {
         paste(id$taxon," (",round(id$confidence, digits=1),"%)",sep="",collapse="; ")
       })
       all_annot_tab[,i] <- ALLassign
-      if(verbose == 3){print(head(all_annot_tab))}
+
     }
+
     FINALassign <- sapply(Fannot,function (id) {
       paste(id$taxon," (",round(id$confidence, digits=1),"%)",sep="",collapse="; ")
     })
+
     all_annot_tab$FINAL = FINALassign
 
     seq_tab <- data.frame(sequences=as.character(dna))
     row.names(seq_tab) <- names(dna)
     final_tax_table <- merge(all_annot_tab, seq_tab, by = "row.names")
-
 
     colnames(final_tax_table)=c("ASV",db_list, "FINAL", "sequences")
     write.table(final_tax_table, paste(output,"/allDB_tax_table.csv",sep=""), quote = FALSE, sep = "\t", row.names = FALSE)
