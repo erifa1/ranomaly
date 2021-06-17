@@ -1,0 +1,17 @@
+citHeader("To cite ranomaly in publications use:")
+
+citEntry(
+  entry    = "Article",
+  title    = "RANOMALY: AmplicoN WOrkflow for Microbial Community AnaLYsis",
+  author   = "Theil Sebastien and Rifa Etienne",
+  journal  = "F1000Research",
+  year     = "2021",
+  volume   = "10",
+  page     = "7",
+  url      = "https://doi.org/10.12688/f1000research.27268.1",
+  textVersion = paste(
+  "Theil Sebastien, and Rifa Etienne. 2021. « RANOMALY: AmplicoN WOrkflow for Microbial Community AnaLYsis ». F1000Research 10 (january): 7. https://doi.org/10.12688/f1000research.27268.1."
+
+
+  )
+)

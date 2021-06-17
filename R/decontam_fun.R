@@ -294,14 +294,11 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
     cont_list <- unlist(strsplit(manual_cont,","))
     flog.info(paste('Removing ',cont_list, sep=''))
     ttable = data@tax_table@.Data
-    taxToKeep5=NULL
-    for(i in cont_list){
       if(manual_cont_rank == "ASV"){
-        taxToKeep5 = c(taxToKeep5,row.names(ttable)[row.names(ttable) !=i ]  )
+        taxToKeep5 = !row.names(ttable) %in% cont_list
       }else{
-        taxToKeep5 = c(taxToKeep5,row.names(ttable)[ttable[,manual_cont_rank]!=i])
+        taxToKeep5 = !ttable[,manual_cont_rank] %in% cont_list
       }
-    }
     data <- prune_taxa(taxToKeep5, data)
   }
 
