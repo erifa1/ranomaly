@@ -133,7 +133,7 @@ plsda_fun <- function(data = data, output = "./plsda/", column1 = "",
   flog.info(paste('keepX: ',select.keepX,sep=''))
 
   flog.info('SPLSDA...')
-  fun <- paste('splsda.res <- splsda(t(otable+1), mdata$',column1,', ncomp = ncomp, keepX = select.keepX)',sep='')
+  fun <- paste('splsda.res <- splsda(t(otable+1), mdata$',column1,', ncomp = ncomp, keepX = select.keepX, logratio= "CLR")',sep='')
   eval(parse(text=fun))
   flog.info('Done.')
   flog.info('Plot Individuals...')
@@ -151,7 +151,7 @@ plsda_fun <- function(data = data, output = "./plsda/", column1 = "",
   png(paste(output,'/splsda_perf_',column1,'_',rank,'.png',sep=''))
   plot(perf.splsda, col = color.mixo(5))
   dev.off()
-  flog.info('Done.')
+
 
   outF[["loadings"]] = list()
   for (comp in 1:ncomp){
@@ -164,16 +164,17 @@ plsda_fun <- function(data = data, output = "./plsda/", column1 = "",
   	dev.off()
   }
 
-  plotArrow(splsda.res, legend=T)
-  outF$splsda.plotArrow <- recordPlot()
-  invisible(dev.off())
-
-  png(paste(output,'/splsda_arrow_',column1,'_',rank,'.png',sep=''))
-  replayPlot(outF$splsda.plotArrow)
-  dev.off()
+  # plotArrow(splsda.res, legend=T)
+  # outF$splsda.plotArrow <- recordPlot()
+  # invisible(dev.off())
+  #
+  # png(paste(output,'/splsda_arrow_',column1,'_',rank,'.png',sep=''))
+  # replayPlot(outF$splsda.plotArrow)
+  # dev.off()
 
   outF$splsda.loadings_table = splsda.res$loadings$X
   write.table(splsda.res$loadings$X,paste(output,'/splsda_table_',column1,'_',rank,'.csv',sep=''),quote=FALSE,sep="\t",col.names=NA)
+  flog.info('Done.')
 
   return(outF)
 
