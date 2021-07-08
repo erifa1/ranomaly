@@ -34,16 +34,6 @@
 #' @import stringr
 #' @export
 
-
-
-get.sample.name <- function(fname){
-  # res <- stringr::str_match(basename(fname), "^(.*)_R[12]\\.fastq\\.gz$")
-  # tt <- res[1,2]
-  tt <- strsplit(basename(fname), "_")[[1]][1]
-
-  return(tt)
-}
-
 # DADA2 function
 
 dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_trunclen = 240, r_trunclen = 240, dadapool = "pseudo",
@@ -185,7 +175,6 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
 
       # Extract sample names, assuming filenames have format:
 
-      # get.sample.name <- function(fname) strsplit(basename(fname), "_")[[1]][1]
       sample.names <- unname(sapply(cutFs, get.sample.name))
       #head(sample.names)
 
@@ -351,7 +340,6 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
       fastq.names <- sort(list.files(path, pattern = ".fastq", full.names = FALSE))
     }
     #sample name
-    get.sample.name <- function(fname) strsplit(basename(fname), "_")[[1]][1]
     sample.names <- unname(sapply(fastq.names, get.sample.name))
     if(compress==TRUE){
       filtFs <- file.path(path, "filtered", paste0(sample.names, "_filt.fastq.gz"))
@@ -459,4 +447,17 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
   }
 
 
+}
+
+
+#' Get sample name
+#'
+#' Extract sample names, assuming filenames have format names_miscinfo.fastq
+#'
+#' @param fname a parameter
+#' @keywords internal
+
+get.sample.name <- function(fname){
+  tt <- strsplit(basename(fname), "_")[[1]][1]
+  return(tt)
 }
