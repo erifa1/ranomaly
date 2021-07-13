@@ -53,7 +53,7 @@ generate_phyloseq_fun <- function(dada_res = dada_res, tax.table = tax.table, tr
 
   if(is.null(tree)){
     flog.info('Building phyloseq object without tree...')
-    data <- phyloseq(dada_res$otu.table, tax.table, sample.metadata, DNAStringSet(sequences))
+    data <- phyloseq(dada_res$otu.table, tax_table(as.matrix(tax.table)), sample.metadata, DNAStringSet(sequences))
   } else{
     flog.info('Building phyloseq object with tree...')
     data <- phyloseq(dada_res$otu.table, tax.table, sample.metadata, phy_tree(tree), DNAStringSet(sequences))
