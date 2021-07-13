@@ -36,6 +36,8 @@ idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", co
   dna <- RemoveGaps(dna)
 
   db_list <- unlist(strsplit(id_db,","))
+  if(any(!file.exists(c(db_list)))){stop("One or more reference DB unreachable. Check path(s).")}
+
   taxid_list=vector("list", length(db_list)+1)
   for (i in 1:length(db_list)){
     db_file <- db_list[i]
@@ -53,7 +55,7 @@ idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", co
     Fannot = list()
     for (seq_name in names(dna)){
       flog.debug(seq_name)
-      
+
       # create list
       L1=list(); L2=list()
       for (i in 1:length(db_list)){
