@@ -3,7 +3,8 @@
 #' Allows subset fastq or fasta files at a given threshold. This function can convert fastq to fasta.
 #'
 #' @param path Path to the fastq files directory
-#' @param format fasta or fastq format are allowed.
+#' @param format input format, fasta or fastq format are allowed.
+#' @param outformat output format, fasta or fastq format are allowed.
 #' @param output Path to the output directory
 #' @param nbseq Number of sequences to output per fastq files; if NULL no subset.
 #' @param ncores Number of CPU used to process.

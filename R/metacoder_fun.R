@@ -10,7 +10,7 @@
 #' @param plot1 Plot heattrees or not
 #' @param signif Plot only siignificant or not
 #'
-#' @importFrom metacoder calc_obs_props
+#' @importFrom metacoder calc_obs_props filter_obs
 
 
 launch_metacoder <- function(psobj, min, col, rank, title = "", plot1 = TRUE, signif = TRUE){
@@ -207,15 +207,7 @@ launch_metacoder <- function(psobj, min, col, rank, title = "", plot1 = TRUE, si
 #'
 #' @import phyloseq
 #' @import ggplot2
-#' @importFrom metacoder zero_low_counts
-#' @importFrom metacoder calc_taxon_abund
-#' @importFrom metacoder calc_n_samples
-#' @importFrom metacoder compare_groups
-#' @importFrom metacoder parse_phyloseq
-#' @importFrom metacoder heat_tree
-#' @importFrom metacoder diverging_palette
-#' @importFrom taxa filter_obs
-#' @importFrom taxa taxon_names
+#' @importFrom metacoder zero_low_counts calc_taxon_abund calc_n_samples compare_groups parse_phyloseq heat_tree diverging_palette taxon_names
 #' @importFrom gridExtra marrangeGrob
 #'
 #' @export

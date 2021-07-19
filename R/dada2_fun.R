@@ -14,7 +14,6 @@
 #' @param compress Reads files are compressed (.gz)
 #' @param verbose Verbose level. (1: quiet, 3: verbal)
 #' @param torrent_single Boolean to choose between Illumina Paired End SOP or Torrent Single End SOP. default: FALSE
-#' @param torrent_trim Sequence length to trim at 3' and 5' for single end torrent data. (0 = no trim)
 #' @param trim_l Trim left size.
 #' @param trim_r Trim right size.
 #' @param returnval Boolean to return values in console or not.
@@ -31,7 +30,6 @@
 #' @import futile.logger
 #' @import digest
 #' @import phyloseq
-#' @import stringr
 #' @export
 
 # DADA2 function
@@ -52,7 +50,7 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
 
   flog.info("Creating directory.")
   if(!dir.exists(outpath)){
-    dir.create(outpath)
+    dir.create(outpath, recursive = TRUE)
   }
   flog.info('Done.')
 

@@ -20,7 +20,9 @@ subset_fastx(
 \arguments{
 \item{path}{Path to the fastq files directory}
 
-\item{format}{fasta or fastq format are allowed.}
+\item{format}{input format, fasta or fastq format are allowed.}
+
+\item{outformat}{output format, fasta or fastq format are allowed.}
 
 \item{output}{Path to the output directory}
 
