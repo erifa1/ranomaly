@@ -1,10 +1,10 @@
 #' Create Phyloseq object from external datas.
 #'
 #'
-#' @param otutable Tabulated ASVtable file path.
-#' @param taxtable Tabulated taxonomy table file path.
-#' @param seq Tabulated sequence file path.
-#' @param metadata Tabulated metadata file path.
+#' @param otutable Path to the tabulated ASV/OTU table or data.frame object.
+#' @param taxtable Path to the tabulated taxonomy table or data.frame object.
+#' @param Path to sequence in fasta format or DNAStringSet object.
+#' @param metadata Path to the tabulated metadata table or data.frame object.
 #' @param generateTree Boolean to generate the phylogenetic tree.
 #' @param output Output directory
 #' @param returnval Boolean to return values in console or not.
@@ -19,18 +19,41 @@ csv2phyloseq_fun <- function(otutable = NULL, taxtable = NULL, seq = NULL, metad
 
   flog.info("Input...")
   flog.info("...OTUtable...")
-  otable <- read.table(otutable, sep="\t", h=TRUE)
-  row.names(otable)=otable[,1]
+  if(is.data.frame(otutable)){
+    otable <- otutable
+  }else{
+    otable <- read.table(otutable, sep="\t", h=TRUE, check.names=FALSE)
+    row.names(otable)=otable[,1]
+    otable = otable[,-1]
+  }
   flog.info("...TAXtable...")
-  ttable <- as.matrix(read.table(taxtable, sep="\t", h=TRUE, stringsAsFactors=FALSE))
-  row.names(ttable)=ttable[,1]
+  if(is.data.frame(taxtable)){
+    print("dF")
+    head(taxtable)
+    ttable <- taxtable
+  }else{
+    ttable <- as.matrix(read.table(taxtable, sep="\t", h=TRUE, stringsAsFactors=FALSE))
+    row.names(ttable)=ttable[,1] # first columns is otu ids.
+    ttable = ttable[,-1]
+  }
   flog.info("...Metadatas...")
-  mtable <- read.table(metadata, sep="\t", h=TRUE)
+  if(is.data.frame(metadata)){
+    mtable <- metadata
+  }else{
+    mtable <- read.table(metadata, sep="\t", h=TRUE)
+  }
   row.names(mtable)=mtable[,1]
   flog.info("...Sequences...")
-  stable <- read.table(seq, sep="\t", h=TRUE)
-  sequences1 = DNAStringSet(stable[,-1])
-  names(sequences1)=stable[,1]
+  if(class(seq) == "DNAStringSet"){
+    sequences1 = seq
+  } else {
+    sequences1 <- readDNAStringSet(seq)
+  }
+
+print(head(otable))
+print(head(ttable))
+print(head(mtable))
+print(head(sequences1))
 
 
   if(generateTree){
@@ -53,9 +76,10 @@ csv2phyloseq_fun <- function(otutable = NULL, taxtable = NULL, seq = NULL, metad
     flog.info('Done.')
     tree <- fitGTR$tree
 
-    data <- phyloseq(otu_table(otable[,-1], taxa_are_rows=TRUE), sample_data(mtable), tax_table(ttable[,-1]), sequences1, tree) # phy_tree(tree),
+    data <- phyloseq(otu_table(otable, taxa_are_rows=TRUE), sample_data(mtable), tax_table(ttable), sequences1, tree) # phy_tree(tree),
   }else{
-    data <- phyloseq(otu_table(otable[,-1], taxa_are_rows=TRUE), sample_data(mtable), tax_table(ttable[,-1]), sequences1)
+    flog.info('Phyloseq object...')
+    data <- phyloseq(otu_table(otable, taxa_are_rows=TRUE), sample_data(mtable), tax_table(as.matrix(ttable)), sequences1)
   }
 
   if(!dir.exists(output)){

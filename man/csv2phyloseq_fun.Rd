@@ -15,19 +15,19 @@ csv2phyloseq_fun(
 )
 }
 \arguments{
-\item{otutable}{Tabulated ASVtable file path.}
+\item{otutable}{Path to the tabulated ASV/OTU table or data.frame object.}
 
-\item{taxtable}{Tabulated taxonomy table file path.}
+\item{taxtable}{Path to the tabulated taxonomy table or data.frame object.}
 
-\item{seq}{Tabulated sequence file path.}
-
-\item{metadata}{Tabulated metadata file path.}
+\item{metadata}{Path to the tabulated metadata table or data.frame object.}
 
 \item{generateTree}{Boolean to generate the phylogenetic tree.}
 
 \item{output}{Output directory}
 
 \item{returnval}{Boolean to return values in console or not.}
+
+\item{Path}{to sequence in fasta format or DNAStringSet object.}
 }
 \value{
 Return a phyloseq object
