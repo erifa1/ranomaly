@@ -168,7 +168,8 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
         # print(round(wilcox_res1$p.value,3))
         wilcox_col1 <- round(wilcox_res1$p.value,3)
         fun <- glue("resAlpha[[\"{m}\"]] <- list(anova = aov1, wilcox_col1 = wilcox_col1)")
-        write.table(wilcox_col1, paste(output,"/anovatable.csv", sep=""), sep="\t", row.names=FALSE)
+        write.table(wilcox_col1, paste(output,"/anovatable.csv", sep=""), sep="\t", col.names=NA)
+        # write.table(aov1, paste(output,"/anovatable.csv", sep=""), sep="\t", col.names=NA)  # need output for aov
         # print(fun)
         eval(parse(text=fun))
 

@@ -85,7 +85,7 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
       mgseqT <- read.table(paste(mgseq,"/signtab_",column1,"_",combinaisons[1,col],"_vs_",combinaisons[2,col],".csv",sep=""), h=TRUE,sep="\t")
     } else{
       if(file.exists(paste(mgseq,"/signtab_",column1,"_",combinaisons[2,col],"_vs_",combinaisons[1,col],".csv",sep=""))){
-        mgseqT <- read.table(paste(mgseq,"/signtab_",column1,"_",combinaisons[1,col],"_vs_",combinaisons[2,col],".csv",sep=""), h=TRUE,sep="\t")
+        mgseqT <- read.table(paste(mgseq,"/signtab_",column1,"_",combinaisons[2,col],"_vs_",combinaisons[1,col],".csv",sep=""), h=TRUE,sep="\t")
       }
       else{
         flog.warn('File does not exists.')

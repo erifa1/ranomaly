@@ -76,7 +76,7 @@ print(head(sequences1))
     flog.info('Done.')
     tree <- fitGTR$tree
 
-    data <- phyloseq(otu_table(otable, taxa_are_rows=TRUE), sample_data(mtable), tax_table(ttable), sequences1, tree) # phy_tree(tree),
+    data <- phyloseq(otu_table(otable, taxa_are_rows=TRUE), sample_data(mtable), tax_table(as.matrix(ttable)), sequences1, tree) # phy_tree(tree),
   }else{
     flog.info('Phyloseq object...')
     data <- phyloseq(otu_table(otable, taxa_are_rows=TRUE), sample_data(mtable), tax_table(as.matrix(ttable)), sequences1)
