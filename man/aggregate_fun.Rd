@@ -33,7 +33,7 @@ aggregate_fun(
 
 \item{column2}{Column name on which table were splitted}
 
-\item{verbose}{Verbose level. (1: quiet, 3: verbal)}
+\item{verbose}{Verbose level. (1: quiet, 2: print infos, 3: print infos + debug)}
 
 \item{rank}{Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)}
 

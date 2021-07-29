@@ -9,7 +9,7 @@
 #' @param mgseq Path to metagenomeseq results folder
 #' @param column1 Column name of factor to test (among sample_variables(data))
 #' @param column2 Column name on which table were splitted
-#' @param verbose Verbose level. (1: quiet, 3: verbal)
+#' @param verbose Verbose level. (1: quiet, 2: print infos, 3: print infos + debug)
 #' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
 #' @param comp Comparison to test. Comma separated and comparisons are informed with a tilde (A~C,A~B,B~C). If empty, test all combination.
 #' @param returnval Boolean for function to return values.
@@ -34,8 +34,13 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
 
   if(verbose == 3){
     invisible(flog.threshold(DEBUG))
-  } else {
+  }
+  if(verbose == 2){
     invisible(flog.threshold(INFO))
+  }
+
+  if(verbose == 1){
+    invisible(flog.threshold(ERROR))
   }
 
   if(!dir.exists(output)){
