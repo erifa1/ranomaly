@@ -10,6 +10,8 @@
 #' @param lvls Vector comma separated list levels of factor to print in venn diagram (max. 5).
 #' @param krona Krona of exclusive ASV or shared with informed level and others. Must be among levels of column1 argument.
 #' @param shared shared [TRUE] or exclusive [FALSE] mode.
+#' @param verbose Verbose level. (1: quiet, 2: print infos, 3: print infos + debug)
+#' @param ggplotmode if TRUE plot the Venn diagram using ggplot
 #'
 #'
 #' @return Returns list with venn diagram and table with shared features. Exports a venn diagram with corresponding tabulated file.
@@ -22,9 +24,21 @@
 
 ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
                             column1 = NULL, subset = "", lvls = NULL, krona = "",
-                            shared = TRUE){
+                            shared = TRUE, verbose = 2, ggplotmode = FALSE){
 
   invisible(flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger"))
+
+  if(verbose == 3){
+    invisible(flog.threshold(DEBUG))
+  }
+  if(verbose == 2){
+    invisible(flog.threshold(INFO))
+  }
+  if(verbose == 1){
+    invisible(flog.threshold(ERROR))
+  }
+
+
 
   if(!is.null(output)){
     if(!dir.exists(output)){
@@ -111,14 +125,14 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
   for(i in 1:length(lvls)){
     databak -> data
     LOC=as.character(lvls[i])
-    print(LOC)
+    flog.info(LOC)
     fun <- paste("data <- subset_samples(data, ",column1," %in% '",LOC,"')",sep="")
     eval(parse(text=fun))
 
     # print(rank)
     sp_data <- prune_taxa(taxa_sums(data) > 0, data)
     # cat(LOC,ntaxa(sp_data)," ", rank, " \n")
-    print(data)
+    # print(data)
     ttable <- sp_data@tax_table@.Data
     otable <- as.data.frame(otu_table(sp_data))
     # print(nrow(ttable))
@@ -213,12 +227,13 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
       }
     }
   } else {
-      print("< 5 levels")
+      flog.info("< 5 levels")
     if(!is.null(lvls)){
       flog.info(glue('Selecting {lvls} ...'))
       LVLs <- unlist(strsplit(lvls,","))
       TF <- TF[match(LVLs, names(TF))]
     }
+    save(list = ls(all.names = TRUE), file = "~/Bureau/debug_asvenn.rdata", envir = environment())
     res1 = VENNFUN(TF = TF, mode = 1, TITRE = TITRE, output = output, refseq1 = refseq1, alltax = alltax)
   }
 
@@ -238,6 +253,7 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
 #' @param output Output path.
 #' @param refseq1 Reference sequences.
 #' @param alltax Taxonomy table.
+#' @param ggplotmode if TRUE plot the Venn diagram using ggplot
 #'
 #'
 #' @return Exports a venn diagram with corresponding tabulated file.
@@ -247,20 +263,26 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
 #' @export
 
 
-VENNFUN <- function(TF = TF, mode = 1, TITRE = TITRE, output = "./", refseq1 = NULL, alltax=NULL){
+VENNFUN <- function(TF = TF, mode = 1, TITRE = TITRE, output = "./", refseq1 = NULL, alltax=NULL, ggplotmode = FALSE){
+  
+
+
   if(mode==1){
     # pdf(NULL)
-    venn::venn(TF, zcol = rainbow(7), ilcs = 2, sncs = 2, ggplot = FALSE) #, col=rainbow(7)
+
+    flog.info("VennDiagram")
+    venn::venn(TF, zcol = rainbow(7), ilcs = 1.5, sncs = 2, ggplot = ggplotmode) #, col=rainbow(7)
     venn.plot <- recordPlot()
     invisible(dev.off())
 
+    flog.info("Output figure")
     if(!is.null(output)){
       png(paste(output,'/',TITRE,'_venndiag.png',sep=''), width=20, height=20, units="cm", res=200)
       replayPlot(venn.plot)
       dev.off()
     }
 
-    print("plotOK")
+    flog.info("plotOK")
 
 
     ov <- calculate.overlap(TF)
@@ -281,6 +303,7 @@ VENNFUN <- function(TF = TF, mode = 1, TITRE = TITRE, output = "./", refseq1 = N
       names(TABf)[1] = names(TF)[j]
     }
 
+    flog.info('Generating table ...')
     if(!is.null(alltax)){
       if(!is.null(refseq1)){
         TABf <- cbind(TABf,alltax[as.character(TABf$TABf),2], refseq1[as.character(TABf$TABf),])
@@ -291,13 +314,15 @@ VENNFUN <- function(TF = TF, mode = 1, TITRE = TITRE, output = "./", refseq1 = N
       }
     }
 
+    flog.info('Writing table ...')
     if(!is.null(output)){
       write.table(TABf, paste(output,"/",TITRE,"_venn_table.csv",sep=""), sep="\t", quote=FALSE, row.names=FALSE)
     }
   } else if(mode == 2){ # more than 5 environments
     # pdf(NULL)
-    venn.plot <- venn::venn(TF, zcol = rainbow(7), ilcs = 2, sncs = 2, ggplot = FALSE) #, col=rainbow(7)
+    venn::venn(TF, zcol = rainbow(7), ilcs = 2, sncs = 2, ggplot = ggplotmode) #, col=rainbow(7)
     venn.plot <- recordPlot()
+
     invisible(dev.off())
 
     if(!is.null(output)){
@@ -336,7 +361,9 @@ VENNFUN <- function(TF = TF, mode = 1, TITRE = TITRE, output = "./", refseq1 = N
   }
 
   LL=list()
-  LL$venn_plot = venn.plot
-  LL$TABf = TABf
+  LL$venn_plot <- venn.plot
+  LL$TABf <- TABf
+
+  flog.info('Finish ...')
   return(LL)
 }

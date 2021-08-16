@@ -54,7 +54,7 @@ heatmap_fun <- function(data = data, column1 = "", top = 20, output = "./plot_he
                            strip.background = element_rect(colour="black", fill="white"))
   pltly.heat <- ggplotly(p.heat)
 
-  print(paste(output1,"heatmap_",column1,".html",sep=''))
+  flog.info(paste(output1,"heatmap_",column1,".html",sep=''))
   saveWidget(pltly.heat, file=  paste(output1,"heatmap_",column1,".html",sep=''))
 
   return(p.heat)
