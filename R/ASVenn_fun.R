@@ -233,7 +233,6 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
       LVLs <- unlist(strsplit(lvls,","))
       TF <- TF[match(LVLs, names(TF))]
     }
-    save(list = ls(all.names = TRUE), file = "~/Bureau/debug_asvenn.rdata", envir = environment())
     res1 = VENNFUN(TF = TF, mode = 1, TITRE = TITRE, output = output, refseq1 = refseq1, alltax = alltax)
   }
 
