@@ -144,14 +144,12 @@ bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 =
     }
   }
 
-  # dir.create(outpath, recursive = TRUE)
-  # htmlwidgets::saveWidget(p1, glue::glue("{outpath}/{outfile}"))
-  if(!is.null(outfile)){
-    htmlwidgets::saveWidget(p1, outfile)
-  }
 
   # facet_wrap output
   if(!split) {
+    if(!is.null(outfile)){
+      htmlwidgets::saveWidget(p1, outfile)
+    }
     return(p1)
   } else {
     p1 = meltdat %>% group_by(across({Ord1})) %>%
@@ -169,6 +167,9 @@ bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 =
     for (i in 2:length(unique(meltdat[, Ord1]))) {
       p1$x$layoutAttrs[[1]][[paste0("xaxis", i)]] = NULL
       p1$x$layoutAttrs[[1]][[paste0("xaxis", i)]]$title <- glue("{Ord1} = {unique(meltdat[, Ord1])[i]}")
+    }
+    if(!is.null(outfile)){
+      htmlwidgets::saveWidget(p1, outfile)
     }
     return(p1)
   }
