@@ -22,7 +22,7 @@ diversity_beta_light(
 
 \item{col}{A metadata column (among sample_variables(data)).}
 
-\item{cov}{Covariable names comma separated vector.}
+\item{cov}{Covariable names comma separated vector (last covariable is used to plot samples with different shape).}
 
 \item{dist0}{Dissimilarity index, partial match to "unifrac", "wunifrac", "dpcoa", "jsd", "manhattan", "euclidean", "canberra", "bray", "kulczynski", "jaccard", "gower", "altGower", "morisita", "horn", "mountford", "raup" , "binomial", "chao", "cao" or "mahalanobis".}
 

@@ -12,7 +12,9 @@ ASVenn_fun(
   subset = "",
   lvls = NULL,
   krona = "",
-  shared = TRUE
+  shared = TRUE,
+  verbose = 2,
+  ggplotmode = FALSE
 )
 }
 \arguments{
@@ -31,6 +33,10 @@ ASVenn_fun(
 \item{krona}{Krona of exclusive ASV or shared with informed level and others. Must be among levels of column1 argument.}
 
 \item{shared}{shared [TRUE] or exclusive [FALSE] mode.}
+
+\item{verbose}{Verbose level. (1: quiet, 2: print infos, 3: print infos + debug)}
+
+\item{ggplotmode}{if TRUE plot the Venn diagram using ggplot}
 }
 \value{
 Returns list with venn diagram and table with shared features. Exports a venn diagram with corresponding tabulated file.

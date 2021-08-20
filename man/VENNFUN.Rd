@@ -10,7 +10,8 @@ VENNFUN(
   TITRE = TITRE,
   output = "./",
   refseq1 = NULL,
-  alltax = NULL
+  alltax = NULL,
+  ggplotmode = FALSE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ VENNFUN(
 \item{refseq1}{Reference sequences.}
 
 \item{alltax}{Taxonomy table.}
+
+\item{ggplotmode}{if TRUE plot the Venn diagram using ggplot}
 }
 \value{
 Exports a venn diagram with corresponding tabulated file.

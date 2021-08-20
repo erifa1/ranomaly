@@ -20,7 +20,7 @@ heatmap_fun <- function(data = data, column1 = "", top = 20, output = "./plot_he
 
   output1 <- paste(getwd(),'/',output,'/',sep='')
   if(!dir.exists(output1)){
-    dir.create(output1)
+    dir.create(output1, recursive = TRUE)
   }
   flog.info('Done.')
 
@@ -33,7 +33,7 @@ heatmap_fun <- function(data = data, column1 = "", top = 20, output = "./plot_he
   colnames(data.com)
 
   p.heat <- ggplot(data.com, aes(x = Sample, y = Tax)) + geom_tile(aes(fill = Abundance))
-  p.heat <- p.heat + scale_fill_distiller("Abundance", palette = "RdYlBu") + theme_bw()
+  p.heat <- p.heat + scale_fill_distiller("Relative\nabundance", palette = "RdYlBu") + theme_bw()
 
   # Make bacterial names italics
   p.heat <- p.heat + theme(axis.text.y = element_text(colour = 'black',
