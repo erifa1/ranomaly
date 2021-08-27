@@ -9,7 +9,10 @@ heatmap_fun(
   column1 = "",
   top = 20,
   output = "./plot_heatmap/",
-  rank = "Species"
+  rank = "Species",
+  relative = TRUE,
+  aggregate = TRUE,
+  legend = "Abundance"
 )
 }
 \arguments{
@@ -22,6 +25,12 @@ heatmap_fun(
 \item{output}{Output directory}
 
 \item{rank}{Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)}
+
+\item{relative}{If TRUE, calculate relative abundance, needs a phyloseq object with raw abundance.}
+
+\item{aggregate}{If TRUE, aggregate abundance of non "top" taxa in a new taxa named "Other".}
+
+\item{legend}{Legend title ("Abundance")}
 }
 \value{
 Generate an heatmap with top taxa (html plotly version in output directory)

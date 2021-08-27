@@ -12,7 +12,9 @@ bars_fun(
   Fact1 = NULL,
   split = FALSE,
   relative = TRUE,
-  outfile = "plot_compo.html"
+  ylab = "Abundance",
+  outfile = "plot_compo.html",
+  verbose = TRUE
 )
 }
 \arguments{
@@ -29,6 +31,8 @@ bars_fun(
 \item{split}{if TRUE make a facet_wrap like grouped by Ord1 (default FALSE)}
 
 \item{relative}{Plot relative (TRUE, default) or raw abundance plot (FALSE)}
+
+\item{ylab}{Y axis title ("Abundance")}
 
 \item{outfile}{Output html file.}
 }

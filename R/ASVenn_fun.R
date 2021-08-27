@@ -82,8 +82,8 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
   if(length(lvls)==0){
     flog.error('You must provide levels...')
     stop()
-  } else if(length(lvls)>5){
-    flog.error('Venn diagram is limited to 5 levels')
+  } else if(length(lvls)>7){
+    flog.error('Venn diagram is limited to 7 levels')
     stop()
   } else{
     if(!all(lvls %in% na.omit(levels(as.factor(sample_data(data)[,column1]@.Data[[1]])) ))){
@@ -92,19 +92,6 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
     }
   }
 
-
-  if(length(lvls)==0){
-    flog.error('You must provide levels...')
-    stop()
-  } else if(length(lvls)>5){
-    flog.error('Venn diagram is limited to 5 levels')
-    stop()
-  } else{
-    if(!all(lvls %in% na.omit(levels(as.factor(sample_data(data)[,column1]@.Data[[1]])) ))){
-      flog.error('Your levels are not present in metadata...')
-      stop()
-    }
-  }
 
 
   #Nombre d'espèce par matrice

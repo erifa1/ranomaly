@@ -41,6 +41,7 @@ rarefaction <- function(data = data, col = NULL, step = 100, ggplotly = TRUE){
 #' @param Fact1 Variable used to change X axis tick labels and color (when split = FALSE)
 #' @param split if TRUE make a facet_wrap like grouped by Ord1 (default FALSE)
 #' @param relative Plot relative (TRUE, default) or raw abundance plot (FALSE)
+#' @param ylab Y axis title ("Abundance")
 #' @param outfile Output html file.
 #'
 #' @return Returns barplots in an interactive plotly community plot
@@ -56,8 +57,7 @@ rarefaction <- function(data = data, col = NULL, step = 100, ggplotly = TRUE){
 
 
 bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 = NULL, split = FALSE,
-                     relative = TRUE,
-                     outfile="plot_compo.html", verbose = TRUE){
+                     relative = TRUE, ylab = "Abundance", outfile="plot_compo.html", verbose = TRUE){
 
   if(verbose){
     invisible(flog.threshold(INFO))
@@ -125,13 +125,12 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
     legendgroup = ~g,
     showlegend = FALSE
   ) %>% layout(xaxis = list(zeroline = FALSE,showline = FALSE, showgrid = FALSE),
-               yaxis=list(showticklabels = FALSE,title = "",showgrid = FALSE))
+               yaxis=list(showticklabels = FALSE,title = ylab, showgrid = FALSE))
 
 
   if(relative){
   flog.info('Plotting relative...')
     #relative abondance
-    plottitle = "Relative abundance"
     otable=apply(otable,2, function(x){Tot=sum(x); x/Tot})
     dat= as.data.frame(t(otable))
     dat <- cbind.data.frame(sdata, dat)
@@ -143,7 +142,7 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
     eval(parse(text=fun))
 
     p1=plot_ly(meltdat, x = ~sample.id, y = ~value, type = 'bar', name = ~variable, color = ~variable) %>% #, color = ~variable
-      layout(title="Relative abundance", yaxis = list(title = 'Relative abundance'), xaxis = xform, barmode = 'stack')
+      layout(title="", yaxis = list(title = ylab), xaxis = xform, barmode = 'stack')
 
     if(length(df1$x) != length(unique(df1$g))){
       p1 <- subplot(p1, subp1, nrows = 2, shareX = T, heights=c(0.95,0.05)) %>%
@@ -152,9 +151,8 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
   }else{
   flog.info('Plotting raw...')
     #raw abundance
-    plottitle = "Raw abundance"
     p1=plot_ly(meltdat, x = ~sample.id, y = ~value, type = 'bar', name = ~variable, color = ~variable) %>% #, color = ~variable
-      layout(title="Raw abundance", yaxis = list(title = 'Raw abundance'), xaxis = xform, barmode = 'stack')
+      layout(title="", yaxis = list(title = ylab), xaxis = xform, barmode = 'stack')
 
     if(length(df1$x) != length(unique(df1$g))){
       p1 <- subplot(p1, subp1, nrows = 2, shareX = T, heights=c(0.95,0.05)) %>%
@@ -178,9 +176,9 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
                                  showlegend = (.y == levels(meltdat[, Ord1])[1])),
                        keep = TRUE)  %>%
       subplot(nrows = 1, shareX = TRUE, shareY=TRUE, titleX = FALSE) %>%
-      layout(title=plottitle,
+      layout(title="",
              xaxis = list(title = glue("{Ord1} = {unique(meltdat[, Ord1])[1]}")),
-             yaxis = list(title = 'Relative abundance'),
+             yaxis = list(title = ylab),
              barmode = 'stack')
 
     for (i in 2:length(unique(meltdat[, Ord1]))) {
