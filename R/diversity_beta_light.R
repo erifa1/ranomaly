@@ -10,6 +10,7 @@
 #' @param ord0 Currently supported method options are: c("DCA", "CCA", "RDA", "CAP", "DPCoA", "NMDS", "MDS", "PCoA")
 #' @param output The output file directory.
 #' @param tests Whether to compute tests or not (TRUE/FALSE)
+#' @param verbose Verbose level. (1: quiet, 2: print infos, 3: print infos + debug)
 #'
 #' @return Return specific plots and tests in list and output them in the output directory.
 #'
@@ -24,7 +25,18 @@
 
 # Decontam Function
 
-diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, dist0 = "bray", ord0 = "MDS", output="./plot_div_beta/", tests = TRUE) {
+diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, dist0 = "bray", ord0 = "MDS", output="./plot_div_beta/", tests = TRUE, verbose = 2) {
+
+  if(verbose == 3){
+  invisible(flog.threshold(DEBUG))
+  }
+  if(verbose == 2){
+    invisible(flog.threshold(INFO))
+  }
+  if(verbose == 1){
+    invisible(flog.threshold(ERROR))
+  }
+
 
   if(!dir.exists(output)){
     dir.create(output, recursive=TRUE)

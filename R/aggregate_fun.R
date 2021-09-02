@@ -84,7 +84,6 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
       flog.warn('File does not exists.')
       deseqT <- data.frame()
     }
-    # print(head(deseqT))
     flog.info('MetagenomeSeq.')
     if(file.exists(paste(mgseq,"/signtab_",column1,"_",combinaisons[1,col],"_vs_",combinaisons[2,col],".csv",sep=""))){
       mgseqT <- read.table(paste(mgseq,"/signtab_",column1,"_",combinaisons[1,col],"_vs_",combinaisons[2,col],".csv",sep=""), h=TRUE,sep="\t")

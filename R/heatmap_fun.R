@@ -17,8 +17,6 @@
 #' @export
 
 
-# Decontam Function
-
 heatmap_fun <- function(data = data, column1 = "", top = 20, output = "./plot_heatmap/", rank = "Species", relative = TRUE, aggregate = TRUE, legend = "Abundance"){
   LL = list()
 
@@ -27,6 +25,8 @@ heatmap_fun <- function(data = data, column1 = "", top = 20, output = "./plot_he
     dir.create(output1, recursive = TRUE)
   }
   flog.info('Done.')
+
+  if( is.na(match(column1, sample_variables(data))) ){stop("This factor is not in sample_variables(data).")}
 
   ps.glom.rel <- psobj.top <- dataglom <- data
 
