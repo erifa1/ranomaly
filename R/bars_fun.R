@@ -41,6 +41,7 @@ rarefaction <- function(data = data, col = NULL, step = 100, ggplotly = TRUE){
 #' @param Fact1 Variable used to change X axis tick labels and color (when split = FALSE)
 #' @param split if TRUE make a facet_wrap like grouped by Ord1 (default FALSE)
 #' @param relative Plot relative (TRUE, default) or raw abundance plot (FALSE)
+#' @param autoorder Order xaxis with gtools::mixedorder function (TRUE).
 #' @param ylab Y axis title ("Abundance")
 #' @param outfile Output html file.
 #'
@@ -57,7 +58,7 @@ rarefaction <- function(data = data, col = NULL, step = 100, ggplotly = TRUE){
 
 
 bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 = NULL, split = FALSE,
-                     relative = TRUE, ylab = "Abundance", outfile="plot_compo.html", verbose = TRUE){
+                     relative = TRUE, autoorder = TRUE, ylab = "Abundance", outfile="plot_compo.html", verbose = TRUE){
 
   if(verbose){
     invisible(flog.threshold(INFO))
@@ -76,13 +77,17 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
 
   # print("get data")
   sdata <- as.data.frame(sample_data(psobj.top), stringsAsFactors = TRUE)
-  sdata$sample.id = sample_names(psobj.top)
+  # sdata$sample.id = sample_names(psobj.top)
   otable = as.data.frame(otu_table(psobj.top))
   row.names(otable) = tax_table(psobj.top)[,rank]
 
   # print("melt data")
   dat <- as.data.frame(t(otable))
   dat <- cbind.data.frame(sdata, dat)
+
+  fun = glue( "dat <- dat[levels(sdata$sample.id), ]")
+  eval(parse(text=fun))
+
   meltdat <- reshape2::melt(dat, id.vars=1:ncol(sdata))
   tt <- levels(meltdat$variable)
   meltdat$variable <- factor(meltdat$variable, levels= c("Other", tt[tt!="Other"]))
@@ -92,16 +97,26 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
   # print(levels(meltdat$sample.id))
   # save(list = ls(all.names = TRUE), file = "debug.rdata", envir = environment())
 
-  # TODO: Message d'erreur si factor n'est pas dans les sample_data
+
+
+  if(autoorder){
+      fun = glue( "labs = gtools::mixedorder(as.character(meltdat${Ord1}))" )
+      eval(parse(text=fun))
+    }else{
+      labs = 1:nrow(meltdat)
+    }
+
+# print(unique(meltdat$sample.id[labs]))
 
   fun = glue( "xform <- list(categoryorder = 'array',
-                    categoryarray = unique(meltdat$sample.id[gtools::mixedorder(as.character(meltdat${Ord1}))]),
+                    categoryarray = unique(meltdat$sample.id[labs]),
                     title = 'Samples',
                     tickmode = 'array',
                     tickvals = 0:nrow(sdata),
-                    ticktext = sdata[unique(meltdat$sample.id[gtools::mixedorder(as.character(meltdat${Ord1}))]), '{Fact1}']@.Data[[1]],
+                    ticktext = sdata[as.character(unique(meltdat$sample.id[labs])), '{Fact1}']@.Data[[1]],
                     tickangle = -90)")
   eval(parse(text=fun))
+  # print(xform)
 
   # subplot to vizualize groups
 
@@ -134,6 +149,9 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
     otable=apply(otable,2, function(x){Tot=sum(x); x/Tot})
     dat= as.data.frame(t(otable))
     dat <- cbind.data.frame(sdata, dat)
+    fun = glue( "dat <- dat[levels(sdata$sample.id), ]")
+    eval(parse(text=fun))
+
     meltdat <- reshape2::melt(dat, id.vars=1:ncol(sdata))
     tt <- levels(meltdat$variable)
     meltdat$variable <- factor(meltdat$variable, levels= c("Other", tt[tt!="Other"]))
@@ -177,7 +195,7 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
                        keep = TRUE)  %>%
       subplot(nrows = 1, shareX = TRUE, shareY=TRUE, titleX = FALSE) %>%
       layout(title="",
-             xaxis = list(title = glue("{Ord1} = {unique(meltdat[, Ord1])[1]}")),
+             xaxis = list(title = glue("{Ord1} = {levels(meltdat[, Ord1])[1]}")),
              yaxis = list(title = ylab),
              barmode = 'stack')
 
