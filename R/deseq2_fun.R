@@ -85,10 +85,10 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
     flog.info(paste('Combinaison ',combinaisons[1,col], ' ' , combinaisons[2,col],sep=''))
     fun <- paste('nb_cond1 <- nsamples(subset_samples(data.glom, ',column1, ' == "',combinaisons[1,col],'"))',sep='')
     eval(parse(text=fun))
-    print(nb_cond1)
+    flog.debug( print(nb_cond1) )
     fun <- paste('nb_cond2 <- nsamples(subset_samples(data.glom, ',column1, ' == "',combinaisons[2,col],'"))',sep='')
     eval(parse(text=fun))
-    print(nb_cond2)
+    flog.debug( print(nb_cond2) )
 
     if(nb_cond1 < 2){
       flog.warn(paste('Condition: ',combinaisons[1,col],' only have ',nb_cond1,' sample(s). Skip...',sep=''))
@@ -148,11 +148,13 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
     flog.info('Plot...')
     alpha = 0.05
     if(length(which(res$padj < alpha)) > 0){
-      sigtab = res[which(res$padj < alpha), ]
-      # sigtab = res
+      sigtab = as.data.frame(res[which(res$padj < alpha), ])
+      sigtab = cbind(taxon_id = row.names(sigtab),as(sigtab, "data.frame"), as(tax_table(data)[rownames(sigtab), ], "matrix"))
+      colnames(sigtab)[1]=resultsNames(dseq3)[2]
+      
+      # Output Global Table
       tabOUT = cbind(taxon_id = row.names(res),as(res, "data.frame"), as(tax_table(data)[rownames(res), ], "matrix"))
       colnames(res)[1]=resultsNames(dseq3)[2]
-      # save.image("debug.rdata")
       write.table(tabOUT, file = paste(output,'/signtab_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.csv',sep=''),quote=FALSE,sep="\t", row.names=FALSE)
 
       if(rank != 'ASV'){
