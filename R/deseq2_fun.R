@@ -56,9 +56,8 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
   # quit()
   flog.info('Defining comparison...')
   if(comp==""){
-    fun <- paste('combinaisons <- utils::combn(na.omit(unique(sample_data(data.glom)$',column1,')),2) ',sep='')
+    fun <- paste('combinaisons <- as.matrix( as.data.frame( utils::combn(na.omit(unique(sample_data(data.glom)$',column1,')),2) ))',sep='')
     eval(parse(text=fun))
-    print(combinaisons)
   }else{
     comp_list <- unlist(strsplit(comp,","))
     # combinaisons <- combn(comp_list,2)
@@ -71,6 +70,7 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
     }
   }
 
+  print(combinaisons)
   flog.info('Done...')
 
   outF = list()
