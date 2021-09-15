@@ -10,6 +10,7 @@
 #' @param ord0 Currently supported method options are: c("DCA", "CCA", "RDA", "CAP", "DPCoA", "NMDS", "MDS", "PCoA")
 #' @param output The output file directory.
 #' @param tests Whether to compute tests or not (TRUE/FALSE)
+#' @param axes Axes to plot (c(1,2))
 #' @param verbose Verbose level. (1: quiet, 2: print infos, 3: print infos + debug)
 #'
 #' @return Return specific plots and tests in list and output them in the output directory.
@@ -25,7 +26,7 @@
 
 # Decontam Function
 
-diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, dist0 = "bray", ord0 = "MDS", output="./plot_div_beta/", tests = TRUE, verbose = 2) {
+diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, dist0 = "bray", ord0 = "MDS", output="./plot_div_beta/", axes = c(1,2), tests = TRUE, verbose = 2) {
 
   if(verbose == 3){
   invisible(flog.threshold(DEBUG))
@@ -69,10 +70,10 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
   flog.info('Plot ...')
   resBeta <- list()
   if(!is.null(cov)){
-  p1 <- plot_samples(data_rank, ordinate(data_rank, ord0, dist0), color = col, shape = cov1[length(cov1)] ) +
+  p1 <- plot_samples(data_rank, ordinate(data_rank, ord0, dist0), color = col, shape = cov1[length(cov1)], axes = axes ) +
   theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}")) + stat_ellipse() + scale_shape_manual(values = 0:10)
 }else{
-  p1 <- plot_samples(data_rank, ordinate(data_rank, ord0, dist0), color = col) +
+  p1 <- plot_samples(data_rank, ordinate(data_rank, ord0, dist0), color = col, axes = axes ) +
   theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}")) + stat_ellipse()
 }
   # plot(p1)

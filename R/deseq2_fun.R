@@ -134,25 +134,26 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
     geoMeans = apply(DESeq2::counts(dseq), 1, gm_mean)
     dseq2 = estimateSizeFactors(dseq, geoMeans = geoMeans)
 
-    flog.info('DESeq2...')
-    print(dseq2)
+    # flog.info('DESeq2...')
+    # print(dseq2)
 
     dseq3 = DESeq2::DESeq(dseq2, test="Wald", fitType="parametric")
     flog.debug(show(dseq3))
 
-    res = results(dseq3, cooksCutoff = FALSE)
+    res = results(dseq3, cooksCutoff = FALSE, contrast = c(column1,combinaisons[1,col] , combinaisons[2,col]))
     flog.debug(show(res))
-    alpha = 0.05
 
     # outlist1 <- list()
 
+    flog.info('Plot...')
+    alpha = 0.05
     if(length(which(res$padj < alpha)) > 0){
-      # sigtab = res[which(res$padj < alpha), ]
-      sigtab = res
-      sigtab = cbind(row.names(sigtab),as(sigtab, "data.frame"), as(tax_table(data)[rownames(sigtab), ], "matrix"))
-      colnames(sigtab)[1]=resultsNames(dseq3)[2]
+      sigtab = res[which(res$padj < alpha), ]
+      # sigtab = res
+      tabOUT = cbind(taxon_id = row.names(res),as(res, "data.frame"), as(tax_table(data)[rownames(res), ], "matrix"))
+      colnames(res)[1]=resultsNames(dseq3)[2]
       # save.image("debug.rdata")
-      write.table(sigtab, file = paste(output,'/signtab_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.csv',sep=''),quote=FALSE,sep="\t", row.names=FALSE)
+      write.table(tabOUT, file = paste(output,'/signtab_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.csv',sep=''),quote=FALSE,sep="\t", row.names=FALSE)
 
       if(rank != 'ASV'){
         fun <- paste('x = tapply(sigtab$log2FoldChange, sigtab$',rank,', function(x) max(x))',sep='')
@@ -174,7 +175,7 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
       Ftable = sigtab[,c("baseMean","log2FoldChange","stat","pvalue","padj",rank)]
       ggtable <- ggtexttable(Ftable,theme = ttheme("mOrange"),rows=NULL)
 
-      pdf(file=paste(output,'/deseq2_',column1,'.pdf',sep=''),width=15,height=16)
+      pdf(file=paste(output,'/deseq2_',column1,"_", paste(combinaisons[,col],collapse="_vs_"), '.pdf',sep=''),width=15,height=16)
       grid.arrange(p,ggtable,top=text_grob(paste('Combination ',combinaisons[1,col], ' VS ' , combinaisons[2,col],sep=''), size=20))
       invisible(dev.off())
 
