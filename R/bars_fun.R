@@ -88,6 +88,7 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
   fun = glue( "dat <- dat[levels(sdata$sample.id), ]")
   eval(parse(text=fun))
 
+  flog.info('  Melting table...')
   meltdat <- reshape2::melt(dat, id.vars=1:ncol(sdata))
   tt <- levels(meltdat$variable)
   meltdat$variable <- factor(meltdat$variable, levels= c("Other", tt[tt!="Other"]))
@@ -98,6 +99,7 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
   # save(list = ls(all.names = TRUE), file = "debug.rdata", envir = environment())
 
 
+  flog.info('  Ordering samples...')
 
   if(autoorder){
       fun = glue( "labs = gtools::mixedorder(as.character(meltdat${Ord1}))" )
@@ -107,7 +109,8 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
     }
 
 # print(unique(meltdat$sample.id[labs]))
-
+  save(list = ls(all.names = TRUE), file = "debug.rdata", envir = environment())
+  flog.info('  Some treatment 1...')
   fun = glue( "xform <- list(categoryorder = 'array',
                     categoryarray = unique(meltdat$sample.id[labs]),
                     title = 'Samples',
@@ -120,6 +123,7 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
 
   # subplot to vizualize groups
 
+  flog.info('  Some treatment 2...')
   orderedIDS <- unique(meltdat$sample.id[gtools::mixedorder(as.character(meltdat[,Ord1]))])
   orderedOrd1 <- meltdat[,Ord1][gtools::mixedorder(as.character(meltdat[,Ord1]))]
 
@@ -132,6 +136,7 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
   fun = glue( "meltdat${Ord1} <- factor(meltdat${Ord1}, levels = as.character(unique(orderedOrd1)))")
   eval(parse(text=fun))
 
+  flog.info('  Plot 1 ...')
   subp1 <- df1 %>% plot_ly(
     type = 'bar',
     x = ~x,
