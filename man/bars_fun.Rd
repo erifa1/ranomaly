@@ -12,6 +12,7 @@ bars_fun(
   Fact1 = NULL,
   split = FALSE,
   relative = TRUE,
+  autoorder = TRUE,
   ylab = "Abundance",
   outfile = "plot_compo.html",
   verbose = TRUE
@@ -31,6 +32,8 @@ bars_fun(
 \item{split}{if TRUE make a facet_wrap like grouped by Ord1 (default FALSE)}
 
 \item{relative}{Plot relative (TRUE, default) or raw abundance plot (FALSE)}
+
+\item{autoorder}{Order xaxis with gtools::mixedorder function (TRUE).}
 
 \item{ylab}{Y axis title ("Abundance")}
 

@@ -31,6 +31,32 @@ rarefaction <- function(data = data, col = NULL, step = 100, ggplotly = TRUE){
 }
 
 
+#' aggregate_top_taxa from microbiome package
+#'
+#'
+#' @param x phyloseq object
+#' @param top Keep the top-n taxa, and merge the rest under the category 'Other'. Instead of top-n numeric this can also be a character vector listing the groups to combine.
+#' @param level Summarization level (from ‘rank_names(pseq)’)
+#'
+#' @importFrom microbiome aggregate_taxa
+#' @importFrom microbiome top_taxa
+#'
+#' @export
+
+aggregate_top_taxa <- function (x, top, level){
+    x <- aggregate_taxa(x, level)
+    tops <- top_taxa(x, top)
+    tax <- tax_table(x)
+    inds <- which(!rownames(tax) %in% tops)
+    tax[inds, level] <- "Other"
+    tax_table(x) <- tax
+    tt <- tax_table(x)[, level]
+    tax_table(x) <- tax_table(tt)
+    aggregate_taxa(x, level)
+}
+
+
+
 #' Barplots plotly
 #'
 #'
@@ -48,7 +74,6 @@ rarefaction <- function(data = data, col = NULL, step = 100, ggplotly = TRUE){
 #' @return Returns barplots in an interactive plotly community plot
 #'
 #' @import plotly
-#' @importFrom microbiome aggregate_top_taxa
 #' @importFrom reshape2 melt
 #' @importFrom gtools mixedsort
 #' @importFrom dplyr group_map group_by across
@@ -75,6 +100,8 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
   Fdata = data
   psobj.top <- aggregate_top_taxa(Fdata, rank, top = top)
 
+
+
   # print("get data")
   sdata <- as.data.frame(sample_data(psobj.top), stringsAsFactors = TRUE)
   # sdata$sample.id = sample_names(psobj.top)
@@ -88,6 +115,7 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
   fun = glue( "dat <- dat[levels(sdata$sample.id), ]")
   eval(parse(text=fun))
 
+  flog.info('  Melting table...')
   meltdat <- reshape2::melt(dat, id.vars=1:ncol(sdata))
   tt <- levels(meltdat$variable)
   meltdat$variable <- factor(meltdat$variable, levels= c("Other", tt[tt!="Other"]))
@@ -98,6 +126,7 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
   # save(list = ls(all.names = TRUE), file = "debug.rdata", envir = environment())
 
 
+  flog.info('  Ordering samples...')
 
   if(autoorder){
       fun = glue( "labs = gtools::mixedorder(as.character(meltdat${Ord1}))" )
@@ -107,7 +136,8 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
     }
 
 # print(unique(meltdat$sample.id[labs]))
-
+  save(list = ls(all.names = TRUE), file = "debug.rdata", envir = environment())
+  flog.info('  Some treatment 1...')
   fun = glue( "xform <- list(categoryorder = 'array',
                     categoryarray = unique(meltdat$sample.id[labs]),
                     title = 'Samples',
@@ -120,6 +150,7 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
 
   # subplot to vizualize groups
 
+  flog.info('  Some treatment 2...')
   orderedIDS <- unique(meltdat$sample.id[gtools::mixedorder(as.character(meltdat[,Ord1]))])
   orderedOrd1 <- meltdat[,Ord1][gtools::mixedorder(as.character(meltdat[,Ord1]))]
 
@@ -132,6 +163,7 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
   fun = glue( "meltdat${Ord1} <- factor(meltdat${Ord1}, levels = as.character(unique(orderedOrd1)))")
   eval(parse(text=fun))
 
+  flog.info('  Plot 1 ...')
   subp1 <- df1 %>% plot_ly(
     type = 'bar',
     x = ~x,
