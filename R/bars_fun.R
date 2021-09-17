@@ -64,7 +64,7 @@ aggregate_top_taxa <- function (x, top, level){
 #' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
 #' @param top Number of top taxa to plot
 #' @param Ord1 Variable used to order sample (X axis) or split the barplot if split = TRUE
-#' @param Fact1 Variable used to change X axis tick labels and color (when split = FALSE)
+#' @param sample_labels If true, x axis labels are sample IDS, if false labels displayed are levels from Ord1 argument. (FALSE)
 #' @param split if TRUE make a facet_wrap like grouped by Ord1 (default FALSE)
 #' @param relative Plot relative (TRUE, default) or raw abundance plot (FALSE)
 #' @param autoorder Order xaxis with gtools::mixedorder function (TRUE).
@@ -82,7 +82,7 @@ aggregate_top_taxa <- function (x, top, level){
 #' @export
 
 
-bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 = NULL, split = FALSE,
+bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, sample_labels = FALSE, split = FALSE,
                      relative = TRUE, autoorder = TRUE, ylab = "Abundance", outfile="plot_compo.html", verbose = TRUE){
 
   if(verbose){
@@ -92,8 +92,8 @@ bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 =
   }
 
 
-if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
-  stop(paste("Wrong value in Ord1 or Fact1 arguments, please use variables existing in the phyloseq object:", toString(sample_variables(data))))
+if( all(Ord1 != sample_variables(data))){
+  stop(paste("Wrong value in Ord1, please use variables existing in the phyloseq object:", toString(sample_variables(data))))
 }
 #{paste(sample_variables(data), collapse = ",")}
   flog.info('Preprocess...')
@@ -104,7 +104,7 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
 
   # print("get data")
   sdata <- as.data.frame(sample_data(psobj.top), stringsAsFactors = TRUE)
-  # sdata$sample.id = sample_names(psobj.top)
+  sdata$sample.id = sample_names(psobj.top)
   otable = as.data.frame(otu_table(psobj.top))
   row.names(otable) = tax_table(psobj.top)[,rank]
 
@@ -112,8 +112,8 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
   dat <- as.data.frame(t(otable))
   dat <- cbind.data.frame(sdata, dat)
 
-  fun = glue( "dat <- dat[levels(sdata$sample.id), ]")
-  eval(parse(text=fun))
+  # fun = glue( "dat <- dat[levels(sdata$sample.id), ]")
+  # eval(parse(text=fun))
 
   flog.info('  Melting table...')
   meltdat <- reshape2::melt(dat, id.vars=1:ncol(sdata))
@@ -123,7 +123,7 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
   LL=list()
   # print(head(meltdat))
   # print(levels(meltdat$sample.id))
-  # save(list = ls(all.names = TRUE), file = "debug.rdata", envir = environment())
+  save(list = ls(all.names = TRUE), file = "debug.rdata", envir = environment())
 
 
   flog.info('  Ordering samples...')
@@ -136,17 +136,21 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
     }
 
 # print(unique(meltdat$sample.id[labs]))
-  save(list = ls(all.names = TRUE), file = "debug.rdata", envir = environment())
-  flog.info('  Some treatment 1...')
-  fun = glue( "xform <- list(categoryorder = 'array',
-                    categoryarray = unique(meltdat$sample.id[labs]),
-                    title = 'Samples',
-                    tickmode = 'array',
-                    tickvals = 0:nrow(sdata),
-                    ticktext = sdata[as.character(unique(meltdat$sample.id[labs])), '{Fact1}']@.Data[[1]],
-                    tickangle = -90)")
-  eval(parse(text=fun))
-  # print(xform)
+  if(sample_labels){
+      lab1 = "sample.id"
+    }else{
+      lab1 = Ord1
+    }
+  print(lab1)
+
+  flog.info('  Set labels...')
+  xform <- list(categoryorder = 'array',
+                categoryarray = unique(meltdat$sample.id[labs]),
+                title = 'Samples',
+                tickmode = 'array',
+                tickvals = 0:nrow(sdata),
+                ticktext = sdata[as.character(unique(meltdat$sample.id[labs])), lab1]@.Data[[1]],
+                tickangle = -90)
 
   # subplot to vizualize groups
 
@@ -155,7 +159,7 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
   orderedOrd1 <- meltdat[,Ord1][gtools::mixedorder(as.character(meltdat[,Ord1]))]
 
   df1 <- cbind.data.frame(x=sdata[orderedIDS, "sample.id"]@.Data[[1]],
-                          g=sdata[orderedIDS, Fact1]@.Data[[1]],
+                          g=sdata[orderedIDS, Ord1]@.Data[[1]],
                           y=1)
 
   fun = glue( "df1$g <- factor(df1$g, levels = as.character(unique(orderedOrd1)))")
@@ -177,12 +181,13 @@ if( all(Ord1 != sample_variables(data)) | all(Fact1 != sample_variables(data))){
 
   if(relative){
   flog.info('Plotting relative...')
+    save(list = ls(all.names = TRUE), file = "debug.rdata", envir = environment())
     #relative abondance
     otable=apply(otable,2, function(x){Tot=sum(x); x/Tot})
     dat= as.data.frame(t(otable))
     dat <- cbind.data.frame(sdata, dat)
-    fun = glue( "dat <- dat[levels(sdata$sample.id), ]")
-    eval(parse(text=fun))
+    # fun = glue( "dat <- dat[levels(sdata$sample.id), ]")
+    # eval(parse(text=fun))
 
     meltdat <- reshape2::melt(dat, id.vars=1:ncol(sdata))
     tt <- levels(meltdat$variable)
