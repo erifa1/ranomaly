@@ -9,7 +9,7 @@ bars_fun(
   rank = "Genus",
   top = 10,
   Ord1 = NULL,
-  Fact1 = NULL,
+  sample_labels = FALSE,
   split = FALSE,
   relative = TRUE,
   autoorder = TRUE,
@@ -27,13 +27,13 @@ bars_fun(
 
 \item{Ord1}{Variable used to order sample (X axis) or split the barplot if split = TRUE}
 
-\item{Fact1}{Variable used to change X axis tick labels and color (when split = FALSE)}
+\item{sample_labels}{If true, x axis labels are sample IDS, if false labels displayed are levels from Ord1 argument. Ignored if split = TRUE (FALSE)}
 
 \item{split}{if TRUE make a facet_wrap like grouped by Ord1 (default FALSE)}
 
 \item{relative}{Plot relative (TRUE, default) or raw abundance plot (FALSE)}
 
-\item{autoorder}{Order xaxis with gtools::mixedorder function (TRUE).}
+\item{autoorder}{Automatic ordering xaxis labels based on Ord1 factor levels with gtools::mixedorder function (TRUE).}
 
 \item{ylab}{Y axis title ("Abundance")}
 

@@ -64,10 +64,10 @@ aggregate_top_taxa <- function (x, top, level){
 #' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
 #' @param top Number of top taxa to plot
 #' @param Ord1 Variable used to order sample (X axis) or split the barplot if split = TRUE
-#' @param sample_labels If true, x axis labels are sample IDS, if false labels displayed are levels from Ord1 argument. (FALSE)
+#' @param sample_labels If true, x axis labels are sample IDS, if false labels displayed are levels from Ord1 argument. Ignored if split = TRUE (FALSE)
 #' @param split if TRUE make a facet_wrap like grouped by Ord1 (default FALSE)
 #' @param relative Plot relative (TRUE, default) or raw abundance plot (FALSE)
-#' @param autoorder Order xaxis with gtools::mixedorder function (TRUE).
+#' @param autoorder Automatic ordering xaxis labels based on Ord1 factor levels with gtools::mixedorder function (TRUE).
 #' @param ylab Y axis title ("Abundance")
 #' @param outfile Output html file.
 #'
@@ -95,14 +95,11 @@ bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, sample_
 if( all(Ord1 != sample_variables(data))){
   stop(paste("Wrong value in Ord1, please use variables existing in the phyloseq object:", toString(sample_variables(data))))
 }
-#{paste(sample_variables(data), collapse = ",")}
+
   flog.info('Preprocess...')
   Fdata = data
   psobj.top <- aggregate_top_taxa(Fdata, rank, top = top)
 
-
-
-  # print("get data")
   sdata <- as.data.frame(sample_data(psobj.top), stringsAsFactors = TRUE)
   sdata$sample.id = sample_names(psobj.top)
   otable = as.data.frame(otu_table(psobj.top))
@@ -112,9 +109,6 @@ if( all(Ord1 != sample_variables(data))){
   dat <- as.data.frame(t(otable))
   dat <- cbind.data.frame(sdata, dat)
 
-  # fun = glue( "dat <- dat[levels(sdata$sample.id), ]")
-  # eval(parse(text=fun))
-
   flog.info('  Melting table...')
   meltdat <- reshape2::melt(dat, id.vars=1:ncol(sdata))
   tt <- levels(meltdat$variable)
@@ -123,25 +117,29 @@ if( all(Ord1 != sample_variables(data))){
   LL=list()
   # print(head(meltdat))
   # print(levels(meltdat$sample.id))
-  save(list = ls(all.names = TRUE), file = "debug.rdata", envir = environment())
+  # save(list = ls(all.names = TRUE), file = "debug.rdata", envir = environment())
 
-
-  flog.info('  Ordering samples...')
 
   if(autoorder){
+  flog.info('  Ordering samples...')
       fun = glue( "labs = gtools::mixedorder(as.character(meltdat${Ord1}))" )
       eval(parse(text=fun))
+
+      orderedIDS <- unique(meltdat$sample.id[gtools::mixedorder(as.character(meltdat[,Ord1]))])
+      orderedOrd1 <- meltdat[,Ord1][gtools::mixedorder(as.character(meltdat[,Ord1]))]
+      orderedOrd1 <- factor(orderedOrd1, levels = gtools::mixedsort(levels(orderedOrd1)))
     }else{
       labs = 1:nrow(meltdat)
+
+      orderedIDS <- unique(meltdat$sample.id)
+      orderedOrd1 <- meltdat[,Ord1]
     }
 
-# print(unique(meltdat$sample.id[labs]))
   if(sample_labels){
       lab1 = "sample.id"
     }else{
       lab1 = Ord1
     }
-  print(lab1)
 
   flog.info('  Set labels...')
   xform <- list(categoryorder = 'array',
@@ -154,20 +152,16 @@ if( all(Ord1 != sample_variables(data))){
 
   # subplot to vizualize groups
 
-  flog.info('  Some treatment 2...')
-  orderedIDS <- unique(meltdat$sample.id[gtools::mixedorder(as.character(meltdat[,Ord1]))])
-  orderedOrd1 <- meltdat[,Ord1][gtools::mixedorder(as.character(meltdat[,Ord1]))]
-
+  flog.info('  Subplot...')
   df1 <- cbind.data.frame(x=sdata[orderedIDS, "sample.id"]@.Data[[1]],
                           g=sdata[orderedIDS, Ord1]@.Data[[1]],
                           y=1)
 
   fun = glue( "df1$g <- factor(df1$g, levels = as.character(unique(orderedOrd1)))")
   eval(parse(text=fun))
-  fun = glue( "meltdat${Ord1} <- factor(meltdat${Ord1}, levels = as.character(unique(orderedOrd1)))")
+  fun = glue( "meltdat${Ord1} <- factor(meltdat${Ord1}, levels = as.character(levels(orderedOrd1)))")
   eval(parse(text=fun))
 
-  flog.info('  Plot 1 ...')
   subp1 <- df1 %>% plot_ly(
     type = 'bar',
     x = ~x,
@@ -181,19 +175,16 @@ if( all(Ord1 != sample_variables(data))){
 
   if(relative){
   flog.info('Plotting relative...')
-    save(list = ls(all.names = TRUE), file = "debug.rdata", envir = environment())
     #relative abondance
     otable=apply(otable,2, function(x){Tot=sum(x); x/Tot})
     dat= as.data.frame(t(otable))
     dat <- cbind.data.frame(sdata, dat)
-    # fun = glue( "dat <- dat[levels(sdata$sample.id), ]")
-    # eval(parse(text=fun))
 
     meltdat <- reshape2::melt(dat, id.vars=1:ncol(sdata))
     tt <- levels(meltdat$variable)
     meltdat$variable <- factor(meltdat$variable, levels= c("Other", tt[tt!="Other"]))
 
-    fun = glue( "meltdat${Ord1} <- factor(meltdat${Ord1}, levels = as.character(unique(orderedOrd1)))")
+    fun = glue( "meltdat${Ord1} <- factor(meltdat${Ord1}, levels = as.character(levels(orderedOrd1)))")
     eval(parse(text=fun))
 
     p1=plot_ly(meltdat, x = ~sample.id, y = ~value, type = 'bar', name = ~variable, color = ~variable) %>% #, color = ~variable
@@ -215,7 +206,7 @@ if( all(Ord1 != sample_variables(data))){
     }
   }
 
-  # facet_wrap output
+  # Splitted plot output
   if(!split) {
     if(!is.null(outfile)){
       htmlwidgets::saveWidget(p1, outfile)
