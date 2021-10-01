@@ -46,9 +46,9 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
   if(!dir.exists(output)){
     dir.create(output,recursive=T )
   }
-  flog.info('Done.')
 
-  # data.glom <- tax_glom(data, taxrank=rank, h=TRUE)
+  flog.info('Glom Tax.')
+  data.glom <- tax_glom(data, taxrank=rank)
 
   if(comp == ''){
     fun <- paste('combinaisons <- combn(na.omit(unique(sample_data(data)$',column1,')),2)',sep='')
@@ -176,7 +176,7 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
       names(TABf)[ncol(TABf)] = names(TF)[j]
     }
 
-    TABfbak <- TABf
+    TABfbak0 <- TABf
 
     # add new columns, sumMethods, DeseqLFC, Mean Relative Abundance (TSS) condition 1 & 2
     row.names(deseqT) = deseqT[,1]
@@ -192,7 +192,7 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
     # clr = function(x){log(x+1) - rowMeans(log(x+1))}
     # otableNORM <- clr(otable)
     normf = function(x){ x/sum(x) }
-    data.norm <- transform_sample_counts(data, normf)
+    data.norm <- transform_sample_counts(data.glom, normf)
     otableNORM <- otu_table(data.norm)
 
     Gtab <- cbind(as.data.frame(ssample), t(otableNORM))
