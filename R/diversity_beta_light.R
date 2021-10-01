@@ -11,6 +11,7 @@
 #' @param output The output file directory.
 #' @param tests Whether to compute tests or not (TRUE/FALSE)
 #' @param axes Axes to plot (c(1,2))
+#' @param ellipse Plot ellipse (TRUE)
 #' @param verbose Verbose level. (1: quiet, 2: print infos, 3: print infos + debug)
 #'
 #' @return Return specific plots and tests in list and output them in the output directory.
@@ -26,7 +27,7 @@
 
 # Decontam Function
 
-diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, dist0 = "bray", ord0 = "MDS", output="./plot_div_beta/", axes = c(1,2), tests = TRUE, verbose = 2) {
+diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, dist0 = "bray", ord0 = "MDS", output="./plot_div_beta/", axes = c(1,2), tests = TRUE, verbose = 2, ellipse = TRUE) {
 
   if(verbose == 3){
   invisible(flog.threshold(DEBUG))
@@ -70,11 +71,32 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
   flog.info('Plot ...')
   resBeta <- list()
   if(!is.null(cov)){
+
+  sdata = sample_data(data_rank)
+  fun = glue::glue("sdata${cov1[length(cov1)]}_{col} = factor(paste(sdata${cov1[length(cov1)]}, sdata${col}, sep='_'))")
+  eval(parse(text=fun))
+  sample_data(data_rank) = sdata
+
   p1 <- plot_samples(data_rank, ordinate(data_rank, ord0, dist0), color = col, shape = cov1[length(cov1)], axes = axes ) +
-  theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}")) + stat_ellipse() + scale_shape_manual(values = 0:10)
+  theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}")) + scale_shape_manual(values = 0:10)
+  if(ellipse){p1 <- p1 + stat_ellipse()}
+
+  p2 <- plot_samples(data_rank, ordinate(data_rank, ord0, dist0), color = glue::glue("{cov1[length(cov1)]}_{col}"), shape = NULL, axes = axes ) +
+  theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}")) + scale_shape_manual(values = 0:10)
+  if(ellipse){p2 <- p2 + stat_ellipse()}
+
+  resBeta$plot2 <- p2 + theme(axis.text.x = element_text(angle = 45, hjust=1),
+  ,axis.text=element_text(size=18),
+  axis.title=element_text(size=16,face="bold"),
+  strip.text.x = element_text(size = 18,face="bold"),
+  title=element_text(size=16,face="bold"))
+  ggsave(glue::glue("{output}/beta_diversity2.eps"), plot=resBeta$plot2, height = 20, width = 30, units="cm", dpi = 500, device="eps")
+
+
 }else{
   p1 <- plot_samples(data_rank, ordinate(data_rank, ord0, dist0), color = col, axes = axes ) +
-  theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}")) + stat_ellipse()
+  theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}"))
+  if(ellipse){p1 <- p1 + stat_ellipse()}
 }
   # plot(p1)
   flog.info('Plot ok...')
@@ -105,10 +127,9 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
     }
 
     #PairwiseAdonis
-    # resBC2 = pairwise.adonis2(as.formula( paste('BC.dist ~ ', col,sep="") ), data = mdata)
-    if(length(col1)>1){
-      fact1 <- apply( mdata[,c(col1)] , 1 , paste , collapse = "-" )
-      resBC2 <- pairwise.adonis(dist1, fact1, p.adjust.m='fdr')
+    if(!is.null(cov)){
+      fun = glue::glue("resBC2 <- pairwise.adonis(dist1, mdata${cov1[length(cov1)]}_{col}, p.adjust.m='fdr')" )
+      eval(parse(text = fun))
     } else {
       resBC2 <- pairwise.adonis(dist1, mdata[,c(col1)], p.adjust.m='fdr')
     }
