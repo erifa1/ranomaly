@@ -272,7 +272,12 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
     TABf=cbind.data.frame( TABtest_filt, TABf )
     names(TABf)[1] = names(TF)[j]
   }
-  TABff <- cbind(as.matrix(TABf), as.matrix(data_no_filtering@tax_table[row.names(TABf),]))
+
+  if(!is.null(data@tax_table)){
+    TABff <- cbind(as.matrix(TABf), as.matrix(data_no_filtering@tax_table[row.names(TABf),]))
+  }else{
+    TABff <- as.matrix(TABf)
+  }
   write.table(TABff, file = paste(output,'/Exclu_out.csv',sep=''), sep = "\t", col.names=NA)
 
 
@@ -312,11 +317,25 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
   flog.info(paste("AFTER FILTERING: ",nsamples(data), "samples and", ntaxa(data),"ASVs in otu table") )
 
   flog.info('Writing raw tables.')
-  write.table(cbind(otu_table(data),"Consensus Lineage" = apply(tax_table(data), 1, paste, collapse = ";"), "sequences"=as.data.frame(refseq(data)) ), paste(output,"/raw_otu-table.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
+  if(!is.null(data@tax_table)){
+    write.table(cbind(otu_table(data),"Consensus Lineage" = apply(tax_table(data), 1, paste, collapse = ";"), "sequences"=as.data.frame(refseq(data)) ), paste(output,"/raw_otu-table.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
+
+  }else{
+    write.table(cbind(otu_table(data), "sequences"=as.data.frame(refseq(data)) ), paste(output,"/raw_otu-table.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
+
+  }
 
   flog.info('Writing relative tables.')
   data_rel <- transform_sample_counts(data, function(x) x / sum(x) )
-  write.table(cbind(otu_table(data_rel),"Consensus Lineage" = apply(tax_table(data_rel), 1, paste, collapse = ";"), "sequences"=as.data.frame(refseq(data_rel))),paste(output,"/relative_otu-table.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
+  if(!is.null(data@tax_table)){
+    write.table(cbind(otu_table(data_rel),"Consensus Lineage" = apply(tax_table(data_rel), 1, paste, collapse = ";"), "sequences"=as.data.frame(refseq(data_rel))),paste(output,"/relative_otu-table.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
+
+
+  }else{
+    write.table(cbind(otu_table(data_rel), "sequences"=as.data.frame(refseq(data_rel))),paste(output,"/relative_otu-table.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
+
+  }
+
 
   flog.info('Saving R objects.')
   save(data, file=paste(output,'/robjects.Rdata',sep=''))
