@@ -30,6 +30,8 @@
 #' @import futile.logger
 #' @import digest
 #' @import phyloseq
+#' @importFrom tibble rownames_to_column
+#' @importFrom dplyr left_join
 #' @export
 
 # DADA2 function
@@ -235,19 +237,27 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
 
       flog.info('Filtering reads...')
 
-
-      out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen=c(f_trunclen,r_trunclen),
+      out0 <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen=c(f_trunclen,r_trunclen),
       maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE, trimLeft=trim_l,
       compress=compress, multithread=TRUE)
+      row.names(out0) = sample.names
+      out <- as.data.frame(out0) %>%tibble::rownames_to_column(var = "sample.id")
+
+
+      filtFs_out <- grep("F_filt",list.files(glue::glue("{path}/filtered/"), full.names = TRUE), value = TRUE)
+      filtRs_out <- grep("R_filt",list.files(glue::glue("{path}/filtered/"), full.names = TRUE), value = TRUE)
+
+      samples_names <- grep(".fastq",list.files("./data_arch_links/", full.names = FALSE), value = TRUE)
+
 
       flog.info('Done.')
 
     }
-
+    
     #COMMON
     flog.info('Learning error model...')
-    errF <- learnErrors(filtFs, multithread=TRUE)
-    errR <- learnErrors(filtRs, multithread=TRUE)
+    errF <- learnErrors(filtFs_out, multithread=TRUE)
+    errR <- learnErrors(filtRs_out, multithread=TRUE)
     flog.info('Done.')
 
 
@@ -269,8 +279,8 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
 
 
     flog.info('Dereplicating fastq...')
-    derepFs <- derepFastq(filtFs, verbose=TRUE)
-    derepRs <- derepFastq(filtRs, verbose=TRUE)
+    derepFs <- derepFastq(filtFs_out, verbose=TRUE)
+    derepRs <- derepFastq(filtRs_out, verbose=TRUE)
 
     flog.info('Done.')
     flog.info('dada2...')
@@ -285,7 +295,6 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
 
 
     seqtab <- makeSequenceTable(mergers)
-
     flog.info('Removing chimeras...')
     seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
     flog.debug(sum(seqtab.nochim))
@@ -295,19 +304,26 @@ dada2_fun <- function(amplicon = "16S", path = "", outpath = "./dada2_out/", f_t
     flog.info('Done.')
 
 
-    track <- cbind.data.frame(out, stockFs, stockRs, sapply(mergers, getN), rowSums(seqtab.nochim))
-    # If processing a single sample, remove the sapply calls: e.g. replace sapply(dadaFs, getN) with getN(dadaFs)
-    colnames(track) <- c("input", "filtered", "denoisedF", "denoisedR", "merged", "nonchim")
-    rownames(track) <- sample.names
-    head(track)
+    track0 <- cbind.data.frame(stockFs, stockRs, sapply(mergers, getN), rowSums(seqtab.nochim))
+    rownames(track0) <- stringr::str_remove(rownames(track0), "_F_filt.fastq")
 
-    write.table(track, paste(outpath,"/read_tracking.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
+    # If processing a single sample, remove the sapply calls: e.g. replace sapply(dadaFs, getN) with getN(dadaFs)
+
+    track <- track0 %>% tibble::rownames_to_column(var="sample.id")
+
+
+    final_track <- out %>% dplyr::left_join(y = track, by = "sample.id")
+    colnames(final_track) <- c("sample.id", "input", "filtered", "denoisedF", "denoisedR", "merged", "nonchim") 
+    head(final_track)
+
+    write.table(final_track, paste(outpath,"/read_tracking.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
 
 
     seqtab.export <- seqtab.nochim
     colnames(seqtab.export) <- sapply(colnames(seqtab.export), digest::digest, algo="md5")
 
     otu.table <- phyloseq::otu_table(t(seqtab.export), taxa_are_rows = TRUE)
+    colnames(otu.table) <- stringr::str_remove(colnames(otu.table), "_F_filt.fastq")
 
     flog.info('Writing raw tables.')
     write.table(cbind(t(seqtab.export), "Sequence" = colnames(seqtab.nochim)), paste(outpath,"/raw_otu-table.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
