@@ -11,6 +11,7 @@ bars_fun(
   Ord1 = NULL,
   sample_labels = FALSE,
   split = FALSE,
+  split_sid_order = FALSE,
   relative = TRUE,
   autoorder = TRUE,
   ylab = "Abundance",

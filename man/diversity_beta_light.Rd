@@ -14,7 +14,8 @@ diversity_beta_light(
   output = "./plot_div_beta/",
   axes = c(1, 2),
   tests = TRUE,
-  verbose = 2
+  verbose = 2,
+  ellipse = TRUE
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ diversity_beta_light(
 \item{tests}{Whether to compute tests or not (TRUE/FALSE)}
 
 \item{verbose}{Verbose level. (1: quiet, 2: print infos, 3: print infos + debug)}
+
+\item{ellipse}{Plot ellipse (TRUE)}
 }
 \value{
 Return specific plots and tests in list and output them in the output directory.

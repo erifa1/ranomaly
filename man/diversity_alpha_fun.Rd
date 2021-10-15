@@ -20,7 +20,7 @@ diversity_alpha_fun(
 
 \item{output}{Output directory}
 
-\item{column1}{Column name of first factor to test (covariable in ANOVA).}
+\item{column1}{Column name of first factor to test (covariable in ANOVA), or principal factor if only one factor to test.}
 
 \item{column2}{Column name of second factor to test (last factor in ANOVA).}
 
