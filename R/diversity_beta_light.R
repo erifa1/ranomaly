@@ -94,9 +94,18 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
 
 
 }else{
-  p1 <- plot_samples(data_rank, ordinate(data_rank, ord0, dist0), color = col, axes = axes ) +
-  theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}"))
-  if(ellipse){p1 <- p1 + stat_ellipse()}
+
+  p1 <- phyloseq::plot_ordination(physeq = data_rank, ordination = ordinate(data_rank, ord0, dist0), axes = axes)
+  p1$layers[[1]] <- NULL
+
+  sample.id = sample_names(data_rank)
+  sdata <- sample_data(data_rank) 
+  fact <- as.matrix(sdata[,col])
+  p1 <- p1 + aes(color = fact, sample.id = sample.id)
+  p1 <- p1 + stat_ellipse(aes(group = fact))
+  p1 <- p1 + geom_point() + theme_bw()
+  resBeta$plotly1 <- ggplotly(p1, tooltip=c("x", "y", "sample.id")) %>% config(toImageButtonOptions = list(format = "svg"))
+
 }
   # plot(p1)
   flog.info('Plot ok...')

@@ -82,7 +82,7 @@ aggregate_top_taxa <- function (x, top, level){
 #' @export
 
 
-bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, sample_labels = FALSE, split = FALSE,
+bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, sample_labels = FALSE, split = FALSE, split_sid_order = FALSE,
                      relative = TRUE, autoorder = TRUE, ylab = "Abundance", outfile="plot_compo.html", verbose = TRUE){
 
   if(verbose){
@@ -135,6 +135,8 @@ if( all(Ord1 != sample_variables(data))){
       orderedOrd1 <- meltdat[,Ord1]
     }
 
+
+
   if(sample_labels){
       lab1 = "sample.id"
     }else{
@@ -159,7 +161,7 @@ if( all(Ord1 != sample_variables(data))){
 
   fun = glue( "df1$g <- factor(df1$g, levels = as.character(unique(orderedOrd1)))")
   eval(parse(text=fun))
-  fun = glue( "meltdat${Ord1} <- factor(meltdat${Ord1}, levels = as.character(levels(orderedOrd1)))")
+  fun = glue( "meltdat${Ord1} <- factor(meltdat${Ord1}, levels = as.character(unique(orderedOrd1)))") # keep sample ids order from metadata.
   eval(parse(text=fun))
 
   subp1 <- df1 %>% plot_ly(
@@ -184,7 +186,7 @@ if( all(Ord1 != sample_variables(data))){
     tt <- levels(meltdat$variable)
     meltdat$variable <- factor(meltdat$variable, levels= c("Other", tt[tt!="Other"]))
 
-    fun = glue( "meltdat${Ord1} <- factor(meltdat${Ord1}, levels = as.character(levels(orderedOrd1)))")
+    fun = glue( "meltdat${Ord1} <- factor(meltdat${Ord1}, levels = as.character(unique(orderedOrd1)))")
     eval(parse(text=fun))
 
     p1=plot_ly(meltdat, x = ~sample.id, y = ~value, type = 'bar', name = ~variable, color = ~variable) %>% #, color = ~variable
@@ -215,12 +217,17 @@ if( all(Ord1 != sample_variables(data))){
     return(p1)
   } else {
   flog.info('Splitted plot...')
-    p1 = meltdat %>% group_by(across({Ord1})) %>%
-      dplyr::group_map(~ plot_ly(data=., x = ~sample.id, y = ~value, type = 'bar',
-                                 name = ~variable,
-                                 color = ~variable, legendgroup = ~variable,
-                                 showlegend = (.y == levels(meltdat[, Ord1])[1])),
-                       keep = TRUE)  %>%
+    if(split_sid_order){
+    meltdat$sample.id = factor(meltdat$sample.id, levels = unique(meltdat$sample.id)) # keep sample ids order from metadata.
+    }
+
+    p1 = meltdat  %>% arrange(across({Ord1})) %>% group_by(across({Ord1})) %>%
+        mutate(across(where(is.character), as.factor)) %>%
+        dplyr::group_map(~ plot_ly(data=., x = ~sample.id, y = ~value, type = 'bar',
+                                   name = ~variable,
+                                   color = ~variable, legendgroup = ~variable,
+                                   showlegend = (.y == levels(meltdat[, Ord1])[1])),
+                         keep = TRUE)  %>%
       subplot(nrows = 1, shareX = TRUE, shareY=TRUE, titleX = FALSE) %>%
       layout(title="",
              xaxis = list(title = glue("{Ord1} = {levels(meltdat[, Ord1])[1]}")),
