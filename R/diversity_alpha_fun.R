@@ -107,9 +107,6 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
     resAlpha = list()
     
     flog.info('Alpha diversity tab ...')
-    # row.names(resAlpha$alphatable) <- gsub("X","",row.names(resAlpha$alphatable))
-    write.table(resAlpha$alphatable,paste(output,'/alphaDiversity_table.csv',sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
-    flog.info('Done.')
 
     p <- alphaPlot(data, column1, column2, measures)
 
@@ -120,6 +117,10 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
     anova_data <- cbind(sample_data(data), alphatable)
     anova_data$Depth <- sample_sums(data)
     resAlpha$alphatable <- anova_data 
+    # row.names(resAlpha$alphatable) <- gsub("X","",row.names(resAlpha$alphatable))
+    write.table(resAlpha$alphatable,paste(output,'/alphaDiversity_table.csv',sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
+    flog.info('Done.')
+    
     if(length(levels(as.factor(anova_data[,column1])))>1 & mean(table(anova_data[,column1])) != 1 ){
       flog.info('ANOVA ...')
       # variables <- paste(sep=" + ", "Depth", var1)
