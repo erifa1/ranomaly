@@ -20,7 +20,7 @@
 #' @import ggplot2
 #' @import pairwiseAdonis
 #' @import vegan
-#' @importFrom plotly ggplotly
+#' @importFrom plotly ggplotly config
 #'
 #' @export
 

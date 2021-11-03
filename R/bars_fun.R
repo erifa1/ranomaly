@@ -7,7 +7,7 @@
 #'
 #' @return A plotly graph.
 #'
-#' @import plotly
+#' @importFrom plotly ggplotly
 #' @importFrom ranacapa ggrare
 #'
 #' @export
@@ -73,10 +73,10 @@ aggregate_top_taxa <- function (x, top, level){
 #'
 #' @return Returns barplots in an interactive plotly community plot
 #'
-#' @import plotly
+#' @importFrom plotly ggplotly plot_ly layout subplot
 #' @importFrom reshape2 melt
 #' @importFrom gtools mixedsort
-#' @importFrom dplyr group_map group_by across
+#' @importFrom dplyr group_map group_by across `%>%` mutate arrange
 #'
 #'
 #' @export
@@ -221,8 +221,8 @@ if( all(Ord1 != sample_variables(data))){
     meltdat$sample.id = factor(meltdat$sample.id, levels = unique(meltdat$sample.id)) # keep sample ids order from metadata.
     }
 
-    p1 = meltdat  %>% arrange(across({Ord1})) %>% group_by(across({Ord1})) %>%
-        mutate(across(where(is.character), as.factor)) %>%
+    p1 = meltdat  %>% dplyr::arrange(across({Ord1})) %>% dplyr::group_by(across({Ord1})) %>%
+        dplyr::mutate(across(where(is.character), as.factor)) %>%
         dplyr::group_map(~ plot_ly(data=., x = ~sample.id, y = ~value, type = 'bar',
                                    name = ~variable,
                                    color = ~variable, legendgroup = ~variable,
@@ -230,13 +230,13 @@ if( all(Ord1 != sample_variables(data))){
                          keep = TRUE)  %>%
       subplot(nrows = 1, shareX = TRUE, shareY=TRUE, titleX = FALSE) %>%
       layout(title="",
-             xaxis = list(title = glue("{Ord1} = {levels(meltdat[, Ord1])[1]}")),
+             xaxis = list(title = glue("{Ord1} =\n{levels(meltdat[, Ord1])[1]}")),
              yaxis = list(title = ylab),
              barmode = 'stack')
 
     for (i in 2:length(unique(meltdat[, Ord1]))) {
       p1$x$layoutAttrs[[1]][[paste0("xaxis", i)]] = NULL
-      p1$x$layoutAttrs[[1]][[paste0("xaxis", i)]]$title <- glue("{Ord1} = {levels(meltdat[, Ord1])[i]}")
+      p1$x$layoutAttrs[[1]][[paste0("xaxis", i)]]$title <- glue("{Ord1} =\n{levels(meltdat[, Ord1])[i]}")
     }
     if(!is.null(outfile)){
       htmlwidgets::saveWidget(p1, outfile)

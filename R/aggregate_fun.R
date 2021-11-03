@@ -274,9 +274,8 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
 
 
   # print(TABfinal)
-  if(length(TABfinal) > 0){
+  if(length(TABfinal$ListAllOtu) > 0){
     flog.info('Building csv file...')
-
 
     TAX <- cbind(seqid = rownames(ttax[as.character(TABfinal$ListAllOtu),]),as.data.frame(ttax[as.character(TABfinal$ListAllOtu),]))
 
@@ -328,7 +327,7 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
     # save(data, file=paste(output,"/signif_phyloseq.rdata",sep=""))
     #
 
-  }
+  }else{flog.info("No significant results in the three methods...")}
 
 
 }
