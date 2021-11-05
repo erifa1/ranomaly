@@ -5,9 +5,9 @@
 \title{DADA2 process (dada2_fun())}
 \usage{
 dada2_fun(
-  amplicon = "16S",
   path = "",
   outpath = "./dada2_out/",
+  cutadapt = FALSE,
   f_trunclen = 240,
   r_trunclen = 240,
   dadapool = "pseudo",
@@ -15,6 +15,7 @@ dada2_fun(
   r_primer = "TCCTCCGCTTWTTGWTWTGC",
   plot = FALSE,
   compress = FALSE,
+  extension = "_R1.fastq",
   verbose = 1,
   torrent_single = FALSE,
   returnval = TRUE,
@@ -25,11 +26,11 @@ dada2_fun(
 )
 }
 \arguments{
-\item{amplicon}{Choose amplipcon "16S" or "ITS"}
-
 \item{path}{Read files folder path}
 
 \item{outpath}{output .Rdata file name}
+
+\item{cutadapt}{Use of cutadapt to trim primers based on their sequences, f_ and r_primer are needed (ambiguous nucleotides allowed)}
 
 \item{f_trunclen}{Forward read tuncate length (only for paired end 16S)}
 
@@ -37,13 +38,15 @@ dada2_fun(
 
 \item{dadapool}{option for dada function (FALSE, TRUE or "pseudo"), default is "pseudo". See ? dada.}
 
-\item{f_primer}{Forward primer sequence (only for ITS)}
+\item{f_primer}{Forward primer sequence (mandatory if cutadapt = TRUE)}
 
-\item{r_primer}{Reverse primer sequence (only for ITS)}
+\item{r_primer}{Reverse primer sequence (mandatory if cutadapt = TRUE)}
 
 \item{plot}{Plot all test or not}
 
 \item{compress}{Reads files are compressed (.gz)}
+
+\item{extension}{Paired reads extension files for R1. (default: _R1.fastq), use "_R1.fastq.gz" for compressed files.}
 
 \item{verbose}{Verbose level. (1: quiet, 3: verbal)}
 
@@ -53,11 +56,11 @@ dada2_fun(
 
 \item{paired}{Boolean for Illumina Paired End Reads.}
 
-\item{trim_l}{Trim left size.}
+\item{trim_l}{Trim left size, to trim forward primer without cutadapt.}
 
-\item{trim_r}{Trim right size.}
+\item{trim_r}{Trim right size, to trim reverse primer without cutadapt.}
 
-\item{orient_torrent}{Forward primer sequence to orient all reads to same strand.}
+\item{orient_torrent}{Forward primer sequence to orient all reads to same strand (only unambiguous nucleotides).}
 }
 \value{
 Return raw otu table in phyloseq object and export it in an Rdata file.

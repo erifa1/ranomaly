@@ -1,5 +1,5 @@
 Package: ranomaly
-Title: An R package grouping ANOMALY worflow functions.
+Title: An R package grouping ANOMALY worflow functions
 Version: 0.0.0.9000
 Authors@R: 
     c(person(given = "Sebastien",
@@ -59,7 +59,9 @@ Imports:
     ranacapa,
     reshape2,
     scales,
+    stringr,
     ShortRead,
+    tibble,
     tools,
     utils,
     vegan,

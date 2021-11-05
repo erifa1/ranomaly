@@ -2,14 +2,14 @@
 #'
 #' Processing DADA2 algorithm on raw sequences, return raw otu table with representative sequence of ASV.
 #'
-#' @param amplicon Choose amplipcon "16S" or "ITS"
 #' @param path Read files folder path
 #' @param outpath output .Rdata file name
+#' @param cutadapt Use of cutadapt to trim primers based on their sequences, f_ and r_primer are needed (ambiguous nucleotides allowed)
 #' @param dadapool option for dada function (FALSE, TRUE or "pseudo"), default is "pseudo". See ? dada.
 #' @param f_trunclen Forward read tuncate length (only for paired end 16S)
 #' @param r_trunclen Reverse read tuncate length (only for paired end 16S)
-#' @param f_primer Forward primer sequence (only for ITS)
-#' @param r_primer Reverse primer sequence (only for ITS)
+#' @param f_primer Forward primer sequence (mandatory if cutadapt = TRUE)
+#' @param r_primer Reverse primer sequence (mandatory if cutadapt = TRUE)
 #' @param plot Plot all test or not
 #' @param compress Reads files are compressed (.gz)
 #' @param extension Paired reads extension files for R1. (default: _R1.fastq), use "_R1.fastq.gz" for compressed files.
@@ -49,8 +49,11 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
     invisible(flog.threshold(INFO))
   }
 
-  flog.info('Read path :')
+  flog.info('Reads path :')
   flog.info(path)
+  if( length(list.files(path, full.names = TRUE)) == 0){
+    stop(glue::glue("No files in the input directory, or this directory does not exist. ({path})"))
+  }
 
   flog.info("Creating directory.")
   if(!dir.exists(outpath)){
