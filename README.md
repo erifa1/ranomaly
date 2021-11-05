@@ -13,6 +13,8 @@ rANOMALY is an R Package integrating AmplicoN wOrkflow for Microbial community A
 F1000 reference paper](https://f1000research.com/articles/10-7) and [the
 poster](https://hal.archives-ouvertes.fr/hal-02340484/) presenting this workflow.
 
+A shiny app [ExploreMetabar](https://shiny.migale.inrae.fr/app/exploremetabar) is available to explore phyloseq object generated with rANOMALY or other tools, and allow users to perform statistical analysis in an user friendly interface (no command line).
+
 ## Installation
 
 You can install the development version of rANOMALY from this repository
