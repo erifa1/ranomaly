@@ -5,11 +5,14 @@
 #' @param psobj a phyloseq object (output from decontam or generate_phyloseq)
 #' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
 #' @param col A metadata column (among sample_variables(data)).
-#' @param cov Covariable names comma separated vector.
+#' @param cov Covariable names comma separated vector (last covariable is used to plot samples with different shape).
 #' @param dist0 Dissimilarity index, partial match to "unifrac", "wunifrac", "dpcoa", "jsd", "manhattan", "euclidean", "canberra", "bray", "kulczynski", "jaccard", "gower", "altGower", "morisita", "horn", "mountford", "raup" , "binomial", "chao", "cao" or "mahalanobis".
 #' @param ord0 Currently supported method options are: c("DCA", "CCA", "RDA", "CAP", "DPCoA", "NMDS", "MDS", "PCoA")
 #' @param output The output file directory.
 #' @param tests Whether to compute tests or not (TRUE/FALSE)
+#' @param axes Axes to plot (c(1,2))
+#' @param ellipse Plot ellipse (TRUE)
+#' @param verbose Verbose level. (1: quiet, 2: print infos, 3: print infos + debug)
 #'
 #' @return Return specific plots and tests in list and output them in the output directory.
 #'
@@ -17,14 +20,25 @@
 #' @import ggplot2
 #' @import pairwiseAdonis
 #' @import vegan
-#' @importFrom plotly ggplotly
+#' @importFrom plotly ggplotly config
 #'
 #' @export
 
 
 # Decontam Function
 
-diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, dist0 = "bray", ord0 = "MDS", output="./plot_div_beta/", tests = TRUE) {
+diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, dist0 = "bray", ord0 = "MDS", output="./plot_div_beta/", axes = c(1,2), tests = TRUE, verbose = 2, ellipse = TRUE) {
+
+  if(verbose == 3){
+  invisible(flog.threshold(DEBUG))
+  }
+  if(verbose == 2){
+    invisible(flog.threshold(INFO))
+  }
+  if(verbose == 1){
+    invisible(flog.threshold(ERROR))
+  }
+
 
   if(!dir.exists(output)){
     dir.create(output, recursive=TRUE)
@@ -34,50 +48,78 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
 
   flog.debug(cov)
   if(!is.null(cov)){
-    cov1 = unlist(strsplit(cov, ","))
+    cov1 <- unlist(strsplit(cov, ","))
   }
 
-  # metrics <- sapply(strsplit(measures,","), '[')
-  col1 = unlist(strsplit(col, "[+]"))
+  col1 <- col
   if(length(col1)==1){
     fun <- paste("psobj = subset_samples(psobj, !is.na(",col,"))",sep="")
     eval(parse(text=fun))
   }else{
-    fun <- paste("psobj = subset_samples(psobj, !is.na(",col1[1],"))",sep="")
-    eval(parse(text=fun))
-    fun <- paste("psobj = subset_samples(psobj, !is.na(",col1[2],"))",sep="")
-    eval(parse(text=fun))
-  }
+    stop("Only one factor in 'col' argument, add more covariable in 'cov' argument.")
+    }
+
   if(rank=="ASV"){
     flog.info('No glom ...')
-    data_rank = psobj
+    data_rank <- psobj
   }else{
-    data_rank = tax_glom(psobj, rank)
+    data_rank <- tax_glom(psobj, rank)
   }
 
 
   # Figure
-  resBeta = list()
+  flog.info('Plot ...')
+  resBeta <- list()
   if(!is.null(cov)){
-  p1 <- plot_samples(data_rank, ordinate(data_rank, ord0, dist0), color = col, shape = cov1[1] ) +
-  theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}")) + stat_ellipse() + scale_shape_manual(values = 0:10)
+
+  sdata = sample_data(data_rank)
+  fun = glue::glue("sdata${cov1[length(cov1)]}_{col} = factor(paste(sdata${cov1[length(cov1)]}, sdata${col}, sep='_'))")
+  eval(parse(text=fun))
+  sample_data(data_rank) = sdata
+
+  p1 <- plot_samples(data_rank, ordinate(data_rank, ord0, dist0), color = col, shape = cov1[length(cov1)], axes = axes ) +
+  theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}")) + scale_shape_manual(values = 0:10)
+  if(ellipse){p1 <- p1 + stat_ellipse()}
+
+  p2 <- plot_samples(data_rank, ordinate(data_rank, ord0, dist0), color = glue::glue("{cov1[length(cov1)]}_{col}"), shape = NULL, axes = axes ) +
+  theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}")) + scale_shape_manual(values = 0:10)
+  if(ellipse){p2 <- p2 + stat_ellipse()}
+
+  resBeta$plot2 <- p2 + theme(axis.text.x = element_text(angle = 45, hjust=1),
+  ,axis.text=element_text(size=18),
+  axis.title=element_text(size=16,face="bold"),
+  strip.text.x = element_text(size = 18,face="bold"),
+  title=element_text(size=16,face="bold"))
+  ggsave(glue::glue("{output}/beta_diversity2.eps"), plot=resBeta$plot2, height = 20, width = 30, units="cm", dpi = 500, device="eps")
+
+
 }else{
-  p1 <- plot_samples(data_rank, ordinate(data_rank, ord0, dist0), color = col) +
-  theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}")) + stat_ellipse()
+
+  p1 <- phyloseq::plot_ordination(physeq = data_rank, ordination = ordinate(data_rank, ord0, dist0), axes = axes)
+  p1$layers[[1]] <- NULL
+
+  sample.id = sample_names(data_rank)
+  sdata <- sample_data(data_rank) 
+  fact <- as.matrix(sdata[,col])
+  p1 <- p1 + aes(color = fact, sample.id = sample.id)
+  p1 <- p1 + stat_ellipse(aes(group = fact))
+  p1 <- p1 + geom_point() + theme_bw()
+  resBeta$plotly1 <- ggplotly(p1, tooltip=c("x", "y", "sample.id")) %>% config(toImageButtonOptions = list(format = "svg"))
+
 }
   # plot(p1)
-
-  resBeta$plot = p1 + theme(axis.text.x = element_text(angle = 45, hjust=1),
+  flog.info('Plot ok...')
+  resBeta$plot <- p1 + theme(axis.text.x = element_text(angle = 45, hjust=1),
   ,axis.text=element_text(size=18),
   axis.title=element_text(size=16,face="bold"),
   strip.text.x = element_text(size = 18,face="bold"),
   title=element_text(size=16,face="bold"))
 
   if(tests){
-    otable = otu_table(data_rank)
+    otable <- otu_table(data_rank)
 
     flog.info(glue::glue('Tests on {dist0} ...'))
-    mdata = data.frame(sample_data(data_rank))
+    mdata <- data.frame(sample_data(data_rank))
     mdata$Depth <- sample_sums(data_rank)
     if( any(grepl(dist0, c("unifrac", "wunifrac", "dpcoa", "jsd") )) ){
       dist1 <-phyloseq::distance(data_rank, dist0)
@@ -85,18 +127,20 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
       dist1 <<- vegdist(t(otable), method = dist0)
     }
     if(!is.null(cov)){
-      resBC = adonis(as.formula(paste('dist1 ~ Depth +', paste(cov1, collapse="+"), "+", col)), data = mdata, permutations = 1000)
+      form1 <- as.formula(paste('dist1 ~ Depth +', paste(cov1, collapse="+"), "+", col))
+      resBC <- adonis(form1, data = mdata, permutations = 1000)
+        
     }else{
-      resBC = adonis(as.formula(paste('dist1 ~ Depth +', col)), data = mdata, permutations = 1000)
+      form1 <- as.formula(paste('dist1 ~ Depth +', col))
+      resBC <- adonis(form1, data = mdata, permutations = 1000)
     }
 
     #PairwiseAdonis
-    # resBC2 = pairwise.adonis2(as.formula( paste('BC.dist ~ ', col,sep="") ), data = mdata)
-    if(length(col1)>1){
-      fact1 <- apply( mdata[,c(col1)] , 1 , paste , collapse = "-" )
-      resBC2 = pairwise.adonis(dist1, fact1, p.adjust.m='fdr')
+    if(!is.null(cov)){
+      fun = glue::glue("resBC2 <- pairwise.adonis(dist1, mdata${cov1[length(cov1)]}_{col}, p.adjust.m='fdr')" )
+      eval(parse(text = fun))
     } else {
-      resBC2 = pairwise.adonis(dist1, mdata[,c(col1)], p.adjust.m='fdr')
+      resBC2 <- pairwise.adonis(dist1, mdata[,c(col1)], p.adjust.m='fdr')
     }
 
     write.table(resBC$aov.tab, file=paste0(output,'/',col,'_permANOVA.txt'), sep="\t")
@@ -104,8 +148,11 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
 
     ggsave(glue::glue("{output}/beta_diversity.eps"), plot=resBeta$plot, height = 20, width = 30, units="cm", dpi = 500, device="eps")
 
-    resBeta$permanova = resBC$aov.tab
-    resBeta$pairwisepermanova = resBC2
+    resBeta$permanova <- resBC$aov.tab
+    resBeta$permanova_formula <- format(form1)
+    resBeta$pairwisepermanova <- resBC2
+    resBeta$test_table <- mdata
+    resBeta$dist <- dist1
 
   }
   return(resBeta)

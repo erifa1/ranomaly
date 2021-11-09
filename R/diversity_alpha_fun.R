@@ -15,10 +15,11 @@ alphaPlot <- function(data = data, col1 = "", col2 = "", measures = c("Shannon")
     p <- plot_richness(data,x=col1, color=col2, measures=measures)
   }
   p$layers <- p$layers[-1]
+  if(col2 != ""){legpos = "right"}else{legpos = "none"}
   p <- p + ggtitle('Alpha diversity indexes') +  geom_boxplot(alpha = 1, outlier.shape = NA) +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 45, hjust=1),
-    legend.position = "right",axis.text=element_text(size=15),
+    legend.position = legpos, axis.text=element_text(size=15),
     axis.title=element_text(size=16,face="bold"),
     strip.text.x = element_text(size = 18,face="bold"),
     title=element_text(size=16,face="bold"))
@@ -44,7 +45,7 @@ alphaPlotly <- function(data=data, alpha=alpha, col1='', col2='', measures=c("Sh
 #'
 #' @param data a phyloseq object (output from decontam or generate_phyloseq)
 #' @param output Output directory
-#' @param column1 Column name of first factor to test (covariable in ANOVA).
+#' @param column1 Column name of first factor to test (covariable in ANOVA), or principal factor if only one factor to test.
 #' @param column2 Column name of second factor to test (last factor in ANOVA).
 #' @param column3 Column name of subjects in case of repeated mesures (mixed model)
 #' @param supcovs One or more supplementary covariables to test in anova (provided as comma separated vector)
@@ -104,20 +105,22 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
 
     #alpha diversité tableau
     resAlpha = list()
+
     flog.info('Alpha diversity tab ...')
-    resAlpha$alphatable <- estimate_richness(data, measures = measures )
-    # row.names(resAlpha$alphatable) <- gsub("X","",row.names(resAlpha$alphatable))
-    write.table(resAlpha$alphatable,paste(output,'/alphaDiversity_table.csv',sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
-    flog.info('Done.')
 
     p <- alphaPlot(data, column1, column2, measures)
 
     resAlpha$plot = p
     ggsave(paste(output,'/alpha_diversity.eps',sep=''), plot=p, height = 15, width = 30, units="cm", dpi = 500, device="eps")
 
-
-    anova_data <- cbind(sample_data(data), resAlpha$alphatable)
+    alphatable <- estimate_richness(data, measures = measures )
+    anova_data <- cbind(sample_data(data), alphatable)
     anova_data$Depth <- sample_sums(data)
+    resAlpha$alphatable <- anova_data
+    # row.names(resAlpha$alphatable) <- gsub("X","",row.names(resAlpha$alphatable))
+    write.table(resAlpha$alphatable,paste(output,'/alphaDiversity_table.csv',sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
+    flog.info('Done.')
+
     if(length(levels(as.factor(anova_data[,column1])))>1 & mean(table(anova_data[,column1])) != 1 ){
       flog.info('ANOVA ...')
       # variables <- paste(sep=" + ", "Depth", var1)
@@ -163,18 +166,19 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
         # }
 
         flog.info(paste("\n##pvalues of pairwise wilcox test on ", m, "with FDR correction \n"), sep="")
-        fun <- paste("wilcox_res1 <- pairwise.wilcox.test(anova_data$",m,", anova_data[,column1], p.adjust.method='fdr')", sep="")
+        fun <- paste("wilcox_res1 <- pairwise.wilcox.test(anova_data$",m,", anova_data[,column1], p.adjust.method='none')", sep="")
         eval(parse(text = fun))
         # print(round(wilcox_res1$p.value,3))
         wilcox_col1 <- round(wilcox_res1$p.value,3)
         fun <- glue("resAlpha[[\"{m}\"]] <- list(anova = aov1, wilcox_col1 = wilcox_col1)")
-        write.table(wilcox_col1, paste(output,"/anovatable.csv", sep=""), sep="\t", row.names=FALSE)
+        write.table(wilcox_col1, paste(output,"/anovatable.csv", sep=""), sep="\t", col.names=NA)
+        # write.table(aov1, paste(output,"/anovatable.csv", sep=""), sep="\t", col.names=NA)  # need output for aov
         # print(fun)
         eval(parse(text=fun))
 
         if(column2 != ''){
           flog.info(paste("\n##pvalues of pairwise wilcox test on ", m, "with FDR correction \n"), sep="")
-          fun <- paste("wilcox_res1 <- pairwise.wilcox.test(anova_data$",m,", anova_data[,column2], p.adjust.method='fdr')", sep="")
+          fun <- paste("wilcox_res1 <- pairwise.wilcox.test(anova_data$",m,", anova_data[,column2], p.adjust.method='none')", sep="")
           eval(parse(text = fun))
           wilcox_col2_fdr <- round(wilcox_res1$p.value,3)
 

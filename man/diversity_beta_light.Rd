@@ -12,7 +12,10 @@ diversity_beta_light(
   dist0 = "bray",
   ord0 = "MDS",
   output = "./plot_div_beta/",
-  tests = TRUE
+  axes = c(1, 2),
+  tests = TRUE,
+  verbose = 2,
+  ellipse = TRUE
 )
 }
 \arguments{
@@ -22,7 +25,7 @@ diversity_beta_light(
 
 \item{col}{A metadata column (among sample_variables(data)).}
 
-\item{cov}{Covariable names comma separated vector.}
+\item{cov}{Covariable names comma separated vector (last covariable is used to plot samples with different shape).}
 
 \item{dist0}{Dissimilarity index, partial match to "unifrac", "wunifrac", "dpcoa", "jsd", "manhattan", "euclidean", "canberra", "bray", "kulczynski", "jaccard", "gower", "altGower", "morisita", "horn", "mountford", "raup" , "binomial", "chao", "cao" or "mahalanobis".}
 
@@ -30,7 +33,13 @@ diversity_beta_light(
 
 \item{output}{The output file directory.}
 
+\item{axes}{Axes to plot (c(1,2))}
+
 \item{tests}{Whether to compute tests or not (TRUE/FALSE)}
+
+\item{verbose}{Verbose level. (1: quiet, 2: print infos, 3: print infos + debug)}
+
+\item{ellipse}{Plot ellipse (TRUE)}
 }
 \value{
 Return specific plots and tests in list and output them in the output directory.

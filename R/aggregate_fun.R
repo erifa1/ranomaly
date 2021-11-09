@@ -9,7 +9,7 @@
 #' @param mgseq Path to metagenomeseq results folder
 #' @param column1 Column name of factor to test (among sample_variables(data))
 #' @param column2 Column name on which table were splitted
-#' @param verbose Verbose level. (1: quiet, 3: verbal)
+#' @param verbose Verbose level. (1: quiet, 2: print infos, 3: print infos + debug)
 #' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
 #' @param comp Comparison to test. Comma separated and comparisons are informed with a tilde (A~C,A~B,B~C). If empty, test all combination.
 #' @param returnval Boolean for function to return values.
@@ -34,16 +34,21 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
 
   if(verbose == 3){
     invisible(flog.threshold(DEBUG))
-  } else {
+  }
+  if(verbose == 2){
     invisible(flog.threshold(INFO))
+  }
+
+  if(verbose == 1){
+    invisible(flog.threshold(ERROR))
   }
 
   if(!dir.exists(output)){
     dir.create(output,recursive=T )
   }
-  flog.info('Done.')
 
-  # data.glom <- tax_glom(data, taxrank=rank, h=TRUE)
+  flog.info('Glom Tax.')
+  data.glom <- tax_glom(data, taxrank=rank)
 
   if(comp == ''){
     fun <- paste('combinaisons <- combn(na.omit(unique(sample_data(data)$',column1,')),2)',sep='')
@@ -79,13 +84,12 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
       flog.warn('File does not exists.')
       deseqT <- data.frame()
     }
-    # print(head(deseqT))
     flog.info('MetagenomeSeq.')
     if(file.exists(paste(mgseq,"/signtab_",column1,"_",combinaisons[1,col],"_vs_",combinaisons[2,col],".csv",sep=""))){
       mgseqT <- read.table(paste(mgseq,"/signtab_",column1,"_",combinaisons[1,col],"_vs_",combinaisons[2,col],".csv",sep=""), h=TRUE,sep="\t")
     } else{
       if(file.exists(paste(mgseq,"/signtab_",column1,"_",combinaisons[2,col],"_vs_",combinaisons[1,col],".csv",sep=""))){
-        mgseqT <- read.table(paste(mgseq,"/signtab_",column1,"_",combinaisons[1,col],"_vs_",combinaisons[2,col],".csv",sep=""), h=TRUE,sep="\t")
+        mgseqT <- read.table(paste(mgseq,"/signtab_",column1,"_",combinaisons[2,col],"_vs_",combinaisons[1,col],".csv",sep=""), h=TRUE,sep="\t")
       }
       else{
         flog.warn('File does not exists.')
@@ -172,7 +176,7 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
       names(TABf)[ncol(TABf)] = names(TF)[j]
     }
 
-    TABfbak <- TABf
+    TABfbak0 <- TABf
 
     # add new columns, sumMethods, DeseqLFC, Mean Relative Abundance (TSS) condition 1 & 2
     row.names(deseqT) = deseqT[,1]
@@ -188,7 +192,7 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
     # clr = function(x){log(x+1) - rowMeans(log(x+1))}
     # otableNORM <- clr(otable)
     normf = function(x){ x/sum(x) }
-    data.norm <- transform_sample_counts(data, normf)
+    data.norm <- transform_sample_counts(data.glom, normf)
     otableNORM <- otu_table(data.norm)
 
     Gtab <- cbind(as.data.frame(ssample), t(otableNORM))
@@ -270,9 +274,8 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
 
 
   # print(TABfinal)
-  if(length(TABfinal) > 0){
+  if(length(TABfinal$ListAllOtu) > 0){
     flog.info('Building csv file...')
-
 
     TAX <- cbind(seqid = rownames(ttax[as.character(TABfinal$ListAllOtu),]),as.data.frame(ttax[as.character(TABfinal$ListAllOtu),]))
 
@@ -324,7 +327,7 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
     # save(data, file=paste(output,"/signif_phyloseq.rdata",sep=""))
     #
 
-  }
+  }else{flog.info("No significant results in the three methods...")}
 
 
 }

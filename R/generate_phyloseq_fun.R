@@ -42,8 +42,16 @@ generate_phyloseq_fun <- function(dada_res = dada_res, tax.table = tax.table, tr
   flog.info('Done.')
 
   if(length(setdiff(colnames(dada_res$otu.table), sampledata$sample.id)) > 0){
-    flog.info(setdiff(colnames(dada_res$otu.table), sampledata$sample.id))
-    stop("ERROR: number of samples in metadata differ from otu table.")
+    message("ERROR: sample names in otu table differs from sample metadata.")
+    print(setdiff(colnames(dada_res$otu.table), sampledata$sample.id))
+    stop("Please check metadata table.",call. = FALSE)
+  }
+
+  if(length(setdiff(sampledata$sample.id, colnames(dada_res$otu.table))) > 0){
+    message("WARNING: One or more samples in metadata are not present in otu table:")
+    print(setdiff(sampledata$sample.id, colnames(dada_res$otu.table)))
+
+    sample.metadata <- sample.metadata[colnames(dada_res$otu.table),]
   }
 
   flog.info("Sequences..")
@@ -51,13 +59,31 @@ generate_phyloseq_fun <- function(dada_res = dada_res, tax.table = tax.table, tr
   flog.debug('Generate MD5 ids...')
   names(sequences) <- sapply(sequences,digest,algo='md5')
 
-  if(is.null(tree)){
-    flog.info('Building phyloseq object without tree...')
-    data <- phyloseq(dada_res$otu.table, tax_table(as.matrix(tax.table)), sample.metadata, DNAStringSet(sequences))
-  } else{
-    flog.info('Building phyloseq object with tree...')
-    data <- phyloseq(dada_res$otu.table, tax_table(as.matrix(tax.table)), sample.metadata, phy_tree(tree), DNAStringSet(sequences))
+  if(!is.null(tax.table)){
+
+    if(is.null(tree)){
+      flog.info('Building phyloseq object without tree...')
+      data <- phyloseq(dada_res$otu.table[,row.names(sample.metadata)], tax_table(as.matrix(tax.table)), sample.metadata, DNAStringSet(sequences))
+    } else{
+      flog.info('Building phyloseq object with tree...')
+      data <- phyloseq(dada_res$otu.table[,row.names(sample.metadata)], tax_table(as.matrix(tax.table)), sample.metadata, phy_tree(tree), DNAStringSet(sequences))
+    }
+
+  }else{
+
+     if(is.null(tree)){
+      flog.info('Building phyloseq object without tree...')
+      data <- phyloseq(dada_res$otu.table[,row.names(sample.metadata)], sample.metadata, DNAStringSet(sequences))
+    } else{
+      flog.info('Building phyloseq object with tree...')
+      data <- phyloseq(dada_res$otu.table[,row.names(sample.metadata)], sample.metadata, phy_tree(tree), DNAStringSet(sequences))
+    }
+
+
   }
+
+
+
   flog.info('Done.')
   data_rel <- transform_sample_counts(data, function(x) x / sum(x) )
 

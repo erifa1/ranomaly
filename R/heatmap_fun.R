@@ -6,7 +6,10 @@
 #' @param output Output directory
 #' @param column1 Column name of factor to plot with (among sample_variables(data)).
 #' @param top Number of top features to plot.
+#' @param relative If TRUE, calculate relative abundance, needs a phyloseq object with raw abundance.
+#' @param aggregate If TRUE, aggregate abundance of non "top" taxa in a new taxa named "Other".
 #' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
+#' @param legend Legend title ("Abundance")
 #'
 #' @return Generate an heatmap with top taxa (html plotly version in output directory)
 #' @importFrom htmlwidgets saveWidget
@@ -14,26 +17,48 @@
 #' @export
 
 
-# Decontam Function
-
-heatmap_fun <- function(data = data, column1 = "", top = 20, output = "./plot_heatmap/", rank = "Species"){
+heatmap_fun <- function(data = data, column1 = "", top = 20, output = "./plot_heatmap/", rank = "Species", relative = TRUE, aggregate = TRUE, legend = "Abundance"){
+  LL = list()
 
   output1 <- paste(getwd(),'/',output,'/',sep='')
   if(!dir.exists(output1)){
-    dir.create(output1)
+    dir.create(output1, recursive = TRUE)
   }
   flog.info('Done.')
 
-  psobj.top <- microbiome::aggregate_top_taxa(data, rank, top = top)
+  if( is.na(match(column1, sample_variables(data))) ){stop("This factor is not in sample_variables(data).")}
 
-  ps.glom.rel <- microbiome::transform(psobj.top, "compositional")
+  ps.glom.rel <- psobj.top <- dataglom <- data
 
-  plot.composition.relAbun <- microbiome::plot_composition(ps.glom.rel, x.label = column1)
-  data.com <- plot.composition.relAbun$data
-  colnames(data.com)
+  if(!is.null(rank)){
+    dataglom <- tax_glom(data, rank)
+    tt <- tax_table(dataglom)
+    taxa <- tt[,rank]
+    taxa_names(dataglom) <- taxa
+  }
+
+  otable <- otu_table(dataglom)
+  sdata <- as.data.frame(as.matrix(sample_data(dataglom)))
+
+  data.com <- reshape2::melt(otable)
+  data.com$xlabel <- as.factor(sdata[as.character(data.com$Var2),match(column1,names(sdata))])
+  names(data.com) <- c("Tax", "Sample", "Abundance", "xlabel")
+  data.com$Tax = factor(data.com$Tax, levels = sort(unique(as.character(data.com$Tax))))
+
+  if(aggregate){psobj.top <- microbiome::aggregate_top_taxa(data, rank, top = top)}
+
+  if(relative){
+    ps.glom.rel <- microbiome::transform(psobj.top, "compositional")
+    plot.composition.relAbun <- microbiome::plot_composition(ps.glom.rel, x.label = column1)
+    data.com <- plot.composition.relAbun$data
+    colnames(data.com)
+  }
+
+
+
 
   p.heat <- ggplot(data.com, aes(x = Sample, y = Tax)) + geom_tile(aes(fill = Abundance))
-  p.heat <- p.heat + scale_fill_distiller("Abundance", palette = "RdYlBu") + theme_bw()
+  p.heat <- p.heat + scale_fill_distiller(legend, palette = "RdYlBu") + theme_bw()
 
   # Make bacterial names italics
   p.heat <- p.heat + theme(axis.text.y = element_text(colour = 'black',
@@ -54,8 +79,11 @@ heatmap_fun <- function(data = data, column1 = "", top = 20, output = "./plot_he
                            strip.background = element_rect(colour="black", fill="white"))
   pltly.heat <- ggplotly(p.heat)
 
-  print(paste(output1,"heatmap_",column1,".html",sep=''))
+  flog.info(paste(output1,"heatmap_",column1,".html",sep=''))
   saveWidget(pltly.heat, file=  paste(output1,"heatmap_",column1,".html",sep=''))
 
-  return(p.heat)
+
+  LL$plot <- p.heat
+  LL$table <- data.com
+  return(LL)
 }
