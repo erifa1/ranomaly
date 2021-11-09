@@ -18,7 +18,7 @@ alphaPlot <- function(data = data, col1 = "", col2 = "", measures = c("Shannon")
   p <- p + ggtitle('Alpha diversity indexes') +  geom_boxplot(alpha = 1, outlier.shape = NA) +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 45, hjust=1),
-    legend.position = "none",axis.text=element_text(size=15),
+    legend.position = "right",axis.text=element_text(size=15),
     axis.title=element_text(size=16,face="bold"),
     strip.text.x = element_text(size = 18,face="bold"),
     title=element_text(size=16,face="bold"))
