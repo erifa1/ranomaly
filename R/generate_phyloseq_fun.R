@@ -56,7 +56,7 @@ generate_phyloseq_fun <- function(dada_res = dada_res, tax.table = tax.table, tr
     data <- phyloseq(dada_res$otu.table, tax_table(as.matrix(tax.table)), sample.metadata, DNAStringSet(sequences))
   } else{
     flog.info('Building phyloseq object with tree...')
-    data <- phyloseq(dada_res$otu.table, tax.table, sample.metadata, phy_tree(tree), DNAStringSet(sequences))
+    data <- phyloseq(dada_res$otu.table, tax_table(as.matrix(tax.table)), sample.metadata, phy_tree(tree), DNAStringSet(sequences))
   }
   flog.info('Done.')
   data_rel <- transform_sample_counts(data, function(x) x / sum(x) )
