@@ -296,6 +296,7 @@ VENNFUN <- function(TF = TF, mode = 1, TITRE = TITRE, output = "./", refseq1 = N
     }
   } else if(mode == 2){ # more than 5 environments
     # pdf(NULL)
+    invisible(dev.off())
     venn.plot <- venn::venn(TF, zcol = rainbow(7), ilcs = 2, sncs = 2, ggplot = FALSE) #, col=rainbow(7)
     venn.plot <- recordPlot()
     invisible(dev.off())
