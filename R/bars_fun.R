@@ -7,7 +7,7 @@
 #'
 #' @return A plotly graph.
 #'
-#' @import plotly
+#' @importFrom plotly ggplotly
 #' @importFrom ranacapa ggrare
 #'
 #' @export
@@ -45,7 +45,7 @@ rarefaction <- function(data = data, col = NULL, step = 100, ggplotly = TRUE){
 #'
 #' @return Returns barplots in an interactive plotly community plot
 #'
-#' @import plotly
+#' @importFrom plotly plot_ly subplot layout
 #' @importFrom microbiome aggregate_top_taxa
 #' @importFrom reshape2 melt
 #' @importFrom gtools mixedsort
@@ -111,7 +111,7 @@ bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 =
     color = ~g,
     legendgroup = ~g,
     showlegend = FALSE
-  ) %>% layout(xaxis = list(zeroline = FALSE,showline = FALSE, showgrid = FALSE),
+  ) %>% plotly::layout(xaxis = list(zeroline = FALSE,showline = FALSE, showgrid = FALSE),
                yaxis=list(showticklabels = FALSE,title = "",showgrid = FALSE))
 
 
@@ -126,21 +126,20 @@ bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 =
     meltdat$variable = factor(meltdat$variable, levels= c("Other", tt[tt!="Other"]))
 
     p1=plot_ly(meltdat, x = ~sample.id, y = ~value, type = 'bar', name = ~variable, color = ~variable) %>% #, color = ~variable
-      layout(title="Relative abundance", yaxis = list(title = 'Relative abundance'), xaxis = xform, barmode = 'stack')
+      plotly::layout(title="Relative abundance", yaxis = list(title = 'Relative abundance'), xaxis = xform, barmode = 'stack')
 
     if(length(df1$x) != length(unique(df1$g))){
-      p1 <- subplot(p1, subp1, nrows = 2, shareX = T, heights=c(0.95,0.05)) %>%
-      layout(xaxis = xform)
+      p1 <- plotly::subplot(p1, subp1, nrows = 2, shareX = T, heights=c(0.95,0.05)) %>%
+      plotly::layout(xaxis = xform)
     }
   }else{
     #raw abundance
     plottitle = "Raw abundance"
     p1=plot_ly(meltdat, x = ~sample.id, y = ~value, type = 'bar', name = ~variable, color = ~variable) %>% #, color = ~variable
-      layout(title="Raw abundance", yaxis = list(title = 'Raw abundance'), xaxis = xform, barmode = 'stack')
+       plotly::layout(title="Raw abundance", yaxis = list(title = 'Raw abundance'), xaxis = xform, barmode = 'stack')
 
     if(length(df1$x) != length(unique(df1$g))){
-      p1 <- subplot(p1, subp1, nrows = 2, shareX = T, heights=c(0.95,0.05)) %>%
-      layout(xaxis = xform)
+      p1 <- plotly::subplot(p1, subp1, nrows = 2, shareX = T, heights=c(0.95,0.05)) %>% plotly::layout(xaxis = xform)
     }
   }
 
@@ -160,8 +159,8 @@ bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, Fact1 =
                                  color = ~variable, legendgroup = ~variable,
                                  showlegend = (.y == levels(meltdat[, Ord1])[1])),
                        keep = TRUE)  %>%
-      subplot(nrows = 1, shareX = TRUE, shareY=TRUE, titleX = FALSE) %>%
-      layout(title=plottitle,
+      plotly::subplot(nrows = 1, shareX = TRUE, shareY=TRUE, titleX = FALSE) %>%
+      plotly::layout(title=plottitle,
              xaxis = list(title = glue("{Ord1} = {unique(meltdat[, Ord1])[1]}")),
              yaxis = list(title = 'Relative abundance'),
              barmode = 'stack')
