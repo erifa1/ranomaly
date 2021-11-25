@@ -216,7 +216,7 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
   }else{flog.info(paste(column1, 'is all NA.'))}
 
   flog.info('Finish.')
-
+  save(resAlpha, file=paste(output,'/alpha_robjects.Rdata',sep=''))
   return(resAlpha)
 
 }
