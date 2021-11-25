@@ -210,12 +210,9 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
 
     #Adjust table
     TABf <- TABf[!is.na(TABf$DESeqLFC),]
-    diff1=TABf$MeanRelAbcond1 - TABf$MeanRelAbcond2
-    cbind( sign(diff1), diff1)
-    TABf$DESeqLFC = abs(TABf$DESeqLFC)*sign(diff1)
     TABf$Condition = rep(NA, nrow(TABf))
-    TABf[diff1>0, "Condition"] = as.character(combinaisons[1,col])
-    TABf[diff1<0, "Condition"] = as.character(combinaisons[2,col])
+    TABf[TABf$DESeqLFC>0, "Condition"] = as.character(combinaisons[1,col])
+    TABf[TABf$DESeqLFC<0, "Condition"] = as.character(combinaisons[2,col])
     TABf$Condition = factor(TABf$Condition,
                             levels=c(as.character(combinaisons[1,col]),as.character(combinaisons[2,col])) )
 
