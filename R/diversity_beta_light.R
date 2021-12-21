@@ -77,11 +77,13 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
   eval(parse(text=fun))
   sample_data(data_rank) = sdata
 
-  p1 <- plot_samples(data_rank, ordinate(data_rank, ord0, dist0), color = col, shape = cov1[length(cov1)], axes = axes ) +
+  resBeta$ordination <- ordinate(data_rank, ord0, dist0)
+
+  p1 <- plot_samples(data_rank, resBeta$ordination, color = col, shape = cov1[length(cov1)], axes = axes ) +
   theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}")) + scale_shape_manual(values = 0:10)
   if(ellipse){p1 <- p1 + stat_ellipse()}
 
-  p2 <- plot_samples(data_rank, ordinate(data_rank, ord0, dist0), color = glue::glue("{cov1[length(cov1)]}_{col}"), shape = NULL, axes = axes ) +
+  p2 <- plot_samples(data_rank, resBeta$ordination, color = glue::glue("{cov1[length(cov1)]}_{col}"), shape = NULL, axes = axes ) +
   theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}")) + scale_shape_manual(values = 0:10)
   if(ellipse){p2 <- p2 + stat_ellipse()}
 
@@ -95,7 +97,9 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
 
 }else{
 
-  p1 <- phyloseq::plot_ordination(physeq = data_rank, ordination = ordinate(data_rank, ord0, dist0), axes = axes)
+  resBeta$ordination <- ordinate(data_rank, ord0, dist0)
+
+  p1 <- phyloseq::plot_ordination(physeq = data_rank, ordination = resBeta$ordination, axes = axes)
   p1$layers[[1]] <- NULL
 
   sample.id = sample_names(data_rank)
@@ -153,6 +157,7 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
     resBeta$pairwisepermanova <- resBC2
     resBeta$test_table <- mdata
     resBeta$dist <- dist1
+    save(resBeta, file=paste(output,'/beta_robjects.Rdata',sep=''))
 
   }
   return(resBeta)

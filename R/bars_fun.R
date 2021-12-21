@@ -73,7 +73,8 @@ aggregate_top_taxa <- function (x, top, level){
 #'
 #' @return Returns barplots in an interactive plotly community plot
 #'
-#' @importFrom plotly ggplotly plot_ly layout subplot
+#' @importFrom plotly plot_ly subplot layout ggplotly
+#' @importFrom microbiome aggregate_top_taxa
 #' @importFrom reshape2 melt
 #' @importFrom gtools mixedsort
 #' @importFrom dplyr group_map group_by across `%>%` mutate arrange
@@ -171,8 +172,8 @@ if( all(Ord1 != sample_variables(data))){
     color = ~g,
     legendgroup = ~g,
     showlegend = FALSE
-  ) %>% layout(xaxis = list(zeroline = FALSE,showline = FALSE, showgrid = FALSE),
-               yaxis=list(showticklabels = FALSE,title = ylab, showgrid = FALSE))
+  ) %>% plotly::layout(xaxis = list(zeroline = FALSE,showline = FALSE, showgrid = FALSE),
+               yaxis=list(showticklabels = FALSE,title = "",showgrid = FALSE))
 
 
   if(relative){
@@ -190,21 +191,20 @@ if( all(Ord1 != sample_variables(data))){
     eval(parse(text=fun))
 
     p1=plot_ly(meltdat, x = ~sample.id, y = ~value, type = 'bar', name = ~variable, color = ~variable) %>% #, color = ~variable
-      layout(title="", yaxis = list(title = ylab), xaxis = xform, barmode = 'stack')
+      plotly::layout(title="Relative abundance", yaxis = list(title = 'Relative abundance'), xaxis = xform, barmode = 'stack')
 
     if(length(df1$x) != length(unique(df1$g))){
-      p1 <- subplot(p1, subp1, nrows = 2, shareX = T, heights=c(0.95,0.05)) %>%
-      layout(xaxis = xform)
+      p1 <- plotly::subplot(p1, subp1, nrows = 2, shareX = T, heights=c(0.95,0.05)) %>%
+      plotly::layout(xaxis = xform)
     }
   }else{
   flog.info('Plotting raw...')
     #raw abundance
     p1=plot_ly(meltdat, x = ~sample.id, y = ~value, type = 'bar', name = ~variable, color = ~variable) %>% #, color = ~variable
-      layout(title="", yaxis = list(title = ylab), xaxis = xform, barmode = 'stack')
+       plotly::layout(title="Raw abundance", yaxis = list(title = 'Raw abundance'), xaxis = xform, barmode = 'stack')
 
     if(length(df1$x) != length(unique(df1$g))){
-      p1 <- subplot(p1, subp1, nrows = 2, shareX = T, heights=c(0.95,0.05)) %>%
-      layout(xaxis = xform)
+      p1 <- plotly::subplot(p1, subp1, nrows = 2, shareX = T, heights=c(0.95,0.05)) %>% plotly::layout(xaxis = xform)
     }
   }
 
@@ -228,8 +228,8 @@ if( all(Ord1 != sample_variables(data))){
                                    color = ~variable, legendgroup = ~variable,
                                    showlegend = (.y == levels(meltdat[, Ord1])[1])),
                          keep = TRUE)  %>%
-      subplot(nrows = 1, shareX = TRUE, shareY=TRUE, titleX = FALSE) %>%
-      layout(title="",
+      plotly::subplot(nrows = 1, shareX = TRUE, shareY=TRUE, titleX = FALSE) %>%
+      plotly::layout(title="",
              xaxis = list(title = glue("{Ord1} =\n{levels(meltdat[, Ord1])[1]}")),
              yaxis = list(title = ylab),
              barmode = 'stack')
