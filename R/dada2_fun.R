@@ -408,9 +408,10 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
 
       # print(fnFs.filtN)
 
-      flog.info('filterAndTrim...')
+      flog.info('filterAndTrim & orient reads...')
       if(! dir.exists(paste(path,'/filtN',sep=''))){
-        filterAndTrim(fwd = fnFs, filt = fnFs.filtN, maxN = 0, multithread = TRUE, verbose=TRUE, rm.phix = TRUE, compress=compress)
+        filterAndTrim(fwd = fnFs, filt = fnFs.filtN, maxN = 0, multithread = TRUE, verbose=TRUE, 
+          rm.phix = TRUE, compress=compress, orient.fwd = orient_torrent)
       }else{
         flog.info('Filtered files exist, skipping...')
       }
@@ -425,7 +426,6 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
       }
 
       flog.info('Primer hits: ')
-
       primerhits <- rbind(FWD.ForwardReads = sapply(FWD.orients, primerHits, fn = fnFs.filtN[[1]]),
       REV.ForwardReads = sapply(REV.orients, primerHits, fn = fnFs.filtN[[1]])
       )
@@ -455,11 +455,11 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
           if(verbose == 3){
             system2(cutadapt, args = c(R1.flags, "-n", 2, # -n 2 required to remove FWD and REV from reads
             "-o", fnFs.cut[i], # output files
-            fnFs.filtN[i]), stdout="", stderr="") # input files
+            fnFs.filtN[i], "--rc"), stdout="", stderr="") # input files
           } else{
             system2(cutadapt, args = c(R1.flags, "-n", 2, # -n 2 required to remove FWD and REV from reads
             "-o", fnFs.cut[i], # output files
-            fnFs.filtN[i]), stdout=NULL, stderr=NULL) # input files
+            fnFs.filtN[i], "--rc"), stdout=NULL, stderr=NULL) # input files
           }
         }
         close(pb)
@@ -493,14 +493,10 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
 
       flog.debug(length(cutFs))
       flog.debug(length(filtFs))
-      
-      if(torrent_single == TRUE){
-      out0 <- filterAndTrim(fwd = cutFs, filt = filtFs, maxN = 0, multithread = FALSE, rm.phix = TRUE,
-        , maxEE = 5 , minLen = 100, compress=compress, orient.fwd = orient_torrent)
-      }else{
+
       out0 <- filterAndTrim(fwd = cutFs, filt = filtFs, maxN = 0, multithread = TRUE, rm.phix = TRUE,
         , maxEE = 5 , minLen = 100, compress=compress)
-      }
+
 
       row.names(out0) = sample.names
       out <- as.data.frame(out0) %>%tibble::rownames_to_column(var = "sample.id")
@@ -512,14 +508,15 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
 
     }else{
       flog.info(glue::glue('DADA2 Trim primers on {trim_l}(FWD) and {trim_r}(REV) bases ...'))
+
       if(torrent_single == TRUE){
-        out <- filterAndTrim(fwd = fnFs, filt = filtFs, maxN = 0, multithread = TRUE, verbose=TRUE, rm.phix = TRUE,
+        out0 <- filterAndTrim(fwd = fnFs, filt = filtFs, maxN = 0, multithread = TRUE, verbose=TRUE, rm.phix = TRUE,
           , maxEE = 5 , minLen = 100, compress=compress, trimLeft=trim_l, trimRight=trim_r, orient.fwd = orient_torrent)
       }else{
-        out <- filterAndTrim(fwd = fnFs, filt = filtFs, maxN = 0, multithread = TRUE, verbose=TRUE, rm.phix = TRUE,
+        out0 <- filterAndTrim(fwd = fnFs, filt = filtFs, maxN = 0, multithread = TRUE, verbose=TRUE, rm.phix = TRUE,
           , maxEE = 5 , minLen = 100, compress=compress, trimLeft=trim_l, trimRight=trim_r )
       }
-      row.names(out) = sample.names
+      row.names(out0) = sample.names
       out <- as.data.frame(out0) %>%tibble::rownames_to_column(var = "sample.id")
 
     }
