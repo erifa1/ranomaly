@@ -79,13 +79,15 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
     TITRE=paste(column1)
   }
 
-  if(length(lvls)==0){
-    flog.error('You must provide levels...')
+  if(length(lvls)==0 & length(levels(as.factor(sample_data(data)[,column1]@.Data[[1]]))) > 7 ){
+    flog.error('More than 7 levels in the provided factor, you must specify levels...')
     stop()
+  } else if(length(lvls)==0 & length(levels(as.factor(sample_data(data)[,column1]@.Data[[1]]))) <= 7 ){
+    lvls <- sample_data(data)[,column1]@.Data[[1]]
   } else if(length(lvls)>7){
     flog.error('Venn diagram is limited to 7 levels')
     stop()
-  } else{
+  } else {
     if(!all(lvls %in% na.omit(levels(as.factor(sample_data(data)[,column1]@.Data[[1]])) ))){
       flog.error('Your levels are not present in metadata...')
       stop()
