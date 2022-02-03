@@ -69,7 +69,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
     flog.info('###ILLUMINA PAIRED END SOP')
 
   if(compress==TRUE & length(grep(".gz", extension)) == 0){
-    stop("If argument compress = TRUE, please add '.gz' to extension argument.")
+    stop(glue::glue("Argument compress = TRUE, please add '.gz' to extension argument ({extension}.gz)."))
   }
 
     flog.info('Loading files...')
@@ -323,7 +323,11 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
 
 
     track0 <- cbind.data.frame(stockFs, stockRs, sapply(mergers, getN), rowSums(seqtab.nochim))
-    rownames(track0) <- stringr::str_remove(rownames(track0), "_F_filt.fastq")
+    if(compress==TRUE){
+      rownames(track0) <- stringr::str_remove(rownames(track0), "_F_filt.fastq.gz")
+    }else{
+      rownames(track0) <- stringr::str_remove(rownames(track0), "_F_filt.fastq")
+    }
 
     # If processing a single sample, remove the sapply calls: e.g. replace sapply(dadaFs, getN) with getN(dadaFs)
 
@@ -341,7 +345,11 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
     colnames(seqtab.export) <- sapply(colnames(seqtab.export), digest::digest, algo="md5")
 
     otu.table <- phyloseq::otu_table(t(seqtab.export), taxa_are_rows = TRUE)
-    colnames(otu.table) <- stringr::str_remove(colnames(otu.table), "_F_filt.fastq")
+    if(compress==TRUE){
+      colnames(otu.table) <- stringr::str_remove(colnames(otu.table), "_F_filt.fastq.gz")
+    }else{
+      colnames(otu.table) <- stringr::str_remove(colnames(otu.table), "_F_filt.fastq")
+    }
 
     flog.info('Writing raw tables.')
     write.table(cbind(t(seqtab.export), "Sequence" = colnames(seqtab.nochim)), paste(outpath,"/raw_otu-table.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
