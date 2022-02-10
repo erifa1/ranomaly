@@ -6,10 +6,10 @@
 #' @param outpath output .Rdata file name
 #' @param cutadapt Use of cutadapt to trim primers based on their sequences, f_ and r_primer are needed (ambiguous nucleotides allowed)
 #' @param dadapool option for dada function (FALSE, TRUE or "pseudo"), default is "pseudo". See ? dada.
-#' @param f_trunclen Forward read tuncate length (only for paired end 16S)
-#' @param r_trunclen Reverse read tuncate length (only for paired end 16S)
-#' @param f_primer Forward primer sequence (mandatory if cutadapt = TRUE)
-#' @param r_primer Reverse primer sequence (mandatory if cutadapt = TRUE)
+#' @param f_trunclen Forward read truncate length (only for paired end 16S)
+#' @param r_trunclen Reverse read truncate length (only for paired end 16S)
+#' @param f_primer Forward primer sequence (mandatory if cutadapt = TRUE),  5' -> 3'.
+#' @param r_primer Reverse primer sequence (mandatory if cutadapt = TRUE), 5' -> 3'.
 #' @param plot Plot all test or not
 #' @param compress Reads files are compressed (.gz)
 #' @param extension Paired reads extension files for R1. (default: _R1.fastq), use "_R1.fastq.gz" for compressed files.
@@ -216,7 +216,6 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
       flog.debug(length(filtFs))
       flog.debug(length(cutRs))      
       flog.debug(length(filtRs))
-      
 
       out0 <- filterAndTrim(cutFs, filtFs, cutRs, filtRs, maxN = 0, maxEE = c(2, 2),
       truncQ = 2, minLen = 50, compress = compress, multithread = TRUE)  # on windows, set multithread = FALSE
@@ -454,7 +453,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
         FWD.RC <- dada2:::rc(FWD)
         REV.RC <- dada2:::rc(REV)
         # Trim FWD and the reverse-complement of REV off of R1 (forward reads)
-        R1.flags <- paste("-g", FWD, "-a", REV.RC)
+        R1.flags <- paste("-g", FWD, "-a", REV.RC, "-m 100")
 
         # Run Cutadapt
         pb <- txtProgressBar(min = 0, max = length(fnFs), style = 3)
@@ -497,7 +496,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
       }
 
       names(filtFs) <- sample.names
-      print(filtFs)
+      # print(filtFs)
 
       flog.debug(length(cutFs))
       flog.debug(length(filtFs))
@@ -540,7 +539,6 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
       flog.info('Done.')
     }
 
-
     stockFs=NULL
     getN <- function(x) sum(getUniques(x))
 
@@ -548,11 +546,15 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
     flog.info('Dereplicating fastq...')
     if(compress==TRUE){
       filtFs <- sort(list.files(file.path(path, "filtered/"), pattern = ".fastq.gz$", full.names = TRUE))
+      name1 <- sort(list.files(file.path(path, "filtered/"), pattern = ".fastq$", full.names = FALSE))
+      sample.names <- names(filtFs) <- sapply( stringr::str_split(name1, "_"), "[[", 1)
     } else{
       filtFs <- sort(list.files(file.path(path, "filtered/"), pattern = ".fastq$", full.names = TRUE))
+      name1 <- sort(list.files(file.path(path, "filtered/"), pattern = ".fastq$", full.names = FALSE))
+      sample.names <- names(filtFs) <- sapply( stringr::str_split(name1, "_"), "[[", 1)
     }
 
-    names(filtFs) <- sample.names
+    # names(filtFs) <- sample.names
     derepFs <- derepFastq(filtFs, verbose=TRUE)
     flog.info('Done.')
 
@@ -585,7 +587,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
     }else{
       rownames(out) <- out$sample.id
       nn <- row.names(out)
-      print(names(stockFs))
+      # print(names(stockFs))
       track <- cbind.data.frame(out, stockFs[nn], rowSums(seqtab.nochim)[nn])
       colnames(track) <- c("sample.id","input", "filtered", "denoisedF", "nonchim")
       head(track)
@@ -597,7 +599,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
     colnames(seqtab.export) <- sapply(colnames(seqtab.export), digest::digest, algo="md5")
 
     otu.table <- phyloseq::otu_table(t(seqtab.export), taxa_are_rows = TRUE)
-    colnames(otu.table) = sample.names
+    # colnames(otu.table) = sample.names
 
     flog.info('Writing raw tables.')
     write.table(cbind(t(seqtab.export), "Sequence" = colnames(seqtab.nochim)), paste(outpath,"/raw_otu-table.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
