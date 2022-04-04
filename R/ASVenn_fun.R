@@ -9,7 +9,7 @@
 #' @param subset Subset sample, please provide as c(FACTOR,LEVEL).
 #' @param lvls Vector comma separated list levels of factor to print in venn diagram (max. 5).
 #' @param krona Krona of exclusive ASV or shared with informed level and others. Must be among levels of column1 argument.
-#' @param shared shared [TRUE] or exclusive [FALSE] mode.
+#' @param shared shared [TRUE] or exclusive [FALSE] mode for krona plot.
 #' @param verbose Verbose level. (1: quiet, 2: print infos, 3: print infos + debug)
 #' @param ggplotmode if TRUE plot the Venn diagram using ggplot
 #'
@@ -71,7 +71,7 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
   #Subset data
   if(subset!=""){
     flog.info('Subset phyloseq object ...')
-    args1 <- unlist(strsplit(subset,","))
+    args1 <- unlist(strsplit(as.character(subset),","))
     fun <- paste("data <- subset_samples(data, ",args1[1]," %in% '",args1[2],"')",sep="")
     eval(parse(text=fun))
     TITRE=paste(column1, args1[1], args1[2], sep="-")
@@ -79,19 +79,20 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
     TITRE=paste(column1)
   }
 
-  if(length(lvls)==0){
-    flog.error('You must provide levels...')
+  if(length(lvls)==0 & length(levels(as.factor(sample_data(data)[,column1]@.Data[[1]]))) > 7 ){
+    flog.error('More than 7 levels in the provided factor, you must specify levels...')
     stop()
+  } else if(length(lvls)==0 & length(levels(as.factor(sample_data(data)[,column1]@.Data[[1]]))) <= 7 ){
+    lvls <- unique(na.omit(sample_data(data)[,column1]@.Data[[1]]))
   } else if(length(lvls)>7){
     flog.error('Venn diagram is limited to 7 levels')
     stop()
-  } else{
+  } else {
     if(!all(lvls %in% na.omit(levels(as.factor(sample_data(data)[,column1]@.Data[[1]])) ))){
       flog.error('Your levels are not present in metadata...')
       stop()
     }
   }
-
 
 
   #Nombre d'espèce par matrice
@@ -143,10 +144,13 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
   row.names(alltax)=alltax[,1]
 
   flog.info('Plotting ...')
-
   # Specific use to screen taxonomic composition of shared taxa...
+  TFbak <- TF <- sapply(TFtax, row.names, simplify = FALSE)
+  names(TFbak) = names(TF) = lvls
+  # print( length(unique(unlist(TF))) )
+
+
   if(krona != ""){
-    TF <- TFbak
     flog.info('Krona ...')
     env1 <- TF[[krona]]
     others1 <- unique( unlist( TF[level1[level1!=krona]] ) )
@@ -182,16 +186,14 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
     write.table(fttable, krona_tab, col.names=FALSE, row.names=FALSE, quote=FALSE, sep="\t")
 
     flog.info('Generate Krona html ...')
-    output <- paste(output,"/",TITRE,"_",krona, "_krona.html", sep = "")
-    system(paste("ktImportText", krona_tab, "-o", output, sep = " "))
+    outputkrona <- paste(output,"/",TITRE,"_",krona, "_krona.html", sep = "")
+    system(paste("ktImportText", krona_tab, "-o", outputkrona, sep = " "))
     # browseURL(output)
   }
 
 
 
-  TFbak <- TF <- sapply(TFtax, row.names, simplify = FALSE)
-  names(TFbak) = names(TF) = lvls
-  # print( length(unique(unlist(TF))) )
+
 
   if(length(lvls)>5){
     flog.info('Too much levels (max. 5) ...')
@@ -203,7 +205,7 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
     }else{
       # print(names(TF))
       flog.info(glue('Selecting {lvls} ...'))
-      LVLs <- unlist(strsplit(lvls,","))
+      LVLs <- unlist(strsplit(as.character(lvls),","))
       TF <- TF[match(LVLs, names(TF))]
       if(length(TF) <= 5){
         flog.info(glue('mode 1 ...'))
@@ -217,14 +219,14 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
       flog.info("< 5 levels")
     if(!is.null(lvls)){
       flog.info(glue('Selecting {lvls} ...'))
-      LVLs <- unlist(strsplit(lvls,","))
+
+      LVLs <- unlist(strsplit(as.character(lvls),","))
       TF <- TF[match(LVLs, names(TF))]
     }
     res1 = VENNFUN(TF = TF, mode = 1, TITRE = TITRE, output = output, refseq1 = refseq1, alltax = alltax)
   }
 
   flog.info('End ...')
-#save(list = ls(all.names = TRUE), file = "debug_asvenn.rdata", envir = environment())
   return(res1)
 }
 
@@ -262,6 +264,8 @@ VENNFUN <- function(TF = TF, mode = 1, TITRE = TITRE, output = "./", refseq1 = N
     invisible(dev.off())
 
     flog.info("Output figure")
+    print(paste(output,'/',TITRE,'_venndiag.png',sep=''))
+    print(TITRE)
     if(!is.null(output)){
       png(paste(output,'/',TITRE,'_venndiag.png',sep=''), width=20, height=20, units="cm", res=200)
       replayPlot(venn.plot)

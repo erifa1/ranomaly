@@ -1,6 +1,6 @@
 #' core_soft_fun
 #'
-#' @description Define core microbiome, soft micriome and transitory microbiome.
+#' @description Define core microbiome, soft microbiome and transitory microbiome.
 #'
 #' @param data A phyloseq object
 #' @param fact Factor to test (must be in sample_variables(data))

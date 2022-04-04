@@ -32,7 +32,7 @@ ASVenn_fun(
 
 \item{krona}{Krona of exclusive ASV or shared with informed level and others. Must be among levels of column1 argument.}
 
-\item{shared}{shared [TRUE] or exclusive [FALSE] mode.}
+\item{shared}{shared [TRUE] or exclusive [FALSE] mode for krona plot.}
 
 \item{verbose}{Verbose level. (1: quiet, 2: print infos, 3: print infos + debug)}
 

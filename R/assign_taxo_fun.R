@@ -4,14 +4,14 @@
 #'
 #' @param dada_res Results of dada2_fun()
 #' @param output Output directory
-#' @param id_db Vector with list of absolute path to IDTAXA formatted reference database(s) (up to 2 databases).
+#' @param id_db Vector with list of absolute path to IDTAXA formatted reference database(s).
 #' @param verbose Verbose level. (1: quiet, 3: verbal)
 #' @param confidence Bootstrap threshold 0...100
 #' @param returnval Boolean to return values in console or not.
 #' @param ncpu Number of cpus to use.
 #'
 #'
-#' @return Return a taxonomy table with multiple ancestor checking and incongruence checking when 2 databases are used.
+#' @return Return a taxonomy table with multiple ancestor checking and incongruence checking when more than one databases are used.
 #'
 #' @import futile.logger
 #' @import dada2

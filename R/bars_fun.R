@@ -128,7 +128,7 @@ if( all(Ord1 != sample_variables(data))){
 
       orderedIDS <- unique(meltdat$sample.id[gtools::mixedorder(as.character(meltdat[,Ord1]))])
       orderedOrd1 <- meltdat[,Ord1][gtools::mixedorder(as.character(meltdat[,Ord1]))]
-      orderedOrd1 <- factor(orderedOrd1, levels = gtools::mixedsort(levels(orderedOrd1)))
+      orderedOrd1 <- factor(orderedOrd1, levels = gtools::mixedsort(unique(orderedOrd1)))
     }else{
       labs = 1:nrow(meltdat)
 
@@ -227,7 +227,7 @@ if( all(Ord1 != sample_variables(data))){
                                    name = ~variable,
                                    color = ~variable, legendgroup = ~variable,
                                    showlegend = (.y == levels(meltdat[, Ord1])[1])),
-                         keep = TRUE)  %>%
+                         .keep = TRUE)  %>%
       plotly::subplot(nrows = 1, shareX = TRUE, shareY=TRUE, titleX = FALSE) %>%
       plotly::layout(title="",
              xaxis = list(title = glue("{Ord1} =\n{levels(meltdat[, Ord1])[1]}")),

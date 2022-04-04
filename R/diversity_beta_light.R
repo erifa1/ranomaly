@@ -96,7 +96,6 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
 
 
 }else{
-
   resBeta$ordination <- ordinate(data_rank, ord0, dist0)
 
   p1 <- phyloseq::plot_ordination(physeq = data_rank, ordination = resBeta$ordination, axes = axes)
@@ -104,7 +103,7 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
 
   sample.id = sample_names(data_rank)
   sdata <- sample_data(data_rank) 
-  fact <- as.matrix(sdata[,col])
+  fact <- sdata[[glue::glue("{col}")]]
   p1 <- p1 + aes(color = fact, sample.id = sample.id)
   p1 <- p1 + stat_ellipse(aes(group = fact))
   p1 <- p1 + geom_point() + theme_bw()
