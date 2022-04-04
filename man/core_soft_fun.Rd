@@ -27,5 +27,5 @@ core_soft_fun(
 \item{rank}{Taxonomy rank.}
 }
 \description{
-Define core microbiome, soft micriome and transitory microbiome.
+Define core microbiome, soft microbiome and transitory microbiome.
 }

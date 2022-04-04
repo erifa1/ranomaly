@@ -1,7 +1,7 @@
 ---
 title: "rANOMALY step-by-step use case."
 author: "Etienne Rifa & Sebastien Theil"
-date: "17/08/2020"
+date: "04/04/2022"
 output:
   html_document:
     toc: yes
@@ -71,7 +71,7 @@ etc...
 Those must match the sample names stored in `sample-metadata.csv` file.
 
 ```{r eval=FALSE}
-dada_res = dada2_fun(path="./reads", dadapool = "pseudo", compress=TRUE, plot=FALSE)
+dada_res = dada2_fun(path="./reads", compress=TRUE)
 ```
 
 Main outputs:
@@ -152,10 +152,6 @@ To create a [phyloseq](https://joey711.github.io/phyloseq/) object, we need to m
 data = generate_phyloseq_fun(dada_res = dada_res, tax.table = tax.table, tree = tree, metadata = "./sample_metadata.csv")
 ```
 
-```{r}
-data
-```
-
 
 Main output:
 
@@ -173,6 +169,11 @@ Our function integrates the basic ASV frequency (nb_reads_ASV/nb_total_reads) an
 ```{r eval=FALSE}
 data = decontam_fun(data = data, domain = "Bacteria", column = "type", ctrl_identifier = "control", spl_identifier = "sample", number = 100, krona= TRUE)
 ```
+
+```{r}
+data
+```
+
 
 Main outputs:
 - `robjects.Rdata` with contaminant filtered phyloseq object named `data`.
@@ -209,12 +210,12 @@ The `bar_fun` function outputs a composition plot, in this example it reveals th
 
 ### Raw abundance
 ```{r compo_raw, fig.width=10, warning=FALSE, message=FALSE}
-bars_fun(data = data, top = 10, Ord1 = "strain_time", Fact1 = "strain_time", rank="Genus", relative = FALSE)
+bars_fun(data = data, top = 10, Ord1 = "strain_time", rank="Genus", relative = FALSE, split = TRUE, verbose = FALSE)
 ```
 
 ### Relative abundance
 ```{r compo_relative, fig.width=10, message=FALSE, warning=FALSE}
-bars_fun(data = data, top = 10, Ord1 = "strain_time", Fact1 = "strain_time", rank="Genus", relative = TRUE)
+bars_fun(data = data, top = 10, Ord1 = "strain_time", rank="Genus", relative = TRUE, split = TRUE, verbose = FALSE)
 ```
 
 
@@ -257,8 +258,8 @@ pander(alpha$alphatable, style='rmarkdown')
 The boxplots of those values.
 
 ```{r alpha_boxplots, warnings = FALSE, message=FALSE, echo = TRUE}
-ggplotly(alpha$plot) %>%
-  layout(boxmode = "group")
+alpha$plot
+
 ```
 
 ### Tests on Observed index
@@ -291,7 +292,6 @@ pander(alpha$Observed$wilcox_col2_collapsed)
 
 ## Beta diversity
 
-The `diversity_beta_fun` function is an exhaustive function allowing to generate all possible tests and ordination in one command.
 
 The `diversity_beta_light` function is equivalent to the first function but allows to generate specific tests and figures ready to publish in rmarkdown as in the example below. It is based on the vegan package function [`vegdist`](https://www.rdocumentation.org/packages/vegan/versions/2.4-2/topics/vegdist) for the distance calculation and [`ordinate`](https://www.rdocumentation.org/packages/phyloseq/versions/1.16.2/topics/ordinate) for the ordination plot.
 
@@ -305,18 +305,23 @@ As return, you will get an object that contains:
 
 - The pairwise permANOVA (`$pairwisepermanova`)
 
-```{r beta, warning=FALSE, results = 'hide'}
+```{r beta0, warning=FALSE, results = 'hide', echo = FALSE, eval = FALSE}
 # beta <- diversity_beta_light(data = data, output = "./plot_div_beta/", glom = "ASV", column1 = "time", column2 = "strain", covar ="")
 beta_strain = diversity_beta_light(data, col = "strain", cov="time", dist0 = "bray", ord0 = "MDS", output="./plot_div_beta_strain/", tests = TRUE)
 beta_time = diversity_beta_light(data, col = "time", cov="strain", dist0 = "bray", ord0 = "MDS", output="./plot_div_beta_time/", tests = TRUE)
+# ggplotly(beta_strain$plot), ggplotly(beta_time$plot), 
+```
 
+
+```{r beta, warning=FALSE, results = 'hide'}
 beta_strain_time = diversity_beta_light(data, col = "strain_time", dist0 = "bray", ord0 = "MDS", output="./plot_div_beta_strain_time/", tests = TRUE)
 ```
+
 ### Ordination plot
 
 
 ```{r beta_ordination, warning=FALSE}
-htmltools::tagList(list(ggplotly(beta_strain$plot), ggplotly(beta_time$plot), ggplotly(beta_strain_time$plot)))
+htmltools::tagList(list(ggplotly(beta_strain_time$plot)))
 ```
 
 
@@ -497,7 +502,7 @@ heatmap_plot = heatmap_fun(data = data, column1 = "strain_time", top = 20, outpu
 ```
 
 ```{r heatmapplot, fig.align='center'}
-ggplotly(heatmap_plot)
+heatmap_plot$plot
 ```
 
 ## Shared taxa
@@ -513,7 +518,7 @@ outvenn = ASVenn_fun(data = data,output = "./ASVenn/", rank = "ASV", column1 = "
 * Venn diagram: 
 
 ```{r}
-grid.draw(outvenn$venn_plot)
+outvenn$venn_plot
 ```
 
 * Table:

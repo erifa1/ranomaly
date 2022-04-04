@@ -1,6 +1,6 @@
 #' DADA2 process (dada2_fun())
 #'
-#' Processing DADA2 algorithm on raw sequences, return raw otu table with representative sequence of ASV.
+#' Processing DADA2 algorithm on raw sequences (IonTorrent or Illumina / single or paired end), return raw otu table with representative sequence of ASV.
 #'
 #' @param path Read files folder path
 #' @param outpath output .Rdata file name
@@ -23,6 +23,8 @@
 #'
 #' @return Return raw otu table in phyloseq object and export it in an Rdata file.
 #'
+#' @examples See https://forgemia.inra.fr/umrf/ranomaly/-/wikis/home#dada2-usage-according-to-raw-data-type
+#' 
 #' @import dada2
 #' @import psadd
 #' @import ShortRead
@@ -546,7 +548,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
     flog.info('Dereplicating fastq...')
     if(compress==TRUE){
       filtFs <- sort(list.files(file.path(path, "filtered/"), pattern = ".fastq.gz$", full.names = TRUE))
-      name1 <- sort(list.files(file.path(path, "filtered/"), pattern = ".fastq$", full.names = FALSE))
+      name1 <- sort(list.files(file.path(path, "filtered/"), pattern = ".fastq.gz$", full.names = FALSE))
       sample.names <- names(filtFs) <- sapply( stringr::str_split(name1, "_"), "[[", 1)
     } else{
       filtFs <- sort(list.files(file.path(path, "filtered/"), pattern = ".fastq$", full.names = TRUE))

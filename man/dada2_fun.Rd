@@ -32,15 +32,15 @@ dada2_fun(
 
 \item{cutadapt}{Use of cutadapt to trim primers based on their sequences, f_ and r_primer are needed (ambiguous nucleotides allowed)}
 
-\item{f_trunclen}{Forward read tuncate length (only for paired end 16S)}
+\item{f_trunclen}{Forward read truncate length (only for paired end 16S)}
 
-\item{r_trunclen}{Reverse read tuncate length (only for paired end 16S)}
+\item{r_trunclen}{Reverse read truncate length (only for paired end 16S)}
 
 \item{dadapool}{option for dada function (FALSE, TRUE or "pseudo"), default is "pseudo". See ? dada.}
 
-\item{f_primer}{Forward primer sequence (mandatory if cutadapt = TRUE)}
+\item{f_primer}{Forward primer sequence (mandatory if cutadapt = TRUE),  5' -> 3'.}
 
-\item{r_primer}{Reverse primer sequence (mandatory if cutadapt = TRUE)}
+\item{r_primer}{Reverse primer sequence (mandatory if cutadapt = TRUE), 5' -> 3'.}
 
 \item{plot}{Plot all test or not}
 
@@ -66,5 +66,9 @@ dada2_fun(
 Return raw otu table in phyloseq object and export it in an Rdata file.
 }
 \description{
-Processing DADA2 algorithm on raw sequences, return raw otu table with representative sequence of ASV.
+Processing DADA2 algorithm on raw sequences (IonTorrent or Illumina / single or paired end), return raw otu table with representative sequence of ASV.
+}
+\examples{
+See https://forgemia.inra.fr/umrf/ranomaly/-/wikis/home#dada2-usage-according-to-raw-data-type
+
 }

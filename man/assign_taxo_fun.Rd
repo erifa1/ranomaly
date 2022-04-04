@@ -19,7 +19,7 @@ assign_taxo_fun(
 
 \item{output}{Output directory}
 
-\item{id_db}{Vector with list of absolute path to IDTAXA formatted reference database(s) (up to 2 databases).}
+\item{id_db}{Vector with list of absolute path to IDTAXA formatted reference database(s).}
 
 \item{confidence}{Bootstrap threshold 0...100}
 
@@ -30,7 +30,7 @@ assign_taxo_fun(
 \item{ncpu}{Number of cpus to use.}
 }
 \value{
-Return a taxonomy table with multiple ancestor checking and incongruence checking when 2 databases are used.
+Return a taxonomy table with multiple ancestor checking and incongruence checking when more than one databases are used.
 }
 \description{
 ASV taxonomic assignment with DECIPHER::IDTAXA (assign_taxo)

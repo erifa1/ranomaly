@@ -45,7 +45,7 @@ heatmap_fun <- function(data = data, column1 = "", top = 20, output = "./plot_he
   names(data.com) <- c("Tax", "Sample", "Abundance", "xlabel")
   data.com$Tax = factor(data.com$Tax, levels = sort(unique(as.character(data.com$Tax))))
 
-  if(aggregate){psobj.top <- microbiome::aggregate_top_taxa(data, rank, top = top)}
+  if(aggregate){psobj.top <- aggregate_top_taxa(data, rank, top = top)}
 
   if(relative){
     ps.glom.rel <- microbiome::transform(psobj.top, "compositional")

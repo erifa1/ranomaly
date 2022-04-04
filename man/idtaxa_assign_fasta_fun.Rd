@@ -16,7 +16,7 @@ idtaxa_assign_fasta_fun(
 \arguments{
 \item{fasta}{Path to fasta file, or DNAStringSet object.}
 
-\item{id_db}{Vector with list of absolute path to IDTAXA formatted reference database(s) (up to 2 databases).}
+\item{id_db}{Vector with list of absolute path to IDTAXA formatted reference database(s).}
 
 \item{output}{Output directory}
 
@@ -27,7 +27,7 @@ idtaxa_assign_fasta_fun(
 \item{returnval}{Boolean to return values in console or not.}
 }
 \value{
-Return a taxonomy table with multiple ancestor checking and incongruence checking when 2 databases are used.
+Return a taxonomy table with multiple ancestor checking and incongruence checking when more than one databases are used.
 }
 \description{
 Same function as assign_taxo_fun but use FASTA file as input.

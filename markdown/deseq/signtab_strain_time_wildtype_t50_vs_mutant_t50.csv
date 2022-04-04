@@ -1,4 +1,4 @@
-strain_time_wildtype_t50_vs_mutant_t50	baseMean	log2FoldChange	lfcSE	stat	pvalue	padj	Domain	Phylum	Class	Order	Family	Genus	Species
+taxon_id	baseMean	log2FoldChange	lfcSE	stat	pvalue	padj	Domain	Phylum	Class	Order	Family	Genus	Species
 2b8f9fcb9ac22f54c1967728797d226b	6041.38169844806	-0.379279143698329	0.344409456760927	-1.10124485914336	0.270790102674209	0.514501195080997	k__Bacteria	p__Firmicutes	c__Clostridia	o__Clostridiales	f__Lachnospiraceae	g__Blautia	s__Blautia_coccoides
 8c0f8f5ae9a48acfb96300c666eb4ccb	10088.6764706697	0.819804876310378	0.395355417240687	2.07358958688883	0.038117443114031	0.0905289273958236	k__Bacteria	p__Bacteroidetes	c__Bacteroidia	o__Bacteroidales	f__Porphyromonadaceae	g__Barnesiella	s__Barnesiella_intestinihominis
 4b9344cb7f7df3d60b7ee87b9f3fca8d	6825.07199324866	-13.1846083633512	0.707158169730979	-18.6444969848357	1.39964626735928e-77	2.65932790798262e-76	k__Bacteria	p__Bacteroidetes	c__Bacteroidia	o__Bacteroidales	f__Bacteroidaceae	g__Bacteroides	s__Bacteroides_acidifaciens
