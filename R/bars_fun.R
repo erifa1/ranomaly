@@ -74,7 +74,6 @@ aggregate_top_taxa <- function (x, top, level){
 #' @return Returns barplots in an interactive plotly community plot
 #'
 #' @importFrom plotly plot_ly subplot layout ggplotly
-#' @importFrom microbiome aggregate_top_taxa
 #' @importFrom reshape2 melt
 #' @importFrom gtools mixedsort
 #' @importFrom dplyr group_map group_by across `%>%` mutate arrange
