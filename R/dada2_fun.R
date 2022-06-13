@@ -20,11 +20,12 @@
 #' @param returnval Boolean to return values in console or not.
 #' @param paired Boolean for Illumina Paired End Reads.
 #' @param orient_torrent Forward primer sequence to orient all reads to same strand (only unambiguous nucleotides).
+#' @param n_cpu Number of CPU to use in multithread.
 #'
 #' @return Return raw otu table in phyloseq object and export it in an Rdata file.
 #'
 #' @examples See https://forgemia.inra.fr/umrf/ranomaly/-/wikis/home#dada2-usage-according-to-raw-data-type
-#' 
+#'
 #' @import dada2
 #' @import psadd
 #' @import ShortRead
@@ -42,7 +43,7 @@
 
 dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_trunclen = 240, r_trunclen = 240, dadapool = "pseudo",
                       f_primer = "GCATCGATGAAGAACGCAGC", r_primer = "TCCTCCGCTTWTTGWTWTGC", plot = FALSE, compress = FALSE, extension = "_R1.fastq",
-                      verbose = 1, torrent_single = FALSE,returnval = TRUE, paired = TRUE, trim_l=15, trim_r=0, orient_torrent = NULL){
+                      verbose = 1, torrent_single = FALSE,returnval = TRUE, paired = TRUE, trim_l=15, trim_r=0, orient_torrent = NULL, n_cpu=6){
   if(torrent_single == TRUE & is.null(orient_torrent)){stop("Need forward primer to orient TORRENT reads...")}
 
   if(verbose == 3){
@@ -125,7 +126,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
 
       flog.info('filterAndTrim...')
       if(! dir.exists(paste(path,'/filtN',sep=''))){
-        filterAndTrim(fwd = fnFs, filt = fnFs.filtN, rev = fnRs, filt.rev = fnRs.filtN, maxN = 0, multithread = TRUE, verbose=TRUE, rm.phix = TRUE, compress=compress)
+        filterAndTrim(fwd = fnFs, filt = fnFs.filtN, rev = fnRs, filt.rev = fnRs.filtN, maxN = 0, multithread=n_cpu, verbose=TRUE, rm.phix = TRUE, compress=compress)
       }else{
         flog.info('Filtered files exist, skipping...')
       }
@@ -216,11 +217,11 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
 
       flog.debug(length(cutFs))
       flog.debug(length(filtFs))
-      flog.debug(length(cutRs))      
+      flog.debug(length(cutRs))
       flog.debug(length(filtRs))
 
       out0 <- filterAndTrim(cutFs, filtFs, cutRs, filtRs, maxN = 0, maxEE = c(2, 2),
-      truncQ = 2, minLen = 50, compress = compress, multithread = TRUE)  # on windows, set multithread = FALSE
+      truncQ = 2, minLen = 50, compress = compress, multithread=n_cpu)  # on windows, set multithread = FALSE
       #head(out)
       row.names(out0) = sample.names
       out <- as.data.frame(out0) %>%tibble::rownames_to_column(var = "sample.id")
@@ -259,7 +260,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
 
       out0 <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen=c(f_trunclen,r_trunclen),
       maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE, trimLeft=trim_l,
-      compress=compress, multithread=TRUE)
+      compress=compress, multithread=n_cpu)
       row.names(out0) = sample.names
       out <- as.data.frame(out0) %>%tibble::rownames_to_column(var = "sample.id")
 
@@ -272,11 +273,11 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
 
       flog.info('Done.')
     }
-    
+
     #COMMON
     flog.info('Learning error model...')
-    errF <- learnErrors(filtFs_out, multithread=TRUE)
-    errR <- learnErrors(filtRs_out, multithread=TRUE)
+    errF <- learnErrors(filtFs_out, multithread=n_cpu)
+    errR <- learnErrors(filtRs_out, multithread=n_cpu)
     flog.info('Done.')
 
 
@@ -296,26 +297,45 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
     stockFs=NULL; stockRs=NULL
     getN <- function(x) sum(getUniques(x))
 
+    for(sam in sample.names) {
+      flog.info(paste('Processing sample ',sam))
+      flog.info('Dereplicating fastq...')
+      derepFs <- derepFastq(filtFs[[sam]], verbose=TRUE)
+      derepRs <- derepFastq(filtRs[[sam]], verbose=TRUE)
+      flog.info('Done.')
+      flog.info('dada2...')
+      dadaFs <- dada(derepFs, err=errF, multithread=n_cpu, pool=FALSE, selfConsist=FALSE)
+      stockFs <- c(stockFs, getN(dadaFs))
+      dadaRs <- dada(derepRs, err=errR, multithread=n_cpu, pool=FALSE, selfConsist=FALSE)
+      stockRs <- c(stockRs,getN(dadaRs))
+      flog.info('Done.')
+      flog.info('Merging pairs...')
+      merger <- mergePairs(dadaFs, derepFs, dadaRs, derepRs, verbose=FALSE)
+      flog.info('Done.')
+      mergers[[sam]] <- merger
+    }
 
-    flog.info('Dereplicating fastq...')
-    derepFs <- derepFastq(filtFs_out, verbose=TRUE)
-    derepRs <- derepFastq(filtRs_out, verbose=TRUE)
-
-    flog.info('Done.')
-    flog.info('dada2...')
-    dadaFs <- dada(derepFs, err=errF, multithread=TRUE, pool=dadapool, selfConsist=FALSE)
-    stockFs <- sapply(dadaFs, getN)
-    dadaRs <- dada(derepRs, err=errR, multithread=TRUE, pool=dadapool, selfConsist=FALSE)
-    stockRs <- sapply(dadaRs, getN)
-    flog.info('Done.')
-    flog.info('Merging pairs...')
-    mergers <- mergePairs(dadaFs, derepFs, dadaRs, derepRs, verbose=FALSE)
-    flog.info('Done.')
+    #
+    #
+    # flog.info('Dereplicating fastq...')
+    # derepFs <- derepFastq(filtFs_out, verbose=TRUE)
+    # derepRs <- derepFastq(filtRs_out, verbose=TRUE)
+    #
+    # flog.info('Done.')
+    # flog.info('dada2...')
+    # dadaFs <- dada(derepFs, err=errF, multithread=n_cpu, pool=dadapool, selfConsist=FALSE)
+    # stockFs <- sapply(dadaFs, getN)
+    # dadaRs <- dada(derepRs, err=errR, multithread=n_cpu, pool=dadapool, selfConsist=FALSE)
+    # stockRs <- sapply(dadaRs, getN)
+    # flog.info('Done.')
+    # flog.info('Merging pairs...')
+    # mergers <- mergePairs(dadaFs, derepFs, dadaRs, derepRs, verbose=FALSE)
+    # flog.info('Done.')
 
 
     seqtab <- makeSequenceTable(mergers)
     flog.info('Removing chimeras...')
-    seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
+    seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=n_cpu, verbose=TRUE)
     flog.debug(sum(seqtab.nochim))
     flog.debug(sum(seqtab))
 
@@ -336,7 +356,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
 
 
     final_track <- out %>% dplyr::left_join(y = track, by = "sample.id")
-    colnames(final_track) <- c("sample.id", "input", "filtered", "denoisedF", "denoisedR", "merged", "nonchim") 
+    colnames(final_track) <- c("sample.id", "input", "filtered", "denoisedF", "denoisedR", "merged", "nonchim")
     head(final_track)
 
     write.table(final_track, paste(outpath,"/read_tracking.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
@@ -419,7 +439,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
 
       flog.info('filterAndTrim & orient reads...')
       if(! dir.exists(paste(path,'/filtN',sep=''))){
-        filterAndTrim(fwd = fnFs, filt = fnFs.filtN, maxN = 0, multithread = TRUE, verbose=TRUE, 
+        filterAndTrim(fwd = fnFs, filt = fnFs.filtN, maxN = 0, multithread=n_cpu, verbose=TRUE,
           rm.phix = TRUE, compress=compress, orient.fwd = orient_torrent)
       }else{
         flog.info('Filtered files exist, skipping...')
@@ -502,36 +522,34 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
 
       flog.debug(length(cutFs))
       flog.debug(length(filtFs))
-
-      out0 <- filterAndTrim(fwd = cutFs, filt = filtFs, maxN = 0, multithread = TRUE, rm.phix = TRUE,
+      flog.info('filterAndTrim...')
+      out0 <- filterAndTrim(fwd = cutFs, filt = filtFs, maxN = 0, multithread=n_cpu, rm.phix = TRUE,
         , maxEE = 5 , minLen = 100, compress=compress)
 
 
       row.names(out0) = sample.names
       out <- as.data.frame(out0) %>%tibble::rownames_to_column(var = "sample.id")
-
+      flog.info('Done.')
 
       filtFs_out <- grep("F_filt",list.files(glue::glue("{path}/filtered/"), full.names = TRUE), value = TRUE)
-
-      # samples_names <- grep(".fastq",list.files("./data_arch_links/", full.names = FALSE), value = TRUE)
 
     }else{
       flog.info(glue::glue('DADA2 Trim primers on {trim_l}(FWD) and {trim_r}(REV) bases ...'))
 
       if(torrent_single == TRUE){
-        out0 <- filterAndTrim(fwd = fnFs, filt = filtFs, maxN = 0, multithread = TRUE, verbose=TRUE, rm.phix = TRUE,
+        out0 <- filterAndTrim(fwd = fnFs, filt = filtFs, maxN = 0, multithread=n_cpu, verbose=TRUE, rm.phix = TRUE,
           , maxEE = 5 , minLen = 100, compress=compress, trimLeft=trim_l, trimRight=trim_r, orient.fwd = orient_torrent)
       }else{
-        out0 <- filterAndTrim(fwd = fnFs, filt = filtFs, maxN = 0, multithread = TRUE, verbose=TRUE, rm.phix = TRUE,
+        out0 <- filterAndTrim(fwd = fnFs, filt = filtFs, maxN = 0, multithread=n_cpu, verbose=TRUE, rm.phix = TRUE,
           , maxEE = 5 , minLen = 100, compress=compress, trimLeft=trim_l, trimRight=trim_r )
       }
       row.names(out0) = sample.names
       out <- as.data.frame(out0) %>%tibble::rownames_to_column(var = "sample.id")
-
+      flog.info('Done.')
     }
 
     flog.info('Learning error model...')
-    errF <- learnErrors(filtFs, multithread=TRUE)
+    errF <- learnErrors(filtFs, multithread=n_cpu)
     flog.info('Done.')
 
     if(plot){
@@ -563,10 +581,10 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
     flog.info('dada2...')
 
     if(torrent_single == TRUE){
-      dadaFs <- dada(derepFs, err=errF, multithread=TRUE, pool=dadapool, selfConsist=FALSE, HOMOPOLYMER_GAP_PENALTY=-1, BAND_SIZE=32)
+      dadaFs <- dada(derepFs, err=errF, multithread=n_cpu, pool=dadapool, selfConsist=FALSE, HOMOPOLYMER_GAP_PENALTY=-1, BAND_SIZE=32)
     }
     else{
-      dadaFs <- dada(derepFs, err=errF, multithread=TRUE, pool=dadapool, selfConsist=FALSE)
+      dadaFs <- dada(derepFs, err=errF, multithread=n_cpu, pool=dadapool, selfConsist=FALSE)
     }
 
 
@@ -581,7 +599,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
     seqtab <- makeSequenceTable(dadaFs)
 
     flog.info('Removing chimeras...')
-    seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
+    seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=n_cpu, verbose=TRUE)
 
     if(length(filtFs)<2){
       track <- c(out, sum(stockFs), rowSums(seqtab.nochim)[1])
