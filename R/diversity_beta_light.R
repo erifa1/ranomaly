@@ -131,11 +131,11 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
     }
     if(!is.null(cov)){
       form1 <- as.formula(paste('dist1 ~ Depth +', paste(cov1, collapse="+"), "+", col))
-      resBC <- adonis(form1, data = mdata, permutations = 1000)
+      resBC <- adonis2(form1, data = mdata, permutations = 1000)
         
     }else{
       form1 <- as.formula(paste('dist1 ~ Depth +', col))
-      resBC <- adonis(form1, data = mdata, permutations = 1000)
+      resBC <- adonis2(form1, data = mdata, permutations = 1000)
     }
 
     #PairwiseAdonis
@@ -146,12 +146,12 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
       resBC2 <- pairwise.adonis(dist1, mdata[,c(col1)], p.adjust.m='fdr')
     }
 
-    write.table(resBC$aov.tab, file=paste0(output,'/',col,'_permANOVA.txt'), sep="\t")
+    write.table(resBC, file=paste0(output,'/',col,'_permANOVA.txt'), sep="\t")
     write.table(resBC2, file=paste0(output,'/',col,'pairwisepermANOVA.txt'), sep="\t")
 
     ggsave(glue::glue("{output}/beta_diversity.eps"), plot=resBeta$plot, height = 20, width = 30, units="cm", dpi = 500, device="eps")
 
-    resBeta$permanova <- resBC$aov.tab
+    resBeta$permanova <- resBC
     resBeta$permanova_formula <- format(form1)
     resBeta$pairwisepermanova <- resBC2
     resBeta$test_table <- mdata

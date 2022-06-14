@@ -5,6 +5,7 @@
 #' @param path Read files folder path
 #' @param outpath output .Rdata file name
 #' @param cutadapt Use of cutadapt to trim primers based on their sequences, f_ and r_primer are needed (ambiguous nucleotides allowed)
+#' @param maxEE Maximum expected error in reads (in filterAndTrim function) (default: 5)
 #' @param dadapool option for dada function (FALSE, TRUE or "pseudo"), default is "pseudo". See ? dada.
 #' @param f_trunclen Forward read truncate length (only for paired end 16S)
 #' @param r_trunclen Reverse read truncate length (only for paired end 16S)
@@ -41,7 +42,7 @@
 
 # DADA2 function
 
-dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_trunclen = 240, r_trunclen = 240, dadapool = "pseudo",
+dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, maxEE = 5, f_trunclen = 240, r_trunclen = 240, dadapool = "pseudo",
                       f_primer = "GCATCGATGAAGAACGCAGC", r_primer = "TCCTCCGCTTWTTGWTWTGC", plot = FALSE, compress = FALSE, extension = "_R1.fastq",
                       verbose = 1, torrent_single = FALSE,returnval = TRUE, paired = TRUE, trim_l=15, trim_r=0, orient_torrent = NULL, n_cpu=6){
   if(torrent_single == TRUE & is.null(orient_torrent)){stop("Need forward primer to orient TORRENT reads...")}
@@ -220,7 +221,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
       flog.debug(length(cutRs))
       flog.debug(length(filtRs))
 
-      out0 <- filterAndTrim(cutFs, filtFs, cutRs, filtRs, maxN = 0, maxEE = c(2, 2),
+      out0 <- filterAndTrim(cutFs, filtFs, cutRs, filtRs, maxN = 0, maxEE = c(maxEE,maxEE), #truncLen=c(f_trunclen,r_trunclen),
       truncQ = 2, minLen = 50, compress = compress, multithread=n_cpu)  # on windows, set multithread = FALSE
       #head(out)
       row.names(out0) = sample.names
@@ -259,7 +260,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
       flog.info('Filtering reads...')
 
       out0 <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen=c(f_trunclen,r_trunclen),
-      maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE, trimLeft=trim_l,
+      maxN=0, maxEE=c(maxEE,maxEE), truncQ=2, rm.phix=TRUE, trimLeft=trim_l,
       compress=compress, multithread=n_cpu)
       row.names(out0) = sample.names
       out <- as.data.frame(out0) %>%tibble::rownames_to_column(var = "sample.id")
@@ -524,7 +525,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
       flog.debug(length(filtFs))
       flog.info('filterAndTrim...')
       out0 <- filterAndTrim(fwd = cutFs, filt = filtFs, maxN = 0, multithread=n_cpu, rm.phix = TRUE,
-        , maxEE = 5 , minLen = 100, compress=compress)
+        , maxEE = maxEE , minLen = 100, compress=compress)
 
 
       row.names(out0) = sample.names
@@ -538,10 +539,10 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
 
       if(torrent_single == TRUE){
         out0 <- filterAndTrim(fwd = fnFs, filt = filtFs, maxN = 0, multithread=n_cpu, verbose=TRUE, rm.phix = TRUE,
-          , maxEE = 5 , minLen = 100, compress=compress, trimLeft=trim_l, trimRight=trim_r, orient.fwd = orient_torrent)
+          , maxEE = maxEE , minLen = 100, compress=compress, trimLeft=trim_l, trimRight=trim_r, orient.fwd = orient_torrent)
       }else{
         out0 <- filterAndTrim(fwd = fnFs, filt = filtFs, maxN = 0, multithread=n_cpu, verbose=TRUE, rm.phix = TRUE,
-          , maxEE = 5 , minLen = 100, compress=compress, trimLeft=trim_l, trimRight=trim_r )
+          , maxEE = maxEE , minLen = 100, compress=compress, trimLeft=trim_l, trimRight=trim_r )
       }
       row.names(out0) = sample.names
       out <- as.data.frame(out0) %>%tibble::rownames_to_column(var = "sample.id")
