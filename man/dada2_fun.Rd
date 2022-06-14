@@ -8,6 +8,7 @@ dada2_fun(
   path = "",
   outpath = "./dada2_out/",
   cutadapt = FALSE,
+  maxEE = 5,
   f_trunclen = 240,
   r_trunclen = 240,
   dadapool = "pseudo",
@@ -22,7 +23,8 @@ dada2_fun(
   paired = TRUE,
   trim_l = 15,
   trim_r = 0,
-  orient_torrent = NULL
+  orient_torrent = NULL,
+  n_cpu = 6
 )
 }
 \arguments{
@@ -31,6 +33,8 @@ dada2_fun(
 \item{outpath}{output .Rdata file name}
 
 \item{cutadapt}{Use of cutadapt to trim primers based on their sequences, f_ and r_primer are needed (ambiguous nucleotides allowed)}
+
+\item{maxEE}{Maximum expected error in reads (in filterAndTrim function) (default: 5)}
 
 \item{f_trunclen}{Forward read truncate length (only for paired end 16S)}
 
@@ -61,6 +65,8 @@ dada2_fun(
 \item{trim_r}{Trim right size, to trim reverse primer without cutadapt.}
 
 \item{orient_torrent}{Forward primer sequence to orient all reads to same strand (only unambiguous nucleotides).}
+
+\item{n_cpu}{Number of CPU to use in multithread.}
 }
 \value{
 Return raw otu table in phyloseq object and export it in an Rdata file.

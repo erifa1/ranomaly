@@ -13,6 +13,7 @@ bars_fun(
   split = FALSE,
   split_sid_order = FALSE,
   relative = TRUE,
+  levelsOrder = TRUE,
   autoorder = TRUE,
   ylab = "Abundance",
   outfile = "plot_compo.html",
@@ -33,6 +34,8 @@ bars_fun(
 \item{split}{if TRUE make a facet_wrap like grouped by Ord1 (default FALSE)}
 
 \item{relative}{Plot relative (TRUE, default) or raw abundance plot (FALSE)}
+
+\item{levelsOrder}{Ordering samples according to levels of Ord1 variable. If FALSE, order from the metadata table is kept.}
 
 \item{autoorder}{Automatic ordering xaxis labels based on Ord1 factor levels with gtools::mixedorder function (TRUE).}
 
