@@ -18,7 +18,6 @@
 #'
 #' @import phyloseq
 #' @import ggplot2
-#' @import pairwiseAdonis
 #' @import vegan
 #' @importFrom plotly ggplotly config
 #'
