@@ -35,7 +35,7 @@ generate_phyloseq_fun <- function(dada_res = dada_res, tax.table = tax.table, tr
   }
 
   flog.info("Loading sample metadata..")
-  sampledata <- read.table(metadata, sep="\t",header=TRUE)
+  sampledata <- read.table(metadata, sep="\t",header=TRUE, stringsAsFactors = TRUE)
   rownames(sampledata) <- sampledata$sample.id
   print(sampledata$sample.id)
   sample.metadata <- sample_data(sampledata)
