@@ -173,11 +173,11 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, max
         for(i in seq_along(fnFs)) {
           setTxtProgressBar(pb, i)
           if(verbose == 3){
-            system2(cutadapt, args = c(R1.flags, R2.flags, "-n", 2, # -n 2 required to remove FWD and REV from reads
+            system2(cutadapt, args = c(R1.flags, R2.flags, "--discard-untrimmed", "-n", 2, # -n 2 required to remove FWD and REV from reads
             "-o", fnFs.cut[i], "-p", fnRs.cut[i], # output files
             fnFs.filtN[i], fnRs.filtN[i]), stdout="", stderr="") # input files
           } else{
-            system2(cutadapt, args = c(R1.flags, R2.flags, "-n", 2, # -n 2 required to remove FWD and REV from reads
+            system2(cutadapt, args = c(R1.flags, R2.flags, "--discard-untrimmed", "-n", 2, # -n 2 required to remove FWD and REV from reads
             "-o", fnFs.cut[i], "-p", fnRs.cut[i], # output files
             fnFs.filtN[i], fnRs.filtN[i]), stdout=NULL, stderr=NULL) # input files
           }
@@ -485,11 +485,11 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, max
           if(verbose == 3){
             system2(cutadapt, args = c(R1.flags, "-n", 2, # -n 2 required to remove FWD and REV from reads
             "-o", fnFs.cut[i], # output files
-            fnFs.filtN[i], "--rc"), stdout="", stderr="") # input files
+            fnFs.filtN[i], "--rc", "--discard-untrimmed"), stdout="", stderr="") # input files
           } else{
             system2(cutadapt, args = c(R1.flags, "-n", 2, # -n 2 required to remove FWD and REV from reads
             "-o", fnFs.cut[i], # output files
-            fnFs.filtN[i], "--rc"), stdout=NULL, stderr=NULL) # input files
+            fnFs.filtN[i], "--rc", "--discard-untrimmed"), stdout=NULL, stderr=NULL) # input files
           }
         }
         close(pb)
