@@ -154,13 +154,22 @@ idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", co
   }
 
   if(max(sapply(taxid, length)) > 7){
+    # taxid is list when non homogeneous length in taxonomy
     LL=sapply(taxid, length)
     Tnames=names(LL[LL>7])
     for(nn in Tnames){
       taxid[[nn]] = taxid[[nn]][1:7]
     }
+    taxnames <- names(taxid)
+    taxid <- t(as.data.frame(taxid))
+    row.names(taxid) <- taxnames
+  }else{
+    # taxid is a matrix
+    taxnames <- colnames(taxid)
+    taxid <- t(as.data.frame(taxid))
+    row.names(taxid) <- taxnames
   }
-  taxid <- as.data.frame(t(taxid))
+
   flog.info('Done.')
 
   if(verbose == 3){
@@ -168,7 +177,7 @@ idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", co
   }
 
   # Filling taxonomy with last assigned rank.
-  names(taxid) <- c("Domain", "Phylum", "Class", "Order", "Family", "Genus", "Species")
+  colnames(taxid) <- c("Domain", "Phylum", "Class", "Order", "Family", "Genus", "Species")
   flog.info("Filling missing taxonomy ranks...")
   PREFIX = c("k__","p__","c__","o__","f__","g__","s__")
   # handling possible prefix
@@ -178,7 +187,7 @@ idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", co
   if(nrow(noprefix_taxid) != 0){
     noprefix_taxid = fill_tax_fun(noprefix_taxid, prefix = FALSE)
     noprefix_taxid = as.data.frame( t(apply(noprefix_taxid, 1, function(x){ paste(PREFIX, x, sep="")})), stringAsFactors = FALSE)
-    names(noprefix_taxid) = names(taxid)
+    colnames(noprefix_taxid) = colnames(taxid)
   }
 
   if(nrow(prefix_taxid) != 0){

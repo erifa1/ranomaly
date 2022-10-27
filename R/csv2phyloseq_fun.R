@@ -3,7 +3,7 @@
 #'
 #' @param otutable Path to the tabulated ASV/OTU table or data.frame object.
 #' @param taxtable Path to the tabulated taxonomy table or data.frame object.
-#' @param Path to sequence in fasta format or DNAStringSet object.
+#' @param seq to sequence in fasta format or DNAStringSet object.
 #' @param metadata Path to the tabulated metadata table or data.frame object.
 #' @param generateTree Boolean to generate the phylogenetic tree.
 #' @param output Output directory
