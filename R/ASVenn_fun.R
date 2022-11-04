@@ -23,7 +23,7 @@
 
 
 ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
-                            column1 = NULL, subset = "", lvls = NULL, krona = "",
+                            column1 = NULL, subset = NULL, lvls = NULL, krona = "",
                             shared = TRUE, verbose = 2, ggplotmode = FALSE){
 
   invisible(flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger"))
@@ -69,7 +69,7 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
   }
 
   #Subset data
-  if(subset!=""){
+  if(!is.null(subset)){
     flog.info('Subset phyloseq object ...')
     args1 <- unlist(strsplit(as.character(subset),","))
     fun <- paste("data <- subset_samples(data, ",args1[1]," %in% '",args1[2],"')",sep="")
