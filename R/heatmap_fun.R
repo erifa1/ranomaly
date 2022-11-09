@@ -18,7 +18,7 @@
 
 
 heatmap_fun <- function(data = data, column1 = "", top = NULL, output = "./plot_heatmap/", 
-  rank = "Species", norm = "TSS", aggregate = TRUE, legend = "Abundance", clust = TRUE){
+  rank = "Species", norm = "TSS", legend = "Abundance", clust = TRUE){
   LL = list()
 
   output1 <- paste(getwd(),'/',output,'/',sep='')
@@ -36,9 +36,10 @@ heatmap_fun <- function(data = data, column1 = "", top = NULL, output = "./plot_
     tt <- tax_table(dataglom)
     taxa <- tt[,rank]
     taxa_names(dataglom) <- taxa
+
+    if(!is.null(top)){dataglom <- aggregate_top_taxa(dataglom, rank, top = top)}
   }
 
-  if(!is.null(top)){dataglom <- aggregate_top_taxa(dataglom, rank, top = top)}
 
   if(norm == "TSS"){
     normf = function(x){ x/sum(x) }

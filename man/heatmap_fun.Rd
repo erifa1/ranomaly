@@ -11,7 +11,6 @@ heatmap_fun(
   output = "./plot_heatmap/",
   rank = "Species",
   norm = "TSS",
-  aggregate = TRUE,
   legend = "Abundance",
   clust = TRUE
 )

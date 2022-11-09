@@ -264,8 +264,8 @@ VENNFUN <- function(TF = TF, mode = 1, TITRE = TITRE, output = "./", refseq1 = N
     invisible(dev.off())
 
     flog.info("Output figure")
-    print(paste(output,'/',TITRE,'_venndiag.png',sep=''))
-    print(TITRE)
+    flog.info(paste(output,'/',TITRE,'_venndiag.png',sep=''))
+    flog.info(TITRE)
     if(!is.null(output)){
       png(paste(output,'/',TITRE,'_venndiag.png',sep=''), width=20, height=20, units="cm", res=200)
       replayPlot(venn.plot)
