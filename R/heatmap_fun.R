@@ -54,9 +54,6 @@ heatmap_fun <- function(data = data, column1 = "", top = 20, output = "./plot_he
     colnames(data.com)
   }
 
-
-
-
   p.heat <- ggplot(data.com, aes(x = Sample, y = Tax)) + geom_tile(aes(fill = Abundance))
   p.heat <- p.heat + scale_fill_distiller(legend, palette = "RdYlBu") + theme_bw()
 
