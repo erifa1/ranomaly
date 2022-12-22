@@ -39,7 +39,6 @@ generate_phyloseq_fun <- function(dada_res = dada_res, tax.table = tax.table, tr
   }
 
   flog.info("Loading sample metadata..")
-<<<<<<< HEAD
   if(tools::file_ext(metadata) %in% c('xls', 'xlsx')){
     sampledata <- readxl::read_excel(path=metadata, sheet=1, col_names=T)
   } else if (tools::file_ext(metadata) %in% c('csv', 'tsv')){
@@ -47,9 +46,6 @@ generate_phyloseq_fun <- function(dada_res = dada_res, tax.table = tax.table, tr
   }
   # sampledata <- read.table(metadata, sep="\t",header=TRUE)
   sampledata <- as.data.frame(sampledata)
-=======
-  sampledata <- read.table(metadata, sep="\t",header=TRUE, stringsAsFactors = TRUE)
->>>>>>> 163e324275801571fc931402b3b6a463f9473cdb
   rownames(sampledata) <- sampledata$sample.id
 
   sample.metadata <- sample_data(sampledata)

@@ -8,7 +8,7 @@
 #' @param top If not NULL, only this number of top features are plotted. Non "top" taxa abundances are aggregated in a new taxa named "Other".
 #' @param norm Normalization method ("TSS" or "VST"), needs a phyloseq object with raw abundance.
 #' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
-#' @param clust If TRUE, taxa are reordered with standard clustering. 
+#' @param clust If TRUE, taxa are reordered with standard clustering.
 #' @param legend Legend title ("Abundance")
 #'
 #' @return Generate an heatmap with top taxa (html plotly version in output directory)
@@ -17,7 +17,7 @@
 #' @export
 
 
-heatmap_fun <- function(data = data, column1 = "", top = NULL, output = "./plot_heatmap/", 
+heatmap_fun <- function(data = data, column1 = "", top = NULL, output = "./plot_heatmap/",
   rank = "Species", norm = "TSS", legend = "Abundance", clust = TRUE){
   LL = list()
 
@@ -46,7 +46,7 @@ heatmap_fun <- function(data = data, column1 = "", top = NULL, output = "./plot_
     dataglom <- transform_sample_counts(dataglom, normf)
   }
 
-  if(norm == "CLR"){ 
+  if(norm == "CLR"){
     clr = function(x){log(x+1) - rowMeans(log(x+1))}
     otable <- otu_table(dataglom)
     otableCLR <- clr(otable)
@@ -78,14 +78,11 @@ heatmap_fun <- function(data = data, column1 = "", top = NULL, output = "./plot_
     data.com$Tax = factor(data.com$Tax, levels = sort(unique(as.character(data.com$Tax))))
   }
 
-<<<<<<< HEAD
-=======
 
 
 
 # PLOT
 
->>>>>>> 163e324275801571fc931402b3b6a463f9473cdb
   p.heat <- ggplot(data.com, aes(x = Sample, y = Tax)) + geom_tile(aes(fill = Abundance))
   p.heat <- p.heat + scale_fill_distiller(legend, palette = "RdYlBu") + theme_bw()
 
