@@ -19,6 +19,8 @@ csv2phyloseq_fun(
 
 \item{taxtable}{Path to the tabulated taxonomy table or data.frame object.}
 
+\item{seq}{to sequence in fasta format or DNAStringSet object.}
+
 \item{metadata}{Path to the tabulated metadata table or data.frame object.}
 
 \item{generateTree}{Boolean to generate the phylogenetic tree.}
@@ -26,8 +28,6 @@ csv2phyloseq_fun(
 \item{output}{Output directory}
 
 \item{returnval}{Boolean to return values in console or not.}
-
-\item{Path}{to sequence in fasta format or DNAStringSet object.}
 }
 \value{
 Return a phyloseq object

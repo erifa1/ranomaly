@@ -7,12 +7,12 @@
 heatmap_fun(
   data = data,
   column1 = "",
-  top = 20,
+  top = NULL,
   output = "./plot_heatmap/",
   rank = "Species",
-  relative = TRUE,
-  aggregate = TRUE,
-  legend = "Abundance"
+  norm = "TSS",
+  legend = "Abundance",
+  clust = TRUE
 )
 }
 \arguments{
@@ -20,17 +20,17 @@ heatmap_fun(
 
 \item{column1}{Column name of factor to plot with (among sample_variables(data)).}
 
-\item{top}{Number of top features to plot.}
+\item{top}{If not NULL, only this number of top features are plotted. Non "top" taxa abundances are aggregated in a new taxa named "Other".}
 
 \item{output}{Output directory}
 
 \item{rank}{Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)}
 
-\item{relative}{If TRUE, calculate relative abundance, needs a phyloseq object with raw abundance.}
-
-\item{aggregate}{If TRUE, aggregate abundance of non "top" taxa in a new taxa named "Other".}
+\item{norm}{Normalization method ("TSS" or "VST"), needs a phyloseq object with raw abundance.}
 
 \item{legend}{Legend title ("Abundance")}
+
+\item{clust}{If TRUE, taxa are reordered with standard clustering.}
 }
 \value{
 Generate an heatmap with top taxa (html plotly version in output directory)

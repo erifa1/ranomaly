@@ -67,6 +67,7 @@ aggregate_top_taxa <- function (x, top, level){
 #' @param sample_labels If true, x axis labels are sample IDS, if false labels displayed are levels from Ord1 argument. Ignored if split = TRUE (FALSE)
 #' @param split if TRUE make a facet_wrap like grouped by Ord1 (default FALSE)
 #' @param relative Plot relative (TRUE, default) or raw abundance plot (FALSE)
+#' @param levelsOrder Ordering samples according to levels of Ord1 variable. If FALSE, order from the metadata table is kept.
 #' @param autoorder Automatic ordering xaxis labels based on Ord1 factor levels with gtools::mixedorder function (TRUE).
 #' @param ylab Y axis title ("Abundance")
 #' @param outfile Output html file.
@@ -83,7 +84,7 @@ aggregate_top_taxa <- function (x, top, level){
 
 
 bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, sample_labels = FALSE, split = FALSE, split_sid_order = FALSE,
-                     relative = TRUE, autoorder = TRUE, ylab = "Abundance", outfile="plot_compo.html", verbose = TRUE){
+                     relative = TRUE, levelsOrder = TRUE, autoorder = TRUE, ylab = "Abundance", outfile="plot_compo.html", verbose = TRUE){
 
   if(verbose){
     invisible(flog.threshold(INFO))
@@ -161,8 +162,11 @@ if( all(Ord1 != sample_variables(data))){
 
   fun = glue( "df1$g <- factor(df1$g, levels = as.character(unique(orderedOrd1)))")
   eval(parse(text=fun))
-  fun = glue( "meltdat${Ord1} <- factor(meltdat${Ord1}, levels = as.character(unique(orderedOrd1)))") # keep sample ids order from metadata.
-  eval(parse(text=fun))
+
+  if(!levelsOrder){
+    fun = glue( "meltdat${Ord1} <- factor(meltdat${Ord1}, levels = as.character(unique(orderedOrd1)))") # keep sample ids order from metadata.
+    eval(parse(text=fun))
+  }
 
   subp1 <- df1 %>% plot_ly(
     type = 'bar',
@@ -186,8 +190,11 @@ if( all(Ord1 != sample_variables(data))){
     tt <- levels(meltdat$variable)
     meltdat$variable <- factor(meltdat$variable, levels= c("Other", tt[tt!="Other"]))
 
-    fun = glue( "meltdat${Ord1} <- factor(meltdat${Ord1}, levels = as.character(unique(orderedOrd1)))")
-    eval(parse(text=fun))
+    if(!levelsOrder){
+      fun = glue( "meltdat${Ord1} <- factor(meltdat${Ord1}, levels = as.character(unique(orderedOrd1)))")
+      eval(parse(text=fun))
+
+    }
 
     p1=plot_ly(meltdat, x = ~sample.id, y = ~value, type = 'bar', name = ~variable, color = ~variable) %>% #, color = ~variable
       plotly::layout(title="Relative abundance", yaxis = list(title = 'Relative abundance'), xaxis = xform, barmode = 'stack')

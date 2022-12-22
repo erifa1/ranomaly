@@ -9,7 +9,7 @@ ASVenn_fun(
   output = "./ASVenn/",
   rank = "ASV",
   column1 = NULL,
-  subset = "",
+  subset = NULL,
   lvls = NULL,
   krona = "",
   shared = TRUE,

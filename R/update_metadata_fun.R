@@ -18,7 +18,7 @@ update_metadata_fun <- function(data = data, output = "./updated_physeq/", metad
     stop("You must provide metadata file path.", call.=FALSE)
   } else{
     flog.info("Loading sample metadata..")
-    sampledata <- read.table(metadata, sep="\t",header=TRUE)
+    sampledata <- read.table(metadata, sep="\t",header=TRUE, stringsAsFactors = TRUE)
     rownames(sampledata) <- sampledata$sample.id
     sample.metadata <- sample_data(sampledata)
     flog.info('Done.')
