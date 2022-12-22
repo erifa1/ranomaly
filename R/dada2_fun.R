@@ -95,8 +95,12 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
       flog.info('Done.')
     }
 
+
+
+
     if(cutadapt){
-            flog.info(glue::glue('DADA2 Trim primers with cutadapt based on primers sequences ...'))
+
+      flog.info(glue::glue('DADA2 Trim primers with cutadapt based on primers sequences ...'))
 
       # Primers sequences
       FWD <- f_primer
@@ -304,9 +308,9 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, f_t
       derepRs <- derepFastq(filtRs[[sam]], verbose=TRUE)
       flog.info('Done.')
       flog.info('dada2...')
-      dadaFs <- dada(derepFs, err=errF, multithread=n_cpu, pool=FALSE, selfConsist=FALSE)
+      dadaFs <- dada(derepFs, err=errF, multithread=n_cpu, pool=dadapool, selfConsist=FALSE)
       stockFs <- c(stockFs, getN(dadaFs))
-      dadaRs <- dada(derepRs, err=errR, multithread=n_cpu, pool=FALSE, selfConsist=FALSE)
+      dadaRs <- dada(derepRs, err=errR, multithread=n_cpu, pool=dadapool, selfConsist=FALSE)
       stockRs <- c(stockRs,getN(dadaRs))
       flog.info('Done.')
       flog.info('Merging pairs...')
