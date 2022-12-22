@@ -76,7 +76,7 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
   }
 
   # CHECKING CONTROL SAMPLES
-  if(skip == FALSE){
+  if(skip == FALSE && any(sample_data(data)[,column] == ctrl_identifier)){
     df <- as.data.frame(sample_data(data))
     samplesCol = df[, column];
     if(!is.null(batch)){
@@ -191,7 +191,9 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
       taxToDump0 = NULL
       skip=TRUE
     }
-  }else{taxToDump0 = NULL} #-k skip all decontam
+  }else{
+    taxToDump0 = NULL
+  } #-k skip all decontam
 
 
   #CLASSIC FILTERING FREQ / PREV / NREADS
@@ -308,7 +310,7 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
   }
 
   ##Remove Control samples for next analysis
-  if(column != "" && skip==FALSE){
+  if( any(sample_data(data)[,column] == ctrl_identifier) ){
     flog.info('Subsetting controls samples.')
     fun <- paste("data <- subset_samples(data, ",column," %in% '",spl_identifier,"')",sep="")
     eval(parse(text=fun))
