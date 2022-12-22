@@ -18,6 +18,10 @@
 #' @import Biostrings
 #' @import futile.logger
 #' @import digest
+#' @import tools
+#' @import vroom
+#' @import here
+#' @import readxl
 #'
 #' @export
 
@@ -35,9 +39,15 @@ generate_phyloseq_fun <- function(dada_res = dada_res, tax.table = tax.table, tr
   }
 
   flog.info("Loading sample metadata..")
-  sampledata <- read.table(metadata, sep="\t",header=TRUE)
+  if(tools::file_ext(metadata) %in% c('xls', 'xlsx')){
+    sampledata <- readxl::read_excel(path=metadata, sheet=1, col_names=T)
+  } else if (tools::file_ext(metadata) %in% c('csv', 'tsv')){
+    sampledata <- vroom::vroom(file=metadata, delim="\t", locale = here::here())
+  }
+  # sampledata <- read.table(metadata, sep="\t",header=TRUE)
+  sampledata <- as.data.frame(sampledata)
   rownames(sampledata) <- sampledata$sample.id
-  print(sampledata$sample.id)
+
   sample.metadata <- sample_data(sampledata)
   flog.info('Done.')
 
@@ -63,6 +73,7 @@ generate_phyloseq_fun <- function(dada_res = dada_res, tax.table = tax.table, tr
 
     if(is.null(tree)){
       flog.info('Building phyloseq object without tree...')
+
       data <- phyloseq(dada_res$otu.table[,row.names(sample.metadata)], tax_table(as.matrix(tax.table)), sample.metadata, DNAStringSet(sequences))
     } else{
       flog.info('Building phyloseq object with tree...')
