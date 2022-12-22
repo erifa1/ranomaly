@@ -6,6 +6,7 @@
 #' @param output Output directory.
 #' @param psobj Phyloseq object with sequences.
 #' @param verbose Verbosity level.
+#' @param n_cpus Number of cpus to use.
 #' @param returnval Boolean to return values in console or not.
 #'
 #' @return Return a formatted tree object ready to use in phyloseq.
@@ -26,12 +27,18 @@
 
 # DADA2 function
 
-generate_tree_fun <- function(dada_res = NULL, psobj = NULL, output = "./tree", returnval=TRUE, verbose=1){
+generate_tree_fun <- function(dada_res = NULL, psobj = NULL, output = "./tree", returnval=TRUE, n_cpus=6,  verbose=1){
 
   if(verbose == 3){
     invisible(flog.threshold(DEBUG))
   } else {
     invisible(flog.threshold(INFO))
+  }
+
+  if(!dir.exists(output)){
+    flog.info('Creating output directory...')
+    dir.create(output)
+    flog.info('Done.')
   }
 
   if(!is.null(dada_res)){
@@ -47,8 +54,29 @@ generate_tree_fun <- function(dada_res = NULL, psobj = NULL, output = "./tree", 
     return(1)
   }
 
-  flog.info('Aligning sequences...')
-  alignment <- AlignSeqs(sequences,anchor=NA,processors=NULL)
+  if(file.exists(paste(output, 'alignment.Rdata', sep=''))){
+    flog.info('Alignment file already exists, loading...')
+    load(paste(output, 'alignment.Rdata', sep=''))
+  }
+  else{
+    flog.info('Building guided tree...')
+
+    gT <- lapply(order(width(sequences), decreasing=TRUE),
+              function(x) {
+                attr(x, "height") <- 0
+                attr(x, "label") <- names(sequences)[x]
+                attr(x, "members") <- 1L
+                attr(x, "leaf") <- TRUE
+                x
+              })
+    attr(gT, "height") <- 0.5
+    attr(gT, "members") <- length(sequences)
+    class(gT) <- "dendrogram"
+    
+    flog.info('Aligning sequences...')
+    alignment <- AlignSeqs(sequences, anchor=NA, processors=n_cpus,  guideTree=gT)
+    save(alignment, file=paste(output, 'alignment.Rdata', sep=''))
+  }
   flog.info('Creating distance matrices...')
   phang.align <- phyDat(as(alignment, "matrix"), type="DNA")
   dm <- dist.ml(phang.align)
@@ -65,11 +93,6 @@ generate_tree_fun <- function(dada_res = NULL, psobj = NULL, output = "./tree", 
 
   tree <- fitGTR$tree
 
-  if(!dir.exists(output)){
-    flog.info('Creating output directory...')
-    dir.create(output)
-    flog.info('Done.')
-  }
   flog.info('Saving R objects.')
   save(tree, file=paste(output,'/robjects.Rdata',sep=''))
   flog.info('Finish.')
