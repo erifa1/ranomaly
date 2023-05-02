@@ -232,7 +232,7 @@ if( all(Ord1 != sample_variables(data))){
         dplyr::group_map(~ plot_ly(data=., x = ~sample.id, y = ~value, type = 'bar',
                                    name = ~variable,
                                    color = ~variable, legendgroup = ~variable,
-                                   showlegend = (.y == levels(meltdat[, Ord1])[1])),
+                                   showlegend = (.y == unique(as.character(meltdat[, Ord1]))[1])),
                          .keep = TRUE)  %>%
       plotly::subplot(nrows = 1, shareX = TRUE, shareY=TRUE, titleX = FALSE) %>%
       plotly::layout(title="",
