@@ -42,7 +42,7 @@ generate_phyloseq_fun <- function(dada_res = dada_res, tax.table = tax.table, tr
   if(tools::file_ext(metadata) %in% c('xls', 'xlsx')){
     sampledata <- readxl::read_excel(path=metadata, sheet=1, col_names=T)
   } else if (tools::file_ext(metadata) %in% c('csv', 'tsv')){
-    sampledata <- vroom::vroom(file=metadata, delim="\t", locale = here::here())
+    sampledata <- vroom::vroom(file=metadata, delim="\t", show_col_types = FALSE)
   }
   # sampledata <- read.table(metadata, sep="\t",header=TRUE)
   sampledata <- as.data.frame(sampledata)

@@ -310,7 +310,8 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
   }
 
   ##Remove Control samples for next analysis
-  if( any(sample_data(data)[,column] == ctrl_identifier) ){
+  # if(any(sample_data(data)[,column] == ctrl_identifier) ){
+  if( column != "" & ctrl_identifier != "" ){
     flog.info('Subsetting controls samples.')
     fun <- paste("data <- subset_samples(data, ",column," %in% '",spl_identifier,"')",sep="")
     eval(parse(text=fun))
