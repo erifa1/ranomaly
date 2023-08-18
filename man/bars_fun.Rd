@@ -33,6 +33,8 @@ bars_fun(
 
 \item{split}{if TRUE make a facet_wrap like grouped by Ord1 (default FALSE)}
 
+\item{split_sid_order}{keep sample_ids order from metadata for splitted plots.}
+
 \item{relative}{Plot relative (TRUE, default) or raw abundance plot (FALSE)}
 
 \item{levelsOrder}{Ordering samples according to levels of Ord1 variable. If FALSE, order from the metadata table is kept.}

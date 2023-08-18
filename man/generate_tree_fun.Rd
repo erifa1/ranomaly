@@ -9,6 +9,7 @@ generate_tree_fun(
   psobj = NULL,
   output = "./tree",
   returnval = TRUE,
+  n_cpus = 6,
   verbose = 1
 )
 }
@@ -20,6 +21,8 @@ generate_tree_fun(
 \item{output}{Output directory.}
 
 \item{returnval}{Boolean to return values in console or not.}
+
+\item{n_cpus}{Number of cpus to use.}
 
 \item{verbose}{Verbosity level.}
 }

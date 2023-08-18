@@ -6,7 +6,6 @@
 \usage{
 VENNFUN(
   TF = TF,
-  mode = 1,
   TITRE = TITRE,
   output = "./",
   refseq1 = NULL,
@@ -16,8 +15,6 @@ VENNFUN(
 }
 \arguments{
 \item{TF}{list containing vectors to plot.}
-
-\item{mode}{= 1: length(TF)<=5, mode = 2 5<length(TF)<7}
 
 \item{TITRE}{Plot title.}
 
