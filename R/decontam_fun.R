@@ -310,11 +310,14 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
   }
 
   ##Remove Control samples for next analysis
-  if( any(sample_data(data)[,column] == ctrl_identifier) ){
-    flog.info('Subsetting controls samples.')
-    fun <- paste("data <- subset_samples(data, ",column," %in% '",spl_identifier,"')",sep="")
-    eval(parse(text=fun))
+  if(column %in% colnames(sample_data(data))){
+    if( any(sample_data(data)[,column] == ctrl_identifier) ){
+      flog.info('Subsetting controls samples.')
+      fun <- paste("data <- subset_samples(data, ",column," %in% '",spl_identifier,"')",sep="")
+      eval(parse(text=fun))
+    }
   }
+
 
   flog.info(paste("AFTER FILTERING: ",nsamples(data), "samples and", ntaxa(data),"ASVs in otu table") )
 
@@ -337,6 +340,12 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
     write.table(cbind(otu_table(data_rel), "sequences"=as.data.frame(refseq(data_rel))),paste(output,"/relative_otu-table.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
 
   }
+
+
+  flog.info('Removing metadata columns.')
+  sample_data(data) <- sample_data(data)[,-c(which(colnames(sample_data(data)) %in% c(column, 'is.neg')))]
+  sample_data(data_rel) <- sample_data(data_rel)[,-c(which(colnames(sample_data(data_rel)) %in% c(column, 'is.neg')))]
+  flog.info('DONE.')
 
 
   flog.info('Saving R objects.')
