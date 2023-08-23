@@ -315,6 +315,7 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
   }
 
   ##Remove Control samples for next analysis
+
   if(column %in% colnames(sample_data(data))){
     if( any(sample_data(data)[,column] == ctrl_identifier) ){
       flog.info('Subsetting controls samples.')
@@ -322,7 +323,8 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
       eval(parse(text=fun))
     }
   } else{
-    flog.error(paste(column, ' not present in metadata.'))
+    flog.error(paste0(column, ' not present in metadata.'))
+    exit(1)
   }
 
 
