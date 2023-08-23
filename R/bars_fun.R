@@ -66,6 +66,7 @@ aggregate_top_taxa <- function (x, top, level){
 #' @param Ord1 Variable used to order sample (X axis) or split the barplot if split = TRUE
 #' @param sample_labels If true, x axis labels are sample IDS, if false labels displayed are levels from Ord1 argument. Ignored if split = TRUE (FALSE)
 #' @param split if TRUE make a facet_wrap like grouped by Ord1 (default FALSE)
+#' @param split_sid_order keep sample_ids order from metadata for splitted plots.
 #' @param relative Plot relative (TRUE, default) or raw abundance plot (FALSE)
 #' @param levelsOrder Ordering samples according to levels of Ord1 variable. If FALSE, order from the metadata table is kept.
 #' @param autoorder Automatic ordering xaxis labels based on Ord1 factor levels with gtools::mixedorder function (TRUE).
@@ -226,13 +227,13 @@ if( all(Ord1 != sample_variables(data))){
     if(split_sid_order){
     meltdat$sample.id = factor(meltdat$sample.id, levels = unique(meltdat$sample.id)) # keep sample ids order from metadata.
     }
-
+    # Add stop message when NA value in Ord1 variable.
     p1 = meltdat  %>% dplyr::arrange(across({Ord1})) %>% dplyr::group_by(across({Ord1})) %>%
         dplyr::mutate(across(where(is.character), as.factor)) %>%
         dplyr::group_map(~ plot_ly(data=., x = ~sample.id, y = ~value, type = 'bar',
                                    name = ~variable,
                                    color = ~variable, legendgroup = ~variable,
-                                   showlegend = (.y == levels(meltdat[, Ord1])[1])),
+                                   showlegend = (.y == unique(as.character(meltdat[, Ord1]))[1])),
                          .keep = TRUE)  %>%
       plotly::subplot(nrows = 1, shareX = TRUE, shareY=TRUE, titleX = FALSE) %>%
       plotly::layout(title="",

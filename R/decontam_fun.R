@@ -76,8 +76,13 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
   }
 
   # CHECKING CONTROL SAMPLES
-  if(skip == FALSE && any(sample_data(data)[,column] == ctrl_identifier)){
-    df <- as.data.frame(sample_data(data))
+  if(skip == FALSE){  #&& any(sample_data(data)[,column] == ctrl_identifier)
+    flog.info('Check control samples...')
+    sample_var <- phyloseq::get_variable(data) %>% colnames()
+    df <- phyloseq::get_variable(data)
+    if(!column %in% sample_var){stop(glue::glue("No column '{column}' in metadata."))}
+    if(!ctrl_identifier %in% df[,column]){stop(glue::glue("No values '{ctrl_identifier} in '{column}' column in metadata."))}
+
     samplesCol = df[, column];
     if(!is.null(batch)){
       df2 = df[,c(batch,column)]
@@ -87,7 +92,7 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
       batchCtrl <- median(table(df3[,batch]))
     } else {batchCtrl <- 1000}
     #DECONTAM STEP
-    if(skip == FALSE & nrow(samplesCol[samplesCol==ctrl_identifier]) >= 3 & batchCtrl >= 3){
+    if(skip == FALSE & length(samplesCol[samplesCol==ctrl_identifier]) >= 3 & batchCtrl >= 3){
       flog.info('Decontam step...')
       if(method == 'frequency'){
         flog.info('Method frequency...')
@@ -316,6 +321,8 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
       fun <- paste("data <- subset_samples(data, ",column," %in% '",spl_identifier,"')",sep="")
       eval(parse(text=fun))
     }
+  } else{
+    flog.error(paste(column, ' not present in metadata.'))
   }
 
 

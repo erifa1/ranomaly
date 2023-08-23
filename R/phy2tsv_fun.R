@@ -23,7 +23,7 @@ phy2tsv_fun <- function(data = data, output = "./tsv_table/", rank = "ASV"){
 
 
   flog.info('Generating table ...')
-  stable <- as.data.frame(sample_data(data))
+  stable <- as.data.frame(as.matrix(sample_data(data)))
   write.table(stable, paste(output,"/metadata_table.csv",sep=""), sep="\t", quote=FALSE, col.names=NA)
   if(any(rank == rank_names(data))){
     flog.info(paste(rank,' ...'))

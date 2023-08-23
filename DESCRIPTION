@@ -1,7 +1,7 @@
 Package: ranomaly
 Title: An R package grouping ANOMALY worflow functions
 Version: 1.0.0
-Authors@R: 
+Author@R: 
     c(person(given = "Sebastien",
              family = "Theil",
              role = c("aut", "cre"),
@@ -10,6 +10,9 @@ Authors@R:
              family = "Rifa",
              role = "aut",
              email = "etienne.rifa@inrae.fr"))
+Author: Sebastien Theil [aut, cre],
+  Etienne Rifa [aut]
+Maintainer: Sebastien Theil <sebastien.theil@inrae.fr>, Etienne Rifa <etienne.rifa@inrae.fr>
 Description: rANOMALY use Amplicon Sequence Variant (ASV from Dada2
     package) as taxonomic unit, allowing an easy and relevant sequence
     tracking between different environments and/or projects.  Decontam
@@ -29,6 +32,7 @@ Imports:
     Biobase,
     BiocGenerics,
     Biostrings,
+    cluster,
     dada2,
     DECIPHER,
     decontam,
@@ -44,6 +48,7 @@ Imports:
     grid,
     gridExtra,
     gtools,
+    here,
     htmlwidgets,
     IRanges,
     metacoder,
@@ -55,27 +60,22 @@ Imports:
     phyloseq,
     plotly,
     psadd,
+    qdapTools,
     ranacapa,
+    readxl,
     reshape2,
     scales,
-    stringr,
     ShortRead,
+    stats,
+    stringr,
     tibble,
     tools,
     utils,
     vegan,
     venn,
-    VennDiagram
+    VennDiagram,
+    vroom
 Remotes:
-    bioc::Biostrings,
-    bioc::dada2,
-    bioc::DECIPHER,
-    bioc::decontam,
-    bioc::metagenomeSeq,
-    bioc::microbiome,
-    bioc::mixOmics,
-    bioc::phyloseq,
-    bioc::ShortRead,
     github::cpauvert/psadd,
     github::gauravsk/ranacapa,
     github::grunwaldlab/metacoder,
@@ -84,4 +84,4 @@ Remotes:
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.3

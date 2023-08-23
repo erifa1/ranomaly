@@ -19,10 +19,10 @@ alphaPlot <- function(data = data, col1 = "", col2 = "", measures = c("Shannon")
   p <- p + ggtitle('Alpha diversity indexes') +  geom_boxplot(alpha = 1, outlier.shape = NA) +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 45, hjust=1),
-    legend.position = legpos, axis.text=element_text(size=15),
-    axis.title=element_text(size=16,face="bold"),
-    strip.text.x = element_text(size = 18,face="bold"),
-    title=element_text(size=16,face="bold"))
+    legend.position = legpos, axis.text=element_text(size=8),
+    axis.title=element_text(size=11,face="bold"),
+    strip.text.x = element_text(size = 10,face="bold"),
+    title=element_text(size=14,face="bold"))
   flog.info('Done.')
   return(p)
 }
@@ -111,7 +111,7 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
     p <- alphaPlot(data, column1, column2, measures)
 
     resAlpha$plot = p
-    ggsave(paste(output,'/alpha_diversity.eps',sep=''), plot=p, height = 15, width = 30, units="cm", dpi = 500, device="eps")
+    ggsave(paste(output,'/alpha_diversity.eps',sep=''), plot=p, height = 15, width = 30, units="cm", dpi = 200, device="eps")
 
     alphatable <- estimate_richness(data, measures = measures )
     anova_data <- cbind(sample_data(data), alphatable)
