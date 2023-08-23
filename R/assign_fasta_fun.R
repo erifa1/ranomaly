@@ -17,7 +17,7 @@
 
 #' @export
 
-idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", confidence = 50, verbose = 1, returnval = TRUE){
+idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", confidence = 50, verbose = 1, returnval = TRUE, ncpu=NULL){
   if(verbose == 3){
     flog.threshold(DEBUG)
   }
@@ -41,7 +41,7 @@ idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", co
   taxid_list=vector("list", length(db_list)+1)
   for (i in 1:length(db_list)){
     db_file <- db_list[i]
-    taxid_list[[i]] <- idTaxa_assign(db_file, dna, names(dna), confidence)
+    taxid_list[[i]] <- idTaxa_assign(db_file, dna, names(dna), confidence, ncpu)
   }
 
   if(verbose == 3){
