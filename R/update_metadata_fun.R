@@ -9,6 +9,7 @@
 #' @return Return a phyloseq object with updated metadata.
 #'
 #' @export
+#' @import readxl
 
 
 update_metadata_fun <- function(data = data, output = "./updated_physeq/", metadata = NULL, returnval = TRUE){
@@ -18,8 +19,14 @@ update_metadata_fun <- function(data = data, output = "./updated_physeq/", metad
     stop("You must provide metadata file path.", call.=FALSE)
   } else{
     flog.info("Loading sample metadata..")
-    sampledata <- read.table(metadata, sep="\t",header=TRUE, stringsAsFactors = TRUE)
-    rownames(sampledata) <- sampledata$sample.id
+    if(tools::file_ext(metadata) %in% c('xls', 'xlsx')){
+      sampledata <- readxl::read_excel(path=metadata, sheet=1, col_names=T)
+      sampledata <- as.data.frame(sampledata)
+    } else if (tools::file_ext(metadata) %in% c('csv', 'tsv')){
+      sampledata <- vroom::vroom(file=metadata, delim="\t", locale = readr::locale(decimal_mark = ",", encoding = "UTF-8"))
+    }
+    rownames(sampledata) <- sampledata[,'sample.id']
+
     sample.metadata <- sample_data(sampledata)
     flog.info('Done.')
   }
@@ -29,7 +36,6 @@ update_metadata_fun <- function(data = data, output = "./updated_physeq/", metad
     dir.create(output)
     flog.info('Done.')
   }
-  print(sample.metadata)
 
   sample_data(data) <- sample.metadata
 
