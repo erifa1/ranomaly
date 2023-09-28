@@ -5,6 +5,7 @@
 #' @param data a phyloseq object (output from decontam or generate_phyloseq)
 #' @param output Output directory
 #' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
+#' @param relative Output table with relative abundances. 
 #'
 #' @return Export tabulated otu table and metadata
 #'
@@ -15,7 +16,7 @@
 
 # Decontam Function
 
-phy2tsv_fun <- function(data = data, output = "./tsv_table/", rank = "ASV"){
+phy2tsv_fun <- function(data = data, output = "./tsv_table/", rank = "ASV", relative = FALSE){
 
   if(!dir.exists(output)){
     dir.create(output, recursive=TRUE)
@@ -28,12 +29,22 @@ phy2tsv_fun <- function(data = data, output = "./tsv_table/", rank = "ASV"){
   if(any(rank == rank_names(data))){
     flog.info(paste(rank,' ...'))
     data_genus <- tax_glom(data, rank)
+
+    if(relative){
+      normf = function(x){ x/sum(x) }
+      data_genus <- transform_sample_counts(data_genus, normf)
+    }
+
     ttable <- data_genus@tax_table@.Data
     otable <- as.data.frame(otu_table(data_genus))
     refseq1 <- as.data.frame(refseq(data_genus)); names(refseq1)="seq"
   }else{
     if(rank=="ASV"){
       flog.info(paste('ASV ...'))
+      if(relative){
+        normf = function(x){ x/sum(x) }
+        data <- transform_sample_counts(data, normf)
+      }      
       ttable <- data@tax_table@.Data
       otable <- as.data.frame(otu_table(data))
       if(!is.null(data@refseq)){
