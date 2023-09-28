@@ -10,7 +10,8 @@ idtaxa_assign_fasta_fun(
   output = "./assign_fasta/",
   confidence = 50,
   verbose = 1,
-  returnval = TRUE
+  returnval = TRUE,
+  ncpu = NULL
 )
 }
 \arguments{

@@ -4,7 +4,12 @@
 \alias{phy2tsv_fun}
 \title{Phyloseq to TSV}
 \usage{
-phy2tsv_fun(data = data, output = "./tsv_table/", rank = "ASV")
+phy2tsv_fun(
+  data = data,
+  output = "./tsv_table/",
+  rank = "ASV",
+  relative = FALSE
+)
 }
 \arguments{
 \item{data}{a phyloseq object (output from decontam or generate_phyloseq)}
@@ -12,6 +17,8 @@ phy2tsv_fun(data = data, output = "./tsv_table/", rank = "ASV")
 \item{output}{Output directory}
 
 \item{rank}{Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)}
+
+\item{relative}{Output table with relative abundances.}
 }
 \value{
 Export tabulated otu table and metadata
