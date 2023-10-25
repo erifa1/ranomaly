@@ -190,13 +190,7 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
       flog.debug(show(data))
       taxToKeep0 <- row.names(contamdf[contamdf$contaminant==FALSE,])
       taxToDump0 <- row.names(contamdf[contamdf$contaminant==TRUE,])
-
-    } else {
-      flog.info('Decontam step skipped or too few control samples (less than 3)...')
-      taxToDump0 = NULL
-    }
-      ##Remove Control samples for next analysis
-    if(column != ''){
+      
       if(column %in% colnames(sample_data(data))){
         if( any(sample_data(data)[,column] == ctrl_identifier) ){
           flog.info('Subsetting controls samples.')
@@ -207,11 +201,15 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
           sample_data(data) <- sample_data(data)[,-c(which(colnames(sample_data(data)) %in% c(column, 'is.neg')))]
           flog.info('DONE.')
         }
-      } else{
-        flog.error(paste0(column, ' not present in metadata.'))
-        quit()
       }
-    } 
+     
+
+    } else {
+      flog.info('Decontam step skipped or too few control samples (less than 3)...')
+      taxToDump0 = NULL
+    }
+      ##Remove Control samples for next analysis
+    
   } else{
     taxToDump0 = NULL
   } #-k skip all decontam
