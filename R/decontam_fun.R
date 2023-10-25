@@ -194,9 +194,26 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
     } else {
       flog.info('Decontam step skipped or too few control samples (less than 3)...')
       taxToDump0 = NULL
-      skip=TRUE
     }
-  }else{
+      ##Remove Control samples for next analysis
+    if(column != ''){
+      if(column %in% colnames(sample_data(data))){
+        if( any(sample_data(data)[,column] == ctrl_identifier) ){
+          flog.info('Subsetting controls samples.')
+          fun <- paste("data <- subset_samples(data, ",column," %in% '",spl_identifier,"')",sep="")
+          eval(parse(text=fun))
+
+          flog.info('Removing metadata columns.')
+          sample_data(data) <- sample_data(data)[,-c(which(colnames(sample_data(data)) %in% c(column, 'is.neg')))]
+          sample_data(data_rel) <- sample_data(data_rel)[,-c(which(colnames(sample_data(data_rel)) %in% c(column, 'is.neg')))]
+          flog.info('DONE.')
+        }
+      } else{
+        flog.error(paste0(column, ' not present in metadata.'))
+        quit()
+      }
+    } 
+  } else{
     taxToDump0 = NULL
   } #-k skip all decontam
 
@@ -251,41 +268,42 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
   TF = list(decontam=taxToDump0,freq=taxToDump1,prev=taxToDump2,unassigned=taxToDump4)
   TF = Filter(length, TF) #ommit empty field of list TF
 
-  # #DEBUG
-  # TF$taxdf=taxdf
-  # return(TF)
-  # #DEBUG
 
   flog.info('Plotting Venn diagrams...')
-  venn.plot <- venn.diagram(TF, filename = NULL, col = "black",
+  if(length(TF > 0)){
+    venn.plot <- venn.diagram(TF, filename = NULL, col = "black",
                             fill = rainbow(length(TF)), alpha = 0.50,
                             cex = 1.5, cat.col = 1, lty = "blank",
                             cat.cex = 1.8, cat.fontface = "bold",
                             margin = 0.1, main=paste("filtered ASVs"), main.cex=2.5,
                             fontfamily ="Arial",main.fontfamily="Arial",cat.fontfamily="Arial") #cat.dist = 0.09,
-  png(paste(output,'/venndiag_filtering.png',sep=''), width=20, height=20, units="cm", res=200)
-  grid.draw(venn.plot)
-  invisible(dev.off())
+    png(paste(output,'/venndiag_filtering.png',sep=''), width=20, height=20, units="cm", res=200)
+    grid.draw(venn.plot)
+    invisible(dev.off())
 
-  flog.info('Generate Exclu_out table...')
-  # Tests in which method each ASV is filtered.
-  TABf = otu_table(prune_taxa(uniqTaxToDump,data))
-  for (j in 1:length(TF)){
-    TABtest = TF[[j]]
-    TABtest_filt=rep(NA, length(uniqTaxToDump))
-    names(TABtest_filt) = uniqTaxToDump
-    TABtest_filt[TABtest] = 1
+    flog.info('Generate Exclu_out table...')
+    # Tests in which method each ASV is filtered.
+    TABf = otu_table(prune_taxa(uniqTaxToDump,data))
+    for (j in 1:length(TF)){
+      TABtest = TF[[j]]
+      TABtest_filt=rep(NA, length(uniqTaxToDump))
+      names(TABtest_filt) = uniqTaxToDump
+      TABtest_filt[TABtest] = 1
 
-    TABf=cbind.data.frame( TABtest_filt, TABf )
-    names(TABf)[1] = names(TF)[j]
+      TABf=cbind.data.frame( TABtest_filt, TABf )
+      names(TABf)[1] = names(TF)[j]
+    }
+
+    if(!is.null(data@tax_table)){
+      TABff <- cbind(as.matrix(TABf), as.matrix(data_no_filtering@tax_table[row.names(TABf),]))
+    }else{
+      TABff <- as.matrix(TABf)
+    }
+    write.table(TABff, file = paste(output,'/Exclu_out.csv',sep=''), sep = "\t", col.names=NA)
+
+
   }
-
-  if(!is.null(data@tax_table)){
-    TABff <- cbind(as.matrix(TABf), as.matrix(data_no_filtering@tax_table[row.names(TABf),]))
-  }else{
-    TABff <- as.matrix(TABf)
-  }
-  write.table(TABff, file = paste(output,'/Exclu_out.csv',sep=''), sep = "\t", col.names=NA)
+  
 
 
   data <- dataKeep
@@ -314,20 +332,6 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
     data <- prune_taxa(taxToKeep5, data)
   }
 
-  ##Remove Control samples for next analysis
-
-  if(column %in% colnames(sample_data(data))){
-    if( any(sample_data(data)[,column] == ctrl_identifier) ){
-      flog.info('Subsetting controls samples.')
-      fun <- paste("data <- subset_samples(data, ",column," %in% '",spl_identifier,"')",sep="")
-      eval(parse(text=fun))
-    }
-  } else{
-    flog.error(paste0(column, ' not present in metadata.'))
-    exit(1)
-  }
-
-
   flog.info(paste("AFTER FILTERING: ",nsamples(data), "samples and", ntaxa(data),"ASVs in otu table") )
 
   flog.info('Writing raw tables.')
@@ -351,10 +355,7 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
   }
 
 
-  flog.info('Removing metadata columns.')
-  sample_data(data) <- sample_data(data)[,-c(which(colnames(sample_data(data)) %in% c(column, 'is.neg')))]
-  sample_data(data_rel) <- sample_data(data_rel)[,-c(which(colnames(sample_data(data_rel)) %in% c(column, 'is.neg')))]
-  flog.info('DONE.')
+
 
 
   flog.info('Saving R objects.')
