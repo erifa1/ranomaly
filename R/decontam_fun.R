@@ -267,6 +267,7 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
 
 
   flog.info('Plotting Venn diagrams...')
+  print(TF)
   if(length(TF > 0)){
     venn.plot <- venn.diagram(TF, filename = NULL, col = "black",
                             fill = rainbow(length(TF)), alpha = 0.50,
