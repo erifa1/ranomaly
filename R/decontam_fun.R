@@ -205,7 +205,6 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
 
           flog.info('Removing metadata columns.')
           sample_data(data) <- sample_data(data)[,-c(which(colnames(sample_data(data)) %in% c(column, 'is.neg')))]
-          sample_data(data_rel) <- sample_data(data_rel)[,-c(which(colnames(sample_data(data_rel)) %in% c(column, 'is.neg')))]
           flog.info('DONE.')
         }
       } else{
