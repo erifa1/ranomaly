@@ -267,14 +267,13 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
 
 
   flog.info('Plotting Venn diagrams...')
-  print(TF)
-  if(length(TF > 0)){
+  if(length(TF) > 0){
     venn.plot <- venn.diagram(TF, filename = NULL, col = "black",
                             fill = rainbow(length(TF)), alpha = 0.50,
                             cex = 1.5, cat.col = 1, lty = "blank",
                             cat.cex = 1.8, cat.fontface = "bold",
                             margin = 0.1, main=paste("filtered ASVs"), main.cex=2.5,
-                            fontfamily ="Arial",main.fontfamily="Arial",cat.fontfamily="Arial") #cat.dist = 0.09,
+                            fontfamily ="Arial", main.fontfamily="Arial", cat.fontfamily="Arial") #cat.dist = 0.09,
     png(paste(output,'/venndiag_filtering.png',sep=''), width=20, height=20, units="cm", res=200)
     grid.draw(venn.plot)
     invisible(dev.off())
