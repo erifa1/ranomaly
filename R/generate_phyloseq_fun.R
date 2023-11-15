@@ -40,11 +40,13 @@ generate_phyloseq_fun <- function(dada_res = dada_res, tax.table = tax.table, tr
   }
 
   flog.info("Loading sample metadata..")
-  if(tools::file_ext(metadata) %in% c('xls', 'xlsx')){
+  if(is.data.frame(metadata)){
+    sampledata <- metadata
+  }else if(tools::file_ext(metadata) %in% c('xls', 'xlsx')){
     sampledata <- readxl::read_excel(path=metadata, sheet=1, col_names=T)
   } else if (tools::file_ext(metadata) %in% c('csv', 'tsv')){
     sampledata <- vroom::vroom(file=metadata, delim="\t", locale = readr::locale(decimal_mark = ",", encoding = "UTF-8"), show_col_types = FALSE)
-  }
+  } 
   # sampledata <- read.table(metadata, sep="\t",header=TRUE)
   sampledata <- as.data.frame(sampledata)
   rownames(sampledata) <- sampledata$sample.id

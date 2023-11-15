@@ -344,7 +344,7 @@ htmltools::tagList(list(ggplotly(beta_strain_time$plot)))
 * permanova
 
 ```{r beta_test1, warning=FALSE}
-pander(beta_strain$permanova)
+pander(beta_strain_time$permanova)
 ```
 
 * pairwise permanova on concatenated factors
