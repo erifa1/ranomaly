@@ -3,14 +3,16 @@
 #' @param desq output of deseq2_fun
 #' @param phys the phyloseq object used for deseq2 analyse
 #' @param var Factor to test.
-#' @param workingRank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
+#' @param workingRank Taxonomy rank used in deseq2_fun function. 
+#' @param output Output directory
 #' @return Return a list object with heatmap plots.
 #' @import futile.logger
 #' @import stringr
 #' @import phyloseq
 #' @import pheatmap
 #' @export
-heatmapDeseq2_fun <- function(desq, phys, var, workingRank) {
+heatmapDeseq2_fun <- function(desq, phys, var, workingRank, output = "./deseq/heatmap/") {
+  dir.create(output, recursive = TRUE)
   pheat = list()
   for (i in names(desq)) {
     tableDESeqSig <- desq[[i]][["table"]] |> subset(padj < 0.05) |> na.omit()
@@ -20,12 +22,10 @@ heatmapDeseq2_fun <- function(desq, phys, var, workingRank) {
                                transform_sample_counts(phys, function(x) x/sum(x)))
 
     # remove unused sample
-    usedName <<- str_split_fixed(names(desq[[i]]$plot$data)[1], "_", 2)
-    keepSamp <<- str_split(usedName[2], "_vs_", simplify = TRUE)
+    keepSamp <<- stringr::str_split(i, "_vs_", simplify = TRUE)
 
     psTaxaRelSig2 <- paste("psTaxaRelSigSubset <<- subset_samples(psTaxaRelSig, ",
-                           var, "%in%
-                                                   keepSamp)", sep = "")
+                           var, " %in% keepSamp)", sep = "")
     eval(parse(text = psTaxaRelSig2))
     psTaxaRelSigSubset <- subset_taxa(psTaxaRelSigSubset,
                                       taxa_sums(psTaxaRelSigSubset) != 0)
@@ -73,12 +73,17 @@ heatmapDeseq2_fun <- function(desq, phys, var, workingRank) {
     } else {
       rownames(annotationRow) <- colnames(matrix)
     }
-    title <- usedName[,2]
+    title <- i 
 
-    pheat[[i]] <- pheatmap(matrix, scale = "row",
+    pheat[[i]] <- pheatmap::pheatmap(matrix, scale = "row",
                            annotationCol = annotationCol,
                            annotationRow = annotationRow,
                            main = title)
+
+    png(glue::glue("{output}/pheatmap-{i}.png"), , width = 1200, height = 800, res = 150)
+    print(pheat[[i]])
+    dev.off()
+
   }
   return(pheat)
 }
