@@ -7,7 +7,7 @@
 #' @param column1 Factor to test.
 #' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
 #' @param axis Select the axis to plot
-#' @param multilevel Use Within matrix decomposition for repeated measurements
+#' @param multilevel Factor (metadata column name) used within matrix decomposition for repeated measurements
 #' @param ind.names either a character vector of names for the individuals to be plotted, or FALSE for no names. If TRUE, the row names of the first (or second) data matrix is used as names (see mixOmics Details).
 #' @param ellipse Logical indicating if ellipse plots should be plotted (see mixOmics Details).
 #' @param progressBar Silence the progress bar.
@@ -115,7 +115,7 @@ plsda_fun <- function (data = data, output = "./plsda/", column1 = "",
     return(plotperf)
   }
   tune_splsda <- function() {
-    flog.info("Tune SPLDA...")
+    flog.info("Tune SPLSDA...")
     if (!is.null(multilevel)) {
       fun <- paste("tune.splsda <- tune.splsda(otable, as.numeric(factor(multilevel[, 2])),
                    ncomp = 4,\n  \tvalidation = \"Mfold\",\n  \tfolds = 4,\n  \tprogressBar = ",

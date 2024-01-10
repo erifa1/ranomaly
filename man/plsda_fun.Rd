@@ -4,7 +4,17 @@
 \alias{plsda_fun}
 \title{PLSDA from MixOmics package}
 \usage{
-plsda_fun(data = data, output = "./plsda/", column1 = "", rank = "ASV")
+plsda_fun(
+  data = data,
+  output = "./plsda/",
+  column1 = "",
+  rank = "ASV",
+  axis = c(1, 2),
+  multilevel = NULL,
+  ind.names = FALSE,
+  ellipse = FALSE,
+  progressBar = FALSE
+)
 }
 \arguments{
 \item{data}{A phyloseq object (output from decontam or generate_phyloseq)}
@@ -14,6 +24,16 @@ plsda_fun(data = data, output = "./plsda/", column1 = "", rank = "ASV")
 \item{column1}{Factor to test.}
 
 \item{rank}{Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)}
+
+\item{axis}{Select the axis to plot}
+
+\item{multilevel}{Factor (metadata column name) used within matrix decomposition for repeated measurements}
+
+\item{ind.names}{either a character vector of names for the individuals to be plotted, or FALSE for no names. If TRUE, the row names of the first (or second) data matrix is used as names (see mixOmics Details).}
+
+\item{ellipse}{Logical indicating if ellipse plots should be plotted (see mixOmics Details).}
+
+\item{progressBar}{Silence the progress bar.}
 }
 \value{
 Return a list object with plots, and loadings table.
