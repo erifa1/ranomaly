@@ -14,6 +14,7 @@
 heatmapDeseq2_fun <- function(desq, phys, var, workingRank, output = "./deseq/heatmap/") {
   dir.create(output, recursive = TRUE)
   pheat = list()
+
   for (i in names(desq)) {
     tableDESeqSig <- desq[[i]][["table"]] |> subset(padj < 0.05) |> na.omit()
 
@@ -22,9 +23,9 @@ heatmapDeseq2_fun <- function(desq, phys, var, workingRank, output = "./deseq/he
                                transform_sample_counts(phys, function(x) x/sum(x)))
 
     # remove unused sample
-    keepSamp <<- stringr::str_split(i, "_vs_", simplify = TRUE)
+    keepSamp <- stringr::str_split(i, "_vs_", simplify = TRUE)
 
-    psTaxaRelSig2 <- paste("psTaxaRelSigSubset <<- subset_samples(psTaxaRelSig, ",
+    psTaxaRelSig2 <- paste("psTaxaRelSigSubset <- subset_samples(psTaxaRelSig, ",
                            var, " %in% keepSamp)", sep = "")
     eval(parse(text = psTaxaRelSig2))
     psTaxaRelSigSubset <- subset_taxa(psTaxaRelSigSubset,
@@ -75,13 +76,14 @@ heatmapDeseq2_fun <- function(desq, phys, var, workingRank, output = "./deseq/he
     }
     title <- i 
 
-    pheat[[i]] <- pheatmap::pheatmap(matrix, scale = "row",
+    pheat[[i]] <- pheat1 <- pheatmap::pheatmap(matrix, scale = "row",
                            annotationCol = annotationCol,
                            annotationRow = annotationRow,
                            main = title)
 
     png(glue::glue("{output}/pheatmap-{i}.png"), , width = 1200, height = 800, res = 150)
-    print(pheat[[i]])
+    print(glue::glue("Output {i}"))
+    print(pheat1)
     dev.off()
 
   }
