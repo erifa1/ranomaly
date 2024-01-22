@@ -197,6 +197,20 @@ plsda_fun <- function (data = data, output = "./plsda/", column1 = "",
     replayPlot(outF$loadings[[glue::glue("comp{comp}")]])
     dev.off()
   }
+
+  outF[["var"]] = list()
+  for (comp in 2:3) {
+    plotVar(splsda.res, comp = c(1,comp), title = paste("Loadings on comp 1 and ",
+                                                        comp, sep = ""))
+    outF$var[[glue::glue("comp{comp}")]] <- recordPlot()
+    invisible(dev.off())
+    png(paste(output, "/splsda_var_", column1, "_",
+              rank, "_comp1-", comp, ".png", sep = ""), width = 800,
+        height = 800)
+    replayPlot(outF$var[[glue::glue("comp{comp}")]])
+    dev.off()
+  }
+
   outF$splsda.loadings_table = splsda.res$loadings$X
   write.table(splsda.res$loadings$X, paste(output, "/splsda_table_",
                                            column1, "_", rank, ".csv", sep = ""), quote = FALSE,
