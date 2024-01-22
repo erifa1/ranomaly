@@ -136,8 +136,8 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
 
     # flog.info('DESeq2...')
     # print(dseq2)
-
-    dseq3 = DESeq2::DESeq(dseq2, test="Wald", fitType="parametric")
+    dseq3 = try(DESeq2::DESeq(dseq2, test="Wald", fitType="parametric"))
+    if(class(dseq3) == "try-error"){next}
     flog.debug(show(dseq3))
 
     res = results(dseq3, cooksCutoff = FALSE, contrast = c(column1,combinaisons[1,col] , combinaisons[2,col]))
@@ -187,10 +187,11 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
 
     } else{
       flog.info(paste('No significant results for comparison ',combinaisons[1,col], ' ' , combinaisons[2,col], sep=''))
-      tab0 = data.frame(matrix(ncol = 14, nrow = 0))
+      headers <- c(resultsNames(dseq3)[2], colnames(res), colnames(tax_table(data)))
+      tab0 = data.frame(matrix(ncol = length(headers), nrow = 0))
       # print(length(c(resultsNames(deseq)[2], colnames(res), colnames(tax_table(data)))))
       # print(c(resultsNames(deseq)[2], colnames(res), colnames(tax_table(data))))
-      colnames(tab0) <- c(resultsNames(dseq3)[2], colnames(res), colnames(tax_table(data)))
+      colnames(tab0) <- headers
       write.table(tab0, file = paste(output,'/signtab_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.csv',sep=''),quote=FALSE,sep="\t", row.names=FALSE)
 
     }
