@@ -8,6 +8,9 @@
 #' @param verbose Verbose level. (1: quiet, 3: verbal)
 #' @param confidence Bootstrap threshold 0...100
 #' @param returnval Boolean to return values in console or not.
+#' @param ncpu Number of cpu to use. 
+#' @param prefix Vector of prefixes to use.
+#' @param ranks_names Taxonomy ranks names.
 #'
 #'
 #' @return Return a taxonomy table with multiple ancestor checking and incongruence checking when more than one databases are used.
@@ -17,7 +20,9 @@
 
 #' @export
 
-idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", confidence = 50, verbose = 1, returnval = TRUE, ncpu=NULL){
+idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", confidence = 50, verbose = 1, 
+  returnval = TRUE, ncpu=NULL, prefix = c("k__","p__","c__","o__","f__","g__","s__"), 
+  ranks_names = c("Domain", "Phylum", "Class", "Order", "Family", "Genus", "Species")){
   if(verbose == 3){
     flog.threshold(DEBUG)
   }
@@ -140,11 +145,11 @@ idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", co
   }else{
     # One DB assignment
     taxid <- sapply(taxid_list[[1]], function(x) {
-      taxa <- rep(NA,7)
+      taxa <- rep(NA,length(ranks_names))
       assign <- x$taxon
       # print(assign)
       if(length(assign[-1])==0){
-        taxa <- rep("unassigned",7)
+        taxa <- rep("unassigned",length(ranks_names))
       } else {
         taxa[1:length(assign[-1])] <- assign[-1]
       }
@@ -177,30 +182,31 @@ idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", co
   }
 
   # Filling taxonomy with last assigned rank.
-  colnames(taxid) <- c("Domain", "Phylum", "Class", "Order", "Family", "Genus", "Species")
+  colnames(taxid) <- ranks_names
   flog.info("Filling missing taxonomy ranks...")
-  PREFIX = c("k__","p__","c__","o__","f__","g__","s__")
+  # PREFIX = prefix
   # handling possible prefix
-  noprefix_taxid = taxid[grep("k__",taxid[,1], invert = TRUE),]
-  prefix_taxid = taxid[grep("k__",taxid[,1]),]
+  # noprefix_taxid = taxid[grep("k__",taxid[,1], invert = TRUE),]
+  # prefix_taxid = taxid[grep("k__",taxid[,1]),]
 
-  if(nrow(noprefix_taxid) != 0){
-    noprefix_taxid = fill_tax_fun(noprefix_taxid, prefix = FALSE)
-    noprefix_taxid = as.data.frame( t(apply(noprefix_taxid, 1, function(x){ paste(PREFIX, x, sep="")})), stringAsFactors = FALSE)
-    colnames(noprefix_taxid) = colnames(taxid)
-  }
+  # if(nrow(noprefix_taxid) != 0){
+  #   noprefix_taxid = fill_tax_fun(noprefix_taxid, prefix = FALSE)
+  #   noprefix_taxid = as.data.frame( t(apply(noprefix_taxid, 1, function(x){ paste(PREFIX, x, sep="")})), stringAsFactors = FALSE)
+  #   colnames(noprefix_taxid) = colnames(taxid)
+  # }
 
-  if(nrow(prefix_taxid) != 0){
-    prefix_taxid = fill_tax_fun(prefix_taxid, prefix = TRUE)
-  }
-  filled_taxid = rbind.data.frame(noprefix_taxid, prefix_taxid)
+  # if(nrow(prefix_taxid) != 0){
+  #   prefix_taxid = fill_tax_fun(prefix_taxid, prefix = TRUE)
+  # }
+  
+  final_taxid = fill_tax_fun(taxid, prefix = prefix, ranks_names = ranks_names)
 
-  tax.table = filled_taxid[names(dna),]
+  tax.table = final_taxid[names(dna),]
 
   flog.info('Done.')
 
   flog.info("Check taxonomy consistency...")
-  tax.tablecheck = check_tax_fun(tax.table, output = NULL, rank = 6, verbose = 3)
+  tax.tablecheck = check_tax_fun(tax.table, output = NULL, rank = length(ranks_names) - 1, ranks_names = ranks_names, verbose = 3)
   flog.info("Done.")
 
   #Output table 2

@@ -33,7 +33,7 @@ metagenomeseq_fun <- function(data = data, output = "./metagenomeseq/", column1 
   if(!dir.exists(output)){
     dir.create(output, recursive = TRUE)
   }
-  ranks <- c("Domain","Phylum","Class","Order","Family","Genus","Species")
+  ranks <- rank_names(data)
   if(comp == ''){
     fun <- paste('combinaisons <- combn(na.omit(unique(sample_data(data)$',column1,')),2) ',sep='')
     eval(parse(text=fun))

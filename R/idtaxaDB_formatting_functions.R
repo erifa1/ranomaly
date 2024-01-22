@@ -3,7 +3,8 @@
 #'
 #'
 #' @param taxtable Taxonomy table in tabulated format.
-#' @param prefix TRUE if there are prefix like c("k__","p__","c__","o__","f__","g__","s__")
+#' @param prefix Vector of prefixes to use like c("k__","p__","c__","o__","f__","g__","s__"), NULL if no prefix.
+#' @param ranks_names Taxonomy ranks names
 #'
 #' @return Return the same taxonomy without empty field, last known ranks are informed.
 #'
@@ -11,15 +12,17 @@
 #' @import DECIPHER
 #' @export
 
-fill_tax_fun <- function(taxtable = taxtable, prefix = TRUE){
+fill_tax_fun <- function(taxtable = taxtable, prefix = c("k__","p__","c__","o__","f__","g__","s__"), 
+  ranks_names = c("Domain","Phylum","Class","Order","Family","Genus","Species")){
 
   fill_tax_table = function(x){
-    RANKS = c("domain","phylum","class","order","family","genus","species")
-    if(prefix){
-      PREFIX = c("k__","p__","c__","o__","f__","g__","s__")
+    RANKS <- ranks_names
+    if(is.null(prefix)){
+      PREFIX <- rep("", length(ranks_names))
     }else{
-      PREFIX = c("","","","","","","")
+      PREFIX <- prefix
     }
+
 
     TAX = x
 
@@ -28,8 +31,8 @@ fill_tax_fun <- function(taxtable = taxtable, prefix = TRUE){
       return(fTAX)
     }
 
-    for( i in 1:7){
-      if(is.na(TAX[i])){
+    for( i in 1:length(ranks_names)){
+      if(is.na(TAX[i]) | grepl("__NA$", TAX[i]) ){
         if(grepl(PREFIX[i-1], TAX[i-1], ignore.case = FALSE, perl = FALSE, fixed = TRUE)){
           TAX[i-1] <- sub(PREFIX[i-1],'',TAX[i-1])
         }
@@ -43,7 +46,7 @@ fill_tax_fun <- function(taxtable = taxtable, prefix = TRUE){
 
 
   filltable <- tt2 <- as.data.frame( t(apply(taxtable, 1, fill_tax_table)) ,stringsAsFactors = FALSE )
-  names(filltable) = c("Domain","Phylum","Class","Order","Family","Genus","Species")
+  names(filltable) = ranks_names
   rownames(filltable) =  rownames(taxtable)
 
   return(filltable)
@@ -65,8 +68,10 @@ fill_tax_fun <- function(taxtable = taxtable, prefix = TRUE){
 
 
 
-check_tax_fun <- function(taxtable = taxtable, output = NULL, rank = 7, verbose=3, returnval = TRUE){
-  RANKS = c("_domain","_phylum","_class","_order","_family","_genus","_species")
+check_tax_fun <- function(taxtable = taxtable, output = NULL, rank = 7, 
+  ranks_names = c("Domain","Phylum","Class","Order","Family","Genus","Species"), verbose=3, returnval = TRUE){
+  RANKS  <- stringr::str_to_lower(ranks_names) %>% paste("_", ., sep = "")
+
   # Check for multiple ancestors at each rank, choose first occurence for each problematic taxon
   sink(paste('./check_tax_fun.log', sep=""), split = TRUE)
   for(rk in rank:2){
