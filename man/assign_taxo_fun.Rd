@@ -11,7 +11,9 @@ assign_taxo_fun(
   confidence = 50,
   verbose = 1,
   returnval = TRUE,
-  ncpu = NULL
+  ncpu = NULL,
+  prefix = c("k__", "p__", "c__", "o__", "f__", "g__", "s__"),
+  ranks_names = c("Domain", "Phylum", "Class", "Order", "Family", "Genus", "Species")
 )
 }
 \arguments{
@@ -28,6 +30,10 @@ assign_taxo_fun(
 \item{returnval}{Boolean to return values in console or not.}
 
 \item{ncpu}{Number of cpus to use.}
+
+\item{prefix}{Vector of prefixes to use.}
+
+\item{ranks_names}{Taxonomy ranks names.}
 }
 \value{
 Return a taxonomy table with multiple ancestor checking and incongruence checking when more than one databases are used.

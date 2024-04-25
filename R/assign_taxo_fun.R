@@ -9,6 +9,8 @@
 #' @param confidence Bootstrap threshold 0...100
 #' @param returnval Boolean to return values in console or not.
 #' @param ncpu Number of cpus to use.
+#' @param prefix Vector of prefixes to use.
+#' @param ranks_names Taxonomy ranks names.
 #'
 #'
 #' @return Return a taxonomy table with multiple ancestor checking and incongruence checking when more than one databases are used.
@@ -23,7 +25,9 @@
 
 
 
-assign_taxo_fun <- function(dada_res = dada_res,  output = "./idtaxa/", id_db = "/PathToDB/UNITE_idtaxa.Rdata", confidence = 50, verbose = 1, returnval = TRUE, ncpu=NULL){
+assign_taxo_fun <- function(dada_res = dada_res,  output = "./idtaxa/", id_db = "/PathToDB/UNITE_idtaxa.Rdata", 
+  confidence = 50, verbose = 1, returnval = TRUE, ncpu=NULL, prefix = c("k__","p__","c__","o__","f__","g__","s__"), 
+  ranks_names = c("Domain", "Phylum", "Class", "Order", "Family", "Genus", "Species")){
 
 
   if(verbose == 3){
@@ -41,7 +45,8 @@ assign_taxo_fun <- function(dada_res = dada_res,  output = "./idtaxa/", id_db = 
   if(!all( names(dna) == rownames(dada_res$otu.table) )){stop("Seq names and ASV table row names are different")}
 
   tt2 = idtaxa_assign_fasta_fun(fasta = dna, id_db = id_db,
-        output = output, confidence = confidence, verbose = verbose, returnval = returnval)
+        output = output, confidence = confidence, verbose = verbose, returnval = returnval, 
+        prefix = prefix, ranks_names = ranks_names)
 
 
 }

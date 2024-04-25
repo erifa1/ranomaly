@@ -96,7 +96,7 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
         mgseqT <- data.frame()
       }
     }
-    flog.debug(pander(mgseqT, split.tables=2000))
+    flog.debug(pander::pander(mgseqT, split.tables=2000))
     # print(head(mgseqT))
     flog.info('Metacoder.')
     if(file.exists(paste(metacoder))){
@@ -177,14 +177,13 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
     }
 
     TABfbak0 <- TABf
-
     # add new columns, sumMethods, DeseqLFC, Mean Relative Abundance (TSS) condition 1 & 2
-    row.names(deseqT) = deseqT[,1]
     if(nrow(deseqT)==0){
       TABf <- cbind(TABf, sumMethods = apply(TABf[3:5], 1, sum, na.rm=TRUE),
                     DESeqLFC = rep(NA, nrow(TABf)),
                     absDESeqLFC = rep(NA, nrow(TABf)))
     }else{
+      row.names(deseqT) = deseqT[,1]
       TABf <- cbind( TABf, sumMethods = apply(TABf[3:5], 1, sum, na.rm=TRUE),
                      DESeqLFC = deseqT[as.character(TABf[,1]),"log2FoldChange"],
                      absDESeqLFC = abs(deseqT[as.character(TABf[,1]),"log2FoldChange"]) )

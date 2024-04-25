@@ -322,9 +322,11 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
       fun <- paste("data <- subset_samples(data, ",column," %in% '",spl_identifier,"')",sep="")
       eval(parse(text=fun))
     }
-  } else{
+  } else if(column == ""){
+    flog.info(paste0('No column to remove from metadata.'))
+  }else {
     flog.error(paste0(column, ' not present in metadata.'))
-    exit(1)
+    # exit(1)
   }
 
 

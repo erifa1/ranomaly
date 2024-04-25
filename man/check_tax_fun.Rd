@@ -8,6 +8,7 @@ check_tax_fun(
   taxtable = taxtable,
   output = NULL,
   rank = 7,
+  ranks_names = c("Domain", "Phylum", "Class", "Order", "Family", "Genus", "Species"),
   verbose = 3,
   returnval = TRUE
 )

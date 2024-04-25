@@ -4,12 +4,18 @@
 \alias{fill_tax_fun}
 \title{Fill taxonomy table (idtaxa training functions)}
 \usage{
-fill_tax_fun(taxtable = taxtable, prefix = TRUE)
+fill_tax_fun(
+  taxtable = taxtable,
+  prefix = c("k__", "p__", "c__", "o__", "f__", "g__", "s__"),
+  ranks_names = c("Domain", "Phylum", "Class", "Order", "Family", "Genus", "Species")
+)
 }
 \arguments{
 \item{taxtable}{Taxonomy table in tabulated format.}
 
-\item{prefix}{TRUE if there are prefix like c("k__","p__","c__","o__","f__","g__","s__")}
+\item{prefix}{Vector of prefixes to use like c("k__","p__","c__","o__","f__","g__","s__"), NULL if no prefix.}
+
+\item{ranks_names}{Taxonomy ranks names}
 }
 \value{
 Return the same taxonomy without empty field, last known ranks are informed.
