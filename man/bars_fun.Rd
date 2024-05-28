@@ -17,7 +17,8 @@ bars_fun(
   autoorder = TRUE,
   ylab = "Abundance",
   outfile = "plot_compo.html",
-  verbose = TRUE
+  verbose = TRUE,
+  pal = NULL
 )
 }
 \arguments{
@@ -44,6 +45,10 @@ bars_fun(
 \item{ylab}{Y axis title ("Abundance")}
 
 \item{outfile}{Output html file.}
+
+\item{verbose}{Boolean verbosity level.}
+
+\item{pal}{Color palette.}
 }
 \value{
 Returns barplots in an interactive plotly community plot
