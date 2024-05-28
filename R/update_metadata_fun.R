@@ -21,10 +21,11 @@ update_metadata_fun <- function(data = data, output = "./updated_physeq/", metad
     flog.info("Loading sample metadata..")
     if(tools::file_ext(metadata) %in% c('xls', 'xlsx')){
       sampledata <- readxl::read_excel(path=metadata, sheet=1, col_names=T)
-      sampledata <- as.data.frame(sampledata)
+      
     } else if (tools::file_ext(metadata) %in% c('csv', 'tsv')){
-      sampledata <- vroom::vroom(file=metadata, delim="\t", locale = readr::locale(decimal_mark = ",", encoding = "UTF-8"))
+      sampledata <- vroom::vroom(file=metadata, delim="\t", locale = readr::locale(decimal_mark = ".", encoding = "UTF-8"), show_col_types = FALSE)
     }
+    sampledata <- as.data.frame(sampledata)
     rownames(sampledata) <- sampledata[,'sample.id']
 
     sample.metadata <- sample_data(sampledata)
