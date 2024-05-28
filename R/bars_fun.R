@@ -72,6 +72,8 @@ aggregate_top_taxa <- function (x, top, level){
 #' @param autoorder Automatic ordering xaxis labels based on Ord1 factor levels with gtools::mixedorder function (TRUE).
 #' @param ylab Y axis title ("Abundance")
 #' @param outfile Output html file.
+#' @param verbose Boolean verbosity level.
+#' @param pal Color palette.
 #'
 #' @return Returns barplots in an interactive plotly community plot
 #'
@@ -85,7 +87,7 @@ aggregate_top_taxa <- function (x, top, level){
 
 
 bars_fun <- function(data = data, rank = "Genus", top = 10, Ord1 = NULL, sample_labels = FALSE, split = FALSE, split_sid_order = FALSE,
-                     relative = TRUE, levelsOrder = TRUE, autoorder = TRUE, ylab = "Abundance", outfile="plot_compo.html", verbose = TRUE){
+                     relative = TRUE, levelsOrder = TRUE, autoorder = TRUE, ylab = "Abundance", outfile="plot_compo.html", verbose = TRUE, pal = NULL){
 
   if(verbose){
     invisible(flog.threshold(INFO))
@@ -175,7 +177,8 @@ if( all(Ord1 != sample_variables(data))){
     y = ~y,
     color = ~g,
     legendgroup = ~g,
-    showlegend = FALSE
+    showlegend = FALSE,
+    colors = pal
   ) %>% plotly::layout(xaxis = list(zeroline = FALSE,showline = FALSE, showgrid = FALSE),
                yaxis=list(showticklabels = FALSE,title = "",showgrid = FALSE))
 
@@ -197,7 +200,7 @@ if( all(Ord1 != sample_variables(data))){
 
     }
 
-    p1=plot_ly(meltdat, x = ~sample.id, y = ~value, type = 'bar', name = ~variable, color = ~variable) %>% #, color = ~variable
+    p1=plot_ly(meltdat, x = ~sample.id, y = ~value, type = 'bar', name = ~variable, color = ~variable, colors = pal) %>% #, color = ~variable
       plotly::layout(title="Relative abundance", yaxis = list(title = 'Relative abundance'), xaxis = xform, barmode = 'stack')
 
     if(length(df1$x) != length(unique(df1$g))){
@@ -207,7 +210,7 @@ if( all(Ord1 != sample_variables(data))){
   }else{
   flog.info('Plotting raw...')
     #raw abundance
-    p1=plot_ly(meltdat, x = ~sample.id, y = ~value, type = 'bar', name = ~variable, color = ~variable) %>% #, color = ~variable
+    p1=plot_ly(meltdat, x = ~sample.id, y = ~value, type = 'bar', name = ~variable, color = ~variable, colors = pal) %>% #, color = ~variable
        plotly::layout(title="Raw abundance", yaxis = list(title = 'Raw abundance'), xaxis = xform, barmode = 'stack')
 
     if(length(df1$x) != length(unique(df1$g))){
@@ -220,10 +223,10 @@ if( all(Ord1 != sample_variables(data))){
     if(!is.null(outfile)){
       htmlwidgets::saveWidget(p1, outfile)
     }
-  flog.info('Finish...')
+    flog.info('Finish...')
     return(p1)
   } else {
-  flog.info('Splitted plot...')
+    flog.info('Splitted plot...')
     if(split_sid_order){
     meltdat$sample.id = factor(meltdat$sample.id, levels = unique(meltdat$sample.id)) # keep sample ids order from metadata.
     }
@@ -233,7 +236,7 @@ if( all(Ord1 != sample_variables(data))){
         dplyr::group_map(~ plot_ly(data=., x = ~sample.id, y = ~value, type = 'bar',
                                    name = ~variable,
                                    color = ~variable, legendgroup = ~variable,
-                                   showlegend = (.y == unique(as.character(meltdat[, Ord1]))[1])),
+                                   showlegend = (.y == unique(as.character(meltdat[, Ord1]))[1]), colors = pal),
                          .keep = TRUE)  %>%
       plotly::subplot(nrows = 1, shareX = TRUE, shareY=TRUE, titleX = FALSE) %>%
       plotly::layout(title="",
