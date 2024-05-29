@@ -27,14 +27,19 @@ subset_fastx <- function(path = NULL, format = "fastq", outformat = "fastq", out
   registerDoParallel(ncores)
   if(!dir.exists(output)){dir.create(output, recursive=TRUE)}
   L1 = list.files(path, pattern = glue::glue("*{format}*"), full.names = TRUE)
-  L2 = tools::file_path_sans_ext(list.files(path, pattern = glue::glue("*{format}*"), full.names = FALSE))
+  L2 = tools::file_path_sans_ext(list.files(path, pattern = glue::glue("*{format}*"), 
+    full.names = FALSE), compression = TRUE)
 
   X=NULL
   foreach (i=1:length(L1)) %dopar% {
+    outname <- glue::glue("{output}/{L2[i]}.{outformat}")
+    if (compress) {
+      outname <- glue::glue("{outname}.gz")
+    }
     X <- readDNAStringSet(L1[i], format=format, with.qualities=TRUE)
     if(verbose){print(L2[i]);print(length(X))}
     if(is.null(nbseq)){
-      writeXStringSet(X, glue::glue("{output}/{L2[i]}.{outformat}"), format = outformat, compress=compress)
+      writeXStringSet(X, outname, format = outformat, compress=compress)
       return("Done")
     }
 
@@ -47,7 +52,7 @@ subset_fastx <- function(path = NULL, format = "fastq", outformat = "fastq", out
         Xout = X[1:nbseq]
       }
     }else{Xout = X}
-    writeXStringSet(Xout, glue::glue("{output}/{L2[i]}.{outformat}"), format = outformat, compress=compress)
+    writeXStringSet(Xout, outname, format = outformat, compress=compress)
   }
   return("Done")
 
