@@ -103,7 +103,7 @@ generate_phyloseq_fun <- function(dada_res = dada_res, tax.table = tax.table, tr
 
   if(!dir.exists(output)){
     flog.info('Creating output directory...')
-    dir.create(output)
+    dir.create(output, recursive = TRUE, showWarnings = FALSE)
     flog.info('Done.')
   }
   flog.info('Saving R objects.')

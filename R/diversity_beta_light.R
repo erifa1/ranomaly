@@ -149,6 +149,7 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
     write.table(resBC2, file=paste0(output,'/',col,'pairwisepermANOVA.txt'), sep="\t")
 
     ggsave(glue::glue("{output}/beta_diversity.eps"), plot=resBeta$plot, height = 20, width = 30, units="cm", dpi = 500, device="eps")
+    saveWidget(resBeta$plotly1, glue::glue("{output}/beta_diversity.html"), selfcontained = TRUE)
 
     resBeta$permanova <- resBC
     resBeta$permanova_formula <- format(form1)
