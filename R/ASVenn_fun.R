@@ -220,7 +220,7 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
 
 VENNFUN <- function(TF = TF, TITRE = TITRE, output = "./", refseq1 = NULL, alltax=NULL, ggplotmode = FALSE){
 
-    venn.plot <- venn::venn(TF, zcol = rainbow(7), ilcs = 2, sncs = 2, ggplot = FALSE, ilabels = "counts") #, col=rainbow(7)
+    venn.plot <- venn::venn(TF, zcol = rainbow(7), ilcs = 1.5, sncs = 0.8, ggplot = FALSE, ilabels = "counts")
     venn.plot <- recordPlot()
 
     invisible(dev.off())
