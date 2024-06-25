@@ -80,7 +80,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, max
     fnFs <- sort(list.files(path, pattern = extension, full.names = TRUE))
     fnRs <- sort(list.files(path, pattern = extension2, full.names = TRUE))
 
-
+    rawCounts <- count_seq(path, pattern = ".*R1.*fastq.*")
 
     flog.debug("File list...")
     flog.debug(length(fnFs))
@@ -360,8 +360,8 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, max
     track <- track0 %>% tibble::rownames_to_column(var="sample.id")
 
 
-    final_track <- out %>% dplyr::left_join(y = track, by = "sample.id")
-    colnames(final_track) <- c("sample.id", "input", "filtered", "denoisedF", "denoisedR", "merged", "nonchim")
+    final_track <- out %>% dplyr::left_join(y = track, by = "sample.id") %>% dplyr::mutate(input = rawCounts, .after = 1)
+    colnames(final_track) <- c("sample.id", "rawcounts", "primer filtered", "filtered", "denoisedF", "denoisedR", "merged", "nonchim")
     head(final_track)
 
     write.table(final_track, paste(outpath,"/read_tracking.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
