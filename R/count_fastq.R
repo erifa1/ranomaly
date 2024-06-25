@@ -14,6 +14,11 @@
 
 count_seq <- function(path, pattern = ".*R1.*fastq.*"){
     L1 = list.files(path, pattern = pattern, full.names = TRUE)
+
+    if(length(L1) == 0){
+        stop(glue::glue("No fastq files found in the directory {path}, pattern {pattern}"))
+    }
+
     # names of samples 
     snames <- dir(path) %>% grep(pattern ,., value = TRUE) %>% as.data.frame %>% 
     tidyr::separate(., col = 1, into = "sample", sep = "_", remove = TRUE) %>%

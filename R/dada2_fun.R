@@ -364,7 +364,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, max
     colnames(final_track) <- c("sample.id", "rawcounts", "primer filtered", "filtered", "denoisedF", "denoisedR", "merged", "nonchim")
     head(final_track)
 
-    write.table(final_track, paste(outpath,"/read_tracking.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
+    write.table(final_track, paste(outpath,"/read_tracking.csv",sep=''), sep="\t", row.names=FALSE, col.names=NA, quote=FALSE)
 
 
     seqtab.export <- seqtab.nochim
@@ -396,6 +396,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, max
 
   }else{
     flog.info('### SINGLE END SOP')
+    rawCounts <- count_seq(path, pattern = ".*fastq.*")
 
     if(compress==TRUE){
       fnFs <- sort(list.files(path, pattern = ".fastq.gz", full.names = TRUE))
@@ -613,8 +614,8 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, max
       rownames(out) <- out$sample.id
       nn <- row.names(out)
       # print(names(stockFs))
-      track <- cbind.data.frame(out, stockFs[nn], rowSums(seqtab.nochim)[nn])
-      colnames(track) <- c("sample.id","input", "filtered", "denoisedF", "nonchim")
+      track <- cbind.data.frame(out, stockFs[nn], rowSums(seqtab.nochim)[nn]) %>% dplyr::mutate(input = rawCounts, .after = 1)
+      colnames(track) <- c("sample.id", "rawcounts", "primer filtered", "filtered", "denoisedF", "nonchim")
       head(track)
     }
     flog.info('Writing table ...')
