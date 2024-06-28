@@ -25,5 +25,5 @@ install_linux:
   - apt-get install -y git libcurl4-openssl-dev libssl-dev libxml2-dev libgmp3-dev libmpfr-dev cmake zlib1g-dev
   script:
     - R -e 'install.packages(c("remotes", "devtools"))'
-    - R -e 'devtools::install_git("https://forgemia.inra.fr/umrf/ranomaly", auth_token = Sys.getenv('CI_GITLAB_TOKEN'))'
+    - R -e 'remotes::install_gitlab(repo = "umrf/ranomaly", host = "forgemia.inra.fr", auth_token = Sys.getenv('CI_GITLAB_TOKEN'))'
     - R -e 'devtools::check()'
