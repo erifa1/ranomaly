@@ -4,6 +4,7 @@ stages:
 
 variables:
   R_VERSION: "4.3.3"
+  CI_GITLAB_TOKEN: $CI_GITLAB_TOKEN
 
 pages:
   stage: wiki
@@ -25,5 +26,5 @@ install_linux:
   - apt-get install -y git libcurl4-openssl-dev libssl-dev libxml2-dev libgmp3-dev libmpfr-dev cmake zlib1g-dev
   script:
     - R -e 'install.packages(c("remotes", "devtools"))'
-    - R -e 'remotes::install_gitlab(repo = "umrf/ranomaly", host = "forgemia.inra.fr", auth_token = Sys.getenv('CI_GITLAB_TOKEN'))'
+    - R -e 'remotes::install_gitlab(repo = "umrf/ranomaly", host = "forgemia.inra.fr", auth_token = Sys.getenv("CI_GITLAB_TOKEN"))'
     - R -e 'devtools::check()'
