@@ -18,7 +18,7 @@ Description: rANOMALY use Amplicon Sequence Variant (ASV from Dada2
     thin community contrast between conditions.
 License: GPL (>= 3)
 Depends:
-    R (>= 3.6)
+    R (>= 4.3)
 Imports:
     Biobase,
     BiocGenerics,
@@ -51,7 +51,7 @@ Imports:
     pander,
     phangorn,
     phyloseq,
-    plotly,
+    plotly (>= 4.10.4),
     psadd,
     qdapTools,
     ranacapa,
