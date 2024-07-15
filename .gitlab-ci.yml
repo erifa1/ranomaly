@@ -28,3 +28,5 @@ install_linux:
     - R -e 'install.packages(c("remotes", "devtools"))'
     - R -e 'remotes::install_gitlab(repo = "umrf/ranomaly", host = "forgemia.inra.fr", auth_token = Sys.getenv("CI_GITLAB_TOKEN"))'
     - R -e 'devtools::check()'
+  only:
+  - master

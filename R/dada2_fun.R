@@ -662,3 +662,33 @@ get.sample.name <- function(fname){
   tt <- strsplit(basename(fname), "_")[[1]][1]
   return(tt)
 }
+
+#' Frequency filter on dada_fun output
+#'
+#' Apply filter to eliminate rare ASVs, allowing to reduce the size of the dataset and to remove potential contaminants.
+#' @param dada_res a dada_fun output
+#' @param freq a frequency threshold to filter rare ASVs
+#' @return Filtered dada_fun output
+#' 
+#' @examples
+#' dada_filter(dada_res = dada_res, freq = 0.00005)
+#' 
+
+dada_filter <- function(dada_res = dada_res, freq = 0.00005){
+
+  seqtab.nochim <- dada_res$seqtab.nochim %>% t() %>% as.data.frame() %>%
+      dplyr::mutate( sumASV =  apply(., 1, sum) ) %>%
+      dplyr::mutate( freqASV = sumASV / sum(sumASV) ) %>%
+      dplyr::filter( freqASV > 0.00005 ) %>%
+      dplyr::select( -sumASV, -freqASV ) %>% t()
+
+  seqtab.export <- seqtab.nochim
+  colnames(seqtab.export) <- sapply(colnames(seqtab.export), digest::digest, algo="md5")
+
+  otu.table <- phyloseq::otu_table(t(seqtab.export), taxa_are_rows = TRUE)
+
+  dada_res2 <- list(seqtab.nochim = seqtab.nochim, seqtab.export = seqtab.export, otu.table = otu.table)
+
+  return(dada_res2)
+}
+
