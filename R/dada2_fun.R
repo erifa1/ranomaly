@@ -59,6 +59,10 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, max
     stop(glue::glue("No files in the input directory, or this directory does not exist. ({path})"))
   }
 
+  if(summary(file(dir(path,full.names=TRUE)[1]))$class == "gzfile" & compress == FALSE){
+    stop(glue::glue("Files are compressed, please set compress = TRUE."))
+  }
+
   flog.info("Creating directory.")
   if(!dir.exists(outpath)){
     dir.create(outpath, recursive = TRUE)
