@@ -221,6 +221,7 @@ if( all(Ord1 != sample_variables(data))){
   # Splitted plot output
   if(!split) {
     if(!is.null(outfile)){
+      dir.create(dirname(outfile), recursive = TRUE, showWarnings = FALSE)
       htmlwidgets::saveWidget(p1, outfile)
     }
     flog.info('Finish...')
@@ -249,6 +250,7 @@ if( all(Ord1 != sample_variables(data))){
       p1$x$layoutAttrs[[1]][[paste0("xaxis", i)]]$title <- glue("{Ord1} =\n{levels(meltdat[, Ord1])[i]}")
     }
     if(!is.null(outfile)){
+      dir.create(dirname(outfile), recursive = TRUE, showWarnings = FALSE)
       htmlwidgets::saveWidget(p1, outfile)
     }
   flog.info('Finish...')
