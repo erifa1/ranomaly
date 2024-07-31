@@ -52,7 +52,7 @@ generate_tree_fun <- function(dada_res = NULL, psobj = NULL, output = "./tree", 
     return(1)
   }
 
-  if(file.exists(paste(output, 'alignment.Rdata', sep=''))){
+  if(file.exists(paste(output, '/alignment.Rdata', sep=''))){
     flog.info('Alignment file already exists, loading...')
     load(paste(output, 'alignment.Rdata', sep=''))
   }

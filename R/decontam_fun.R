@@ -31,6 +31,7 @@
 #' @import futile.logger
 #' @import psadd
 #' @import VennDiagram
+#' @import grid
 #'
 #' @export
 
@@ -264,21 +265,27 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
   TF = list(decontam=taxToDump0,freq=taxToDump1,prev=taxToDump2,unassigned=taxToDump4)
   TF = Filter(length, TF) #ommit empty field of list TF
 
-
-  flog.info('Plotting Venn diagrams...')
-  if(length(TF) > 0){
+  # #DEBUG
+  # TF$taxdf=taxdf
+  # return(TF)
+  # #DEBUG
+  if(length(TF) != 0){
+    flog.info('Plotting Venn diagrams...')
     venn.plot <- venn.diagram(TF, filename = NULL, col = "black",
-                            fill = rainbow(length(TF)), alpha = 0.50,
-                            cex = 1.5, cat.col = 1, lty = "blank",
-                            cat.cex = 1.8, cat.fontface = "bold",
-                            margin = 0.1, main=paste("filtered ASVs"), main.cex=2.5,
-                            fontfamily ="Arial", main.fontfamily="Arial", cat.fontfamily="Arial") #cat.dist = 0.09,
+                              fill = rainbow(length(TF)), alpha = 0.50,
+                              cex = 1.5, cat.col = 1, lty = "blank",
+                              cat.cex = 1.8, cat.fontface = "bold",
+                              margin = 0.1, main=paste("filtered ASVs"), main.cex=2.5,
+                              fontfamily ="Arial",main.fontfamily="Arial",cat.fontfamily="Arial") #cat.dist = 0.09,
     png(paste(output,'/venndiag_filtering.png',sep=''), width=20, height=20, units="cm", res=200)
     grid::grid.draw(venn.plot)
     invisible(dev.off())
+  }
+  
 
-    flog.info('Generate Exclu_out table...')
-    # Tests in which method each ASV is filtered.
+  flog.info('Generate Exclu_out table...')
+  # Tests in which method each ASV is filtered.
+  if(length(uniqTaxToDump) > 0){
     TABf = otu_table(prune_taxa(uniqTaxToDump,data))
     for (j in 1:length(TF)){
       TABtest = TF[[j]]
@@ -290,16 +297,14 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
       names(TABf)[1] = names(TF)[j]
     }
 
+
     if(!is.null(data@tax_table)){
       TABff <- cbind(as.matrix(TABf), as.matrix(data_no_filtering@tax_table[row.names(TABf),]))
     }else{
       TABff <- as.matrix(TABf)
     }
     write.table(TABff, file = paste(output,'/Exclu_out.csv',sep=''), sep = "\t", col.names=NA)
-
-
   }
-  
 
 
   data <- dataKeep
@@ -312,8 +317,6 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
   }
   data <- prune_samples(sample_sums(data) > number, data)
   flog.info('Done.')
-
-
 
   ##TAXA to remove manually
   if(!is.null(manual_cont)){
@@ -329,7 +332,6 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
   }
 
   ##Remove Control samples for next analysis
-
   if(column %in% colnames(sample_data(data))){
     if( any(sample_data(data)[,column] == ctrl_identifier) ){
       flog.info('Subsetting controls samples.')
@@ -340,9 +342,7 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
     flog.info(paste0('No column to remove from metadata.'))
   }else {
     flog.error(paste0(column, ' not present in metadata.'))
-    # exit(1)
   }
-
 
   flog.info(paste("AFTER FILTERING: ",nsamples(data), "samples and", ntaxa(data),"ASVs in otu table") )
 
@@ -365,9 +365,6 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
     write.table(cbind(otu_table(data_rel), "sequences"=as.data.frame(refseq(data_rel))),paste(output,"/relative_otu-table.csv",sep=''), sep="\t", row.names=TRUE, col.names=NA, quote=FALSE)
 
   }
-
-
-
 
   flog.info('Saving R objects.')
   save(data, file=paste(output,'/robjects.Rdata',sep=''))
