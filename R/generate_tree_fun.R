@@ -73,7 +73,7 @@ generate_tree_fun <- function(dada_res = NULL, psobj = NULL, output = "./tree", 
     
     flog.info('Aligning sequences...')
     alignment <- AlignSeqs(sequences, anchor=NA, processors=n_cpus,  guideTree=gT)
-    save(alignment, file=paste(output, 'alignment.Rdata', sep=''))
+    save(alignment, file=paste(output, '/alignment.Rdata', sep=''))
   }
   flog.info('Creating distance matrices...')
   phang.align <- phyDat(as(alignment, "matrix"), type="DNA")
