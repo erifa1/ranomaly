@@ -4,7 +4,7 @@ stages:
 
 variables:
   R_VERSION: "4.3.3"
-  GITHUB_PAT: $GITHUB_PAT_TOKEN
+  GITHUB_PAT_TOKEN: $GITHUB_PAT_TOKEN
   CI_GITLAB_TOKEN: $CI_GITLAB_TOKEN
 
 pages:
@@ -26,6 +26,8 @@ install_linux:
   - apt-get update -qq && apt-get install -y --no-install-recommends
   - apt-get install -y git libcurl4-openssl-dev libssl-dev libxml2-dev libgmp3-dev libmpfr-dev cmake zlib1g-dev
   script:
+    - echo "GITHUB_PAT=$GITHUB_PAT_TOKEN" >> ~/.Renviron
+    - cat ~/.Renviron
     - R -e 'install.packages(c("remotes", "devtools"))'
     - R -e 'remotes::install_gitlab(repo = "umrf/ranomaly", host = "forgemia.inra.fr", upgrade = FALSE)'
     - R -e 'devtools::check()'
