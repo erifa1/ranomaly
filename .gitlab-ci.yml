@@ -4,6 +4,7 @@ stages:
 
 variables:
   R_VERSION: "4.3.3"
+  GITHUB_PAT: $GITHUB_PAT_TOKEN
   CI_GITLAB_TOKEN: $CI_GITLAB_TOKEN
 
 pages:
