@@ -59,6 +59,7 @@ fill_tax_fun <- function(taxtable = taxtable, prefix = c("k__","p__","c__","o__"
 #' @param taxtable Output from fill_tax_table function.
 #' @param output output path
 #' @param rank Deepest taxonomy rank at which correction begin (7 for Species, 6 for Genus etc...).
+#' @param ranks_names Vector with taxonomy ranks names
 #' @param verbose verbose mode
 #' @param returnval Boolean to return values in console or not.
 

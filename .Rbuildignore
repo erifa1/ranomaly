@@ -1,3 +1,8 @@
 ^ranomaly\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
+^markdown$
+^markdown/.*
+^\.gitlab-ci\.yml$
+^inst/scripts$
+^inst/scripts/.*

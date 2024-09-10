@@ -35,6 +35,10 @@ count_seq <- function(path, pattern = ".*R1.*fastq.*"){
 #' count_fastq_sequences
 #'
 #' Count the number of sequences in a fastq file.
+#' 
+#' @param file_path Path to the fastq file
+#' 
+#' @return The number of sequences in the fastq file
 
 count_fastq_sequences <- function(file_path) {
   # Ouvrir le fichier en mode lecture

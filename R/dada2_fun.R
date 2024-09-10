@@ -25,8 +25,10 @@
 #'
 #' @return Return raw otu table in phyloseq object and export it in an Rdata file.
 #'
-#' @examples See https://forgemia.inra.fr/umrf/ranomaly/-/wikis/home#dada2-usage-according-to-raw-data-type
-#'
+#' @examples 
+#' \dontrun{
+#' See https://forgemia.inra.fr/umrf/ranomaly/-/wikis/home#dada2-usage-according-to-raw-data-type
+#' }
 #' @import dada2
 #' @import psadd
 #' @import ShortRead
@@ -675,8 +677,10 @@ get.sample.name <- function(fname){
 #' @return Filtered dada_fun output
 #' 
 #' @examples
+#' dontrun{
 #' dada_filter(dada_res = dada_res, freq = 0.00005)
-#' 
+#' }
+#' @export
 
 dada_filter <- function(dada_res = dada_res, freq = 0.00005){
 

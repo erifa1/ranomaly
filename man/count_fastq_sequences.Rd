@@ -6,6 +6,12 @@
 \usage{
 count_fastq_sequences(file_path)
 }
+\arguments{
+\item{file_path}{Path to the fastq file}
+}
+\value{
+The number of sequences in the fastq file
+}
 \description{
 Count the number of sequences in a fastq file.
 }

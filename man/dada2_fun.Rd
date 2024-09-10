@@ -75,6 +75,7 @@ Return raw otu table in phyloseq object and export it in an Rdata file.
 Processing DADA2 algorithm on raw sequences (IonTorrent or Illumina / single or paired end), return raw otu table with representative sequence of ASV.
 }
 \examples{
+\dontrun{
 See https://forgemia.inra.fr/umrf/ranomaly/-/wikis/home#dada2-usage-according-to-raw-data-type
-
+}
 }

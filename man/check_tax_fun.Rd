@@ -20,6 +20,8 @@ check_tax_fun(
 
 \item{rank}{Deepest taxonomy rank at which correction begin (7 for Species, 6 for Genus etc...).}
 
+\item{ranks_names}{Vector with taxonomy ranks names}
+
 \item{verbose}{verbose mode}
 
 \item{returnval}{Boolean to return values in console or not.}

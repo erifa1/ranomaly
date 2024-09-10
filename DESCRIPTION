@@ -63,6 +63,7 @@ Imports:
     stats,
     stringr,
     tibble,
+    tidyr,
     tools,
     utils,
     vegan,

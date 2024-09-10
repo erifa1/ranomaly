@@ -16,6 +16,8 @@
 #' default is 'bonferroni'.
 #'
 #'@param reduce String. Restrict comparison to pairs including these factors. If more than one factor, separate by pipes like  reduce = 'setosa|versicolor'
+#' 
+#' @param perm Number of permutations, default is 999.
 #'
 #'@return Table with the pairwise factors, Df, SumsOfSqs, F-values, R^2, p.value and adjusted p.value.
 #'
