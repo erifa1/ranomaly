@@ -2,10 +2,24 @@ stages:
   - wiki
   - install
 
+cache:
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+  - installed_deps/
+
 variables:
   R_VERSION: "4.3.3"
-  GITHUB_PAT_TOKEN: $GITHUB_PAT_TOKEN
+  GITHUB_PAT: $CI_GITHUB_TOKEN
   CI_GITLAB_TOKEN: $CI_GITLAB_TOKEN
+
+
+default:
+  before_script:
+  - mkdir -p installed_deps
+  - echo 'R_LIBS="installed_deps"' > .Renviron
+  - echo 'R_LIBS_USER="installed_deps"' >> .Renviron
+  - echo 'R_LIBS_SITE="installed_deps"' >> .Renviron
+
 
 pages:
   stage: wiki
@@ -23,13 +37,17 @@ install_linux:
   stage: install
   image: rocker/r-ver:${R_VERSION}
   before_script:
+  - echo "GITHUB_PAT=${GITHUB_PAT}" >> .Renviron
+  - cat .Renviron
   - apt-get update -qq && apt-get install -y --no-install-recommends
-  - apt-get install -y git libcurl4-openssl-dev libssl-dev libxml2-dev libgmp3-dev libmpfr-dev cmake zlib1g-dev
+  - apt-get install -y git libcurl4-openssl-dev libssl-dev libxml2-dev libgmp3-dev libmpfr-dev cmake zlib1g-dev libglpk40 libglpk-dev liblzma-dev libbz2-dev
+  - R -e 'install.packages(c("remotes", "devtools", "BiocManager"))'
   script:
-    - echo "GITHUB_PAT=$GITHUB_PAT_TOKEN" >> ~/.Renviron
-    - cat ~/.Renviron
-    - R -e 'install.packages(c("remotes", "devtools"))'
-    - R -e 'remotes::install_gitlab(repo = "umrf/ranomaly", host = "forgemia.inra.fr", upgrade = FALSE)'
+    - R -e 'options(repos = BiocManager::repositories()); remotes::install_gitlab(repo = "umrf/ranomaly", host = "forgemia.inra.fr", upgrade = FALSE)'
     - R -e 'devtools::check()'
+  artifacts:
+    paths:
+      - installed_deps
+    expire_in: 7 days
   only:
   - master

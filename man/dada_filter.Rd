@@ -18,6 +18,7 @@ Filtered dada_fun output
 Apply filter to eliminate rare ASVs, allowing to reduce the size of the dataset and to remove potential contaminants.
 }
 \examples{
+\dontrun{
 dada_filter(dada_res = dada_res, freq = 0.00005)
-
+}
 }

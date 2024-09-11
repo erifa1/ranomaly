@@ -1,6 +1,6 @@
 Package: ranomaly
 Title: An R package grouping ANOMALY worflow functions
-Version: 1.0.0
+Version: 1.0.1
 Author: Sebastien Theil [aut, cre], Etienne Rifa [aut]
 Maintainer: Sebastien Theil <sebastien.theil@inrae.fr>, Etienne Rifa
     <etienne.rifa@inrae.fr>
@@ -16,18 +16,28 @@ Description: rANOMALY use Amplicon Sequence Variant (ASV from Dada2
     impact of tested factors on microbial communities. The workflow
     incorporate multiple differential analyses (DESeq2 etc...)  to reveal
     thin community contrast between conditions.
-License: GPL (>= 3)
+License: GPL (>= 3) + file LICENSE
 Depends:
-    R (>= 4.3)
+    R (>= 4.3.0)
 Imports:
-    Biobase,
-    BiocGenerics,
     Biostrings,
-    cluster,
     ComplexHeatmap,
     dada2,
     DECIPHER,
     decontam,
+    metagenomeSeq,
+    microbiome,
+    mixOmics,
+    phyloseq,
+    psadd,
+    ranacapa,
+    ShortRead,
+    Rsamtools,
+    GenomicAlignments,
+    Rhtslib,
+    Biobase,
+    BiocGenerics,
+    cluster,
     DESeq2,
     digest,
     doParallel,
@@ -44,22 +54,15 @@ Imports:
     htmlwidgets,
     IRanges,
     metacoder,
-    metagenomeSeq,
-    microbiome,
-    mixOmics,
     nlme,
     pander,
     phangorn,
-    phyloseq,
     plotly (>= 4.10.4),
-    psadd,
     qdapTools,
-    ranacapa,
     readr,
     readxl,
     reshape2,
     scales,
-    ShortRead,
     stats,
     stringr,
     tibble,
@@ -71,11 +74,25 @@ Imports:
     VennDiagram,
     vroom
 Remotes:
-    github::cpauvert/psadd,
+    Bioconductor/rhdf5
+    Bioconductor/Biostrings,
+    Bioconductor/ComplexHeatmap,
+    Bioconductor/dada2,
+    Bioconductor/DECIPHER,
+    Bioconductor/decontam,
+    Bioconductor/metagenomeSeq,
+    Bioconductor/microbiome,
+    Bioconductor/mixOmics,
+    Bioconductor/phyloseq,
+    Bioconductor/ShortRead,
+    Bioconductor/Rsamtools,
+    Bioconductor/GenomicAlignments,
+    Bioconductor/Rhtslib,
+    github::cpauvert/psadd
     github::gauravsk/ranacapa,
     github::grunwaldlab/metacoder,
     github::mikelove/DESeq2,
-    github::mixOmicsTeam/mixOmics
+    github::pmartinezarbizu/pairwiseAdonis/pairwiseAdonis
 Author@R: c(person(given = "Sebastien", family = "Theil", role = c("aut",
     "cre"), email = "sebastien.theil@inrae.fr"), person(given = "Etienne",
     family = "Rifa", role = "aut", email = "etienne.rifa@inrae.fr"))

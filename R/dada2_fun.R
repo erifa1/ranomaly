@@ -677,7 +677,7 @@ get.sample.name <- function(fname){
 #' @return Filtered dada_fun output
 #' 
 #' @examples
-#' dontrun{
+#' \dontrun{
 #' dada_filter(dada_res = dada_res, freq = 0.00005)
 #' }
 #' @export

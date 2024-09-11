@@ -6,3 +6,7 @@
 ^\.gitlab-ci\.yml$
 ^inst/scripts$
 ^inst/scripts/.*
+^dev$
+^dev/.*
+^public$
+^public/.*
