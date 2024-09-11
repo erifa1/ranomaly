@@ -74,7 +74,7 @@ Imports:
     VennDiagram,
     vroom
 Remotes:
-    Bioconductor/rhdf5
+    Bioconductor/rhdf5,
     Bioconductor/Biostrings,
     Bioconductor/ComplexHeatmap,
     Bioconductor/dada2,
@@ -88,7 +88,7 @@ Remotes:
     Bioconductor/Rsamtools,
     Bioconductor/GenomicAlignments,
     Bioconductor/Rhtslib,
-    github::cpauvert/psadd
+    github::cpauvert/psadd,
     github::gauravsk/ranacapa,
     github::grunwaldlab/metacoder,
     github::mikelove/DESeq2,
