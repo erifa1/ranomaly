@@ -35,17 +35,18 @@ export_to_stamp_fun <- function(data = data, output = "./stamp/", correc = FALSE
     dir.create(output)
     flog.info('Done.')
   }
-  flog.info('Saving ...')
-  write.table(stamp.table,paste(output,'/table_stamp.tsv',sep=''),sep="\t",row.names=FALSE, quote=FALSE)
-  write.table(sample_data(data),paste(output,'/meta_stamp.tsv',sep=''),sep="\t",row.names=FALSE, quote=FALSE)
-  flog.info('Done.')
 
-  #Replace most common french special characters
+  meta_stamp <- get_variable(data)
   if(correc==TRUE){
     flog.info('Correcting special characters ...')
-    command1 <- paste('sed "s/é/e/g;s/è/e/g;s/É/E/g;s/à/a/g;s/ê/e/g;s/â/a/g;s/û/u/g;s/ï/i/g;s/°//g;s/ô/o/g" ',output,'/meta_stamp.tsv > ',output,'meta_stampOK.tsv',sep="")
-    invisible(system(command1, intern=TRUE))
+    meta_stamp <- data.frame(lapply(meta_stamp, remove_non_ascii), stringsAsFactors = FALSE)
+    names(meta_stamp) <- remove_non_ascii(names(meta_stamp))
   }
+
+  flog.info('Saving ...')
+  write.table(stamp.table,paste(output,'/table_stamp.tsv',sep=''),sep="\t",row.names=FALSE, quote=FALSE)
+  write.table(meta_stamp,paste(output,'/meta_stamp.tsv',sep=''),sep="\t",row.names=FALSE, quote=FALSE)
+  flog.info('Done.')
 
   flog.info('Finish.')
 

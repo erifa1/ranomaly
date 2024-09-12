@@ -32,7 +32,7 @@ phy2cyto_fun <- function(data = data, output = "./cytoscape/", column1 = NULL, r
 
   if(is.null(repl)){
     flog.info('No replicates, performing links ...')
-    #Test1 VUE globale sans tenir compte des réplicats
+    #Test1 VUE globale sans tenir compte des replicats
     # Interaction table
     sif_tab=NULL
     for(env in fact ){
@@ -40,7 +40,7 @@ phy2cyto_fun <- function(data = data, output = "./cytoscape/", column1 = NULL, r
       eval(parse(text=glue("tt <- subset_samples(data1, {column1} %in% '{env}')") ))   ###
       flog.debug(print(nsamples(tt)))
 
-      #ASV present dans au moins 3 échantillons, autre filtre sur abondance?
+      #ASV present dans au moins 3 echantillons, autre filtre sur abondance?
       tt2 = prune_taxa( apply(otu_table(tt), 1, function(x){length(which(x>0))>3}), tt)
       flog.debug(print(ntaxa(tt2)))
       #Effectif des asv dans la table < 20
@@ -90,7 +90,7 @@ phy2cyto_fun <- function(data = data, output = "./cytoscape/", column1 = NULL, r
 
         srcs <- as.character(unique(sdat2[,column1]))
         if(rep1==1){
-          flog.debug(glue("{asv} exclusif 1 seul réplicat 1 env"))
+          flog.debug(glue("{asv} exclusif 1 seul replicat 1 env"))
           LINKS = c(asv, glue("type_{srcs}"), srcs)
         }else{
           # print(c(asv, "debug"))
