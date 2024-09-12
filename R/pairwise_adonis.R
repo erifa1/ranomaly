@@ -33,7 +33,7 @@
 #' sim.method='euclidian',p.adjust.m='holm')
 #' 
 #'#identical example using a distance matrix as an input
-#' dist_matrix=vegdist(iris[,1:4],method="euclidean")
+#' dist_matrix=vegan::vegdist(iris[,1:4],method="euclidean")
 #' pairwise.adonis(dist_matrix,factors=iris$Species,
 #' p.adjust.m='holm')
 #'
