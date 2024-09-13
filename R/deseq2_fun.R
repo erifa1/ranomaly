@@ -13,7 +13,6 @@
 #'
 #' @import futile.logger
 #' @import phyloseq
-#' @importFrom BiocGenerics estimateSizeFactors
 #' @importFrom DESeq2 DESeq
 #' @importFrom DESeq2 results
 #' @importFrom DESeq2 resultsNames
@@ -131,7 +130,7 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
       exp(sum(log(x[x > 0]), na.rm=na.rm) / length(x))
     }
     geoMeans = apply(DESeq2::counts(dseq), 1, gm_mean)
-    dseq2 = estimateSizeFactors(dseq, geoMeans = geoMeans)
+    dseq2 = BiocGenerics::estimateSizeFactors(dseq, geoMeans = geoMeans)
 
     # flog.info('DESeq2...')
     # print(dseq2)

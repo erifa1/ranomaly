@@ -26,7 +26,6 @@ Imports:
     DECIPHER,
     decontam,
     metagenomeSeq,
-    microbiome,
     mixOmics,
     phyloseq,
     psadd,
@@ -34,8 +33,6 @@ Imports:
     Rsamtools,
     GenomicAlignments,
     Rhtslib,
-    Biobase,
-    BiocGenerics,
     cluster,
     DESeq2,
     digest,
@@ -55,7 +52,6 @@ Imports:
     pkgndep,
     plotly (>= 4.10.4),
     reshape2,
-    scales,
     stats,
     stringr,
     tibble,
@@ -73,7 +69,9 @@ Remotes:
     github::mikelove/DESeq2,
     github::pmartinezarbizu/pairwiseAdonis/pairwiseAdonis
 Suggests:
-    readxl
+    readxl,
+    scales,
+    microbiome
 Author@R: c(person(given = "Sebastien", family = "Theil", role = c("aut",
     "cre"), email = "sebastien.theil@inrae.fr"), person(given = "Etienne",
     family = "Rifa", role = "aut", email = "etienne.rifa@inrae.fr"))

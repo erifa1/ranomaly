@@ -9,12 +9,13 @@
 #' @param prev prevalence threshold of microbiome::core_members function
 #' @param rank Taxonomy rank.
 #'
-#' @importFrom microbiome transform core_members
 #'
 #' @export
 
 
 core_soft_fun <- function(data = NULL, fact = NULL, group = NULL, freq = 0.001, prev = 0.5, rank = "ASV"){
+  # Need from microbiome : transform core_members
+  pkgndep::check_pkg("microbiome")
   if(is.null(data)|is.null(fact)){stop("Require a phyloseq object, factor and group...")}
   if(! any( sample_variables(data) == fact ) ){stop(glue::glue("{fact} is not in sample_variables(phyloseq_object)..."))}
 

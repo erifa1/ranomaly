@@ -5,7 +5,7 @@
 \title{ranacapa: Make a rarefaction curve using ggplot2}
 \usage{
 ggrare(
-  physeq,
+  physeq_object,
   step = 10,
   label = NULL,
   color = NULL,
@@ -15,6 +15,8 @@ ggrare(
 )
 }
 \arguments{
+\item{physeq_object}{A phyloseq class object, from which abundance data are extracted}
+
 \item{step}{Step Size for sample size in rarefaction curves}
 
 \item{label}{Default `NULL`. Character string. The name of the variable to map to text labels on the plot. Similar to color option but for plotting text.}
@@ -26,8 +28,6 @@ ggrare(
 \item{parallel}{default `FALSE`. Logical. Should rarefaction be parallelized}
 
 \item{se}{default `TRUE`. Logical. Should standard errors be calculated.}
-
-\item{physeq_object}{A phyloseq class object, from which abundance data are extracted}
 }
 \description{
 ranacapa: Make a rarefaction curve using ggplot2

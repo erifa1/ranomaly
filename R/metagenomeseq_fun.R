@@ -14,7 +14,6 @@
 #' @import phyloseq
 #' @import ggplot2
 #' @import metagenomeSeq
-#' @importFrom Biobase fData
 #'
 #' @export
 
@@ -92,12 +91,12 @@ if(rank != 'ASV'){
     }
 
     featuresToKeep = which(rowSums(MGdata@assayData$counts) > 0)
-    samplesToKeep = which(pData(MGdata)[,column1] == combinaisons[1,col] | pData(MGdata)[,column1] == combinaisons[2,col])
+    samplesToKeep = which(Biobase::pData(MGdata)[,column1] == combinaisons[1,col] | Biobase::pData(MGdata)[,column1] == combinaisons[2,col])
     obj_f = MGdata[featuresToKeep, samplesToKeep]
 
     #FitFeature model : zero-inflated log-normal model
     flog.info('Fitzig Model')
-    pd <- pData(obj_f)
+    pd <- Biobase::pData(obj_f)
     mod <- model.matrix(as.formula(paste("~", column1)), data = pd)
 
     res1 = NULL
@@ -116,7 +115,7 @@ if(rank != 'ASV'){
     TAB=cbind(row.names(TAB) ,TAB)
 
     TABF = na.omit(TAB)
-    TABF <- cbind(TABF, fData(MGdata)[row.names(TABF),1:match(rank,ranks)+1])
+    TABF <- cbind(TABF, Biobase::fData(MGdata)[row.names(TABF),1:match(rank,ranks)+1])
     colnames(TABF)[1]=paste(combinaisons[,col],collapse="_vs_")
 
     TABF <- TABF[order(TABF$logFC, decreasing = FALSE), ]

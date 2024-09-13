@@ -30,31 +30,6 @@ rarefaction <- function(data = data, col = NULL, step = 100, ggplotly = TRUE){
 }
 
 
-#' aggregate_top_taxa from microbiome package
-#'
-#'
-#' @param x phyloseq object
-#' @param top Keep the top-n taxa, and merge the rest under the category 'Other'. Instead of top-n numeric this can also be a character vector listing the groups to combine.
-#' @param level Summarization level (from ‘rank_names(pseq)’)
-#'
-#' @importFrom microbiome aggregate_taxa
-#' @importFrom microbiome top_taxa
-#'
-#' @export
-
-aggregate_top_taxa <- function (x, top, level){
-    x <- aggregate_taxa(x, level)
-    tops <- top_taxa(x, top)
-    tax <- tax_table(x)
-    inds <- which(!rownames(tax) %in% tops)
-    tax[inds, level] <- "Other"
-    tax_table(x) <- tax
-    tt <- tax_table(x)[, level]
-    tax_table(x) <- tax_table(tt)
-    aggregate_taxa(x, level)
-}
-
-
 
 #' Barplots plotly
 #'
