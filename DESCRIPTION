@@ -44,7 +44,6 @@ Imports:
     foreach,
     futile.logger,
     ggplot2,
-    ggpubr,
     glue,
     grid,
     gridExtra,
@@ -54,9 +53,9 @@ Imports:
     nlme,
     pander,
     phangorn,
+    pkgndep,
     plotly (>= 4.10.4),
     readr,
-    readxl,
     reshape2,
     scales,
     stats,
@@ -75,6 +74,8 @@ Remotes:
     github::grunwaldlab/metacoder,
     github::mikelove/DESeq2,
     github::pmartinezarbizu/pairwiseAdonis/pairwiseAdonis
+Suggests:
+    readxl
 Author@R: c(person(given = "Sebastien", family = "Theil", role = c("aut",
     "cre"), email = "sebastien.theil@inrae.fr"), person(given = "Etienne",
     family = "Rifa", role = "aut", email = "etienne.rifa@inrae.fr"))

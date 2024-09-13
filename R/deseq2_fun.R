@@ -18,9 +18,8 @@
 #' @importFrom DESeq2 results
 #' @importFrom DESeq2 resultsNames
 #' @importFrom gridExtra grid.arrange
-#' @importFrom ggpubr ggtexttable
-#' @importFrom ggpubr ttheme
-#' @importFrom ggpubr text_grob
+#' @importFrom gridExtra tableGrob
+#' @importFrom grid textGrob
 #' @importFrom plotly ggplotly
 #' @import ggplot2
 
@@ -175,10 +174,10 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
       eval(parse(text=fun))
 
       Ftable = sigtab[,c("baseMean","log2FoldChange","stat","pvalue","padj",rank)]
-      ggtable <- ggtexttable(Ftable,theme = ttheme("mOrange"),rows=NULL)
+      ggtable <- gridExtra::tableGrob(Ftable)
 
       pdf(file=paste(output,'/deseq2_',column1,"_", paste(combinaisons[,col],collapse="_vs_"), '.pdf',sep=''),width=15,height=16)
-      grid.arrange(p,ggtable,top=text_grob(paste('Combination ',combinaisons[1,col], ' VS ' , combinaisons[2,col],sep=''), size=20))
+      grid.arrange(p,ggtable,top=grid::textGrob(paste('Combination ',combinaisons[1,col], ' VS ' , combinaisons[2,col],sep=''), size=20))
       invisible(dev.off())
 
 

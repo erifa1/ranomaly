@@ -10,6 +10,7 @@
 #'
 #' @export
 #' @import readxl
+#' @importFrom pkgndep check_pkg
 
 
 update_metadata_fun <- function(data = data, output = "./updated_physeq/", metadata = NULL, returnval = TRUE){
@@ -20,6 +21,7 @@ update_metadata_fun <- function(data = data, output = "./updated_physeq/", metad
   } else{
     flog.info("Loading sample metadata..")
     if(tools::file_ext(metadata) %in% c('xls', 'xlsx')){
+      pkgndep::check_pkg("readxl")
       sampledata <- readxl::read_excel(path=metadata, sheet=1, col_names=T)
       
     } else if (tools::file_ext(metadata) %in% c('csv', 'tsv')){
