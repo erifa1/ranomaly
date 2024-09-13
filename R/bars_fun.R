@@ -8,7 +8,6 @@
 #' @return A plotly graph.
 #'
 #' @importFrom plotly ggplotly
-#' @importFrom ranacapa ggrare
 #'
 #' @export
 
@@ -79,7 +78,6 @@ aggregate_top_taxa <- function (x, top, level){
 #'
 #' @importFrom plotly plot_ly subplot layout ggplotly
 #' @importFrom reshape2 melt
-#' @importFrom gtools mixedsort
 #' @importFrom dplyr group_map group_by across `%>%` mutate arrange
 #'
 #'
@@ -126,12 +124,12 @@ if( all(Ord1 != sample_variables(data))){
 
   if(autoorder){
   flog.info('  Ordering samples...')
-      fun = glue( "labs = gtools::mixedorder(as.character(meltdat${Ord1}))" )
+      fun = glue( "labs = mixedorder(as.character(meltdat${Ord1}))" )
       eval(parse(text=fun))
 
-      orderedIDS <- unique(meltdat$sample.id[gtools::mixedorder(as.character(meltdat[,Ord1]))])
-      orderedOrd1 <- meltdat[,Ord1][gtools::mixedorder(as.character(meltdat[,Ord1]))]
-      orderedOrd1 <- factor(orderedOrd1, levels = gtools::mixedsort(unique(orderedOrd1)))
+      orderedIDS <- unique(meltdat$sample.id[mixedorder(as.character(meltdat[,Ord1]))])
+      orderedOrd1 <- meltdat[,Ord1][mixedorder(as.character(meltdat[,Ord1]))]
+      orderedOrd1 <- factor(orderedOrd1, levels = mixedsort(unique(orderedOrd1)))
     }else{
       labs = 1:nrow(meltdat)
 
