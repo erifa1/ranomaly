@@ -31,7 +31,6 @@
 #' @import futile.logger
 #' @import psadd
 #' @import VennDiagram
-#' @importFrom grid grid.draw
 #'
 #' @export
 
@@ -275,7 +274,7 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
                             margin = 0.1, main=paste("filtered ASVs"), main.cex=2.5,
                             fontfamily ="Arial", main.fontfamily="Arial", cat.fontfamily="Arial") #cat.dist = 0.09,
     png(paste(output,'/venndiag_filtering.png',sep=''), width=20, height=20, units="cm", res=200)
-    grid.draw(venn.plot)
+    grid::grid.draw(venn.plot)
     invisible(dev.off())
 
     flog.info('Generate Exclu_out table...')

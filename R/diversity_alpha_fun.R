@@ -57,7 +57,6 @@ alphaPlotly <- function(data=data, alpha=alpha, col1='', col2='', measures=c("Sh
 #' @import phyloseq
 #' @import ggplot2
 #' @importFrom nlme lme
-#' @importFrom glue glue
 #' @import futile.logger
 #' @export
 

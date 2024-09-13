@@ -15,8 +15,6 @@
 #'
 #' @return Output fastx files in the output directory
 #'
-#' @import Biostrings
-#' @import foreach
 #' @import doParallel
 #' @export
 

@@ -18,7 +18,6 @@
 #' @import phyloseq
 #' @import DECIPHER
 #' @import ShortRead
-#' @import Biostrings
 #' @import mixOmics
 #' @export
 

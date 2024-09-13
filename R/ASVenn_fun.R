@@ -16,7 +16,6 @@
 #'
 #' @return Returns list with venn diagram and table with shared features. Exports a venn diagram with corresponding tabulated file.
 #'
-#' @importFrom glue glue
 #' @importFrom venn venn
 #' @export
 
@@ -167,7 +166,7 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
                               fontfamily ="Arial",main.fontfamily="Arial",cat.fontfamily="Arial") #cat.dist = 0.09,
     venn_tab=paste(output,"/",TITRE,"_",krona, "_kronaVenn.png", sep="")
     png(venn_tab, width=20, height=20, units="cm", res=200)
-    grid.draw(venn.plot)
+    grid::grid.draw(venn.plot)
     invisible(dev.off())
 
     #Krona
@@ -212,7 +211,6 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
 #'
 #' @return Exports a venn diagram with corresponding tabulated file.
 #'
-#' @importFrom glue glue
 #' @importFrom venn venn
 #' @export
 

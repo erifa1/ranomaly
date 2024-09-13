@@ -7,8 +7,6 @@
 #'
 #' @return  A vector of sequence counts
 #'
-#' @import Biostrings
-#' @import foreach
 #' @import doParallel
 #' @export
 

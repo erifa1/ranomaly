@@ -652,7 +652,6 @@ ggrare <- function (physeq_object, step = 10, label = NULL, color = NULL,
 #'@export pairwise.adonis
 #'@importFrom stats p.adjust
 #'@importFrom utils combn
-#'@importFrom vegan adonis2 vegdist
 #'@importFrom cluster daisy
 
 
@@ -679,7 +678,7 @@ pairwise.adonis <- function(x,factors, sim.function = 'vegdist', sim.method = 'b
       if (sim.function == 'daisy'){
             x1 = daisy(x[factors %in% c(co[1,elem],co[2,elem]),],metric=sim.method)
         } 
-      else{x1 = vegdist(x[factors %in% c(co[1,elem],co[2,elem]),],method=sim.method)}
+      else{x1 = vegan::vegdist(x[factors %in% c(co[1,elem],co[2,elem]),],method=sim.method)}
     )
     
     x2 = data.frame(Fac = factors[factors %in% c(co[1,elem],co[2,elem])])

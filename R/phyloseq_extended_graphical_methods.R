@@ -37,7 +37,6 @@ phy2MGseq <- function (physeq, ...)
 ## Set of graphical methods for phyloseq objects (mainly related to ordination,
 ## and library size after normalisation)
 #' @import ggplot2
-#' @import reshape2
 #
 # rarecurve2 <- function (x, step = 1, sample, xlab = "Sample Size", ylab = "Species", label = TRUE, col = "black", ...)
 #   ## See documentation for vegan rarecurve, col is now used to define

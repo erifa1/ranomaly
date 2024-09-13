@@ -18,7 +18,6 @@
 #'
 #' @import phyloseq
 #' @import ggplot2
-#' @import vegan
 #' @importFrom plotly ggplotly config
 #'
 #' @export

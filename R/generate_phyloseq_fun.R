@@ -15,7 +15,6 @@
 #' @import phyloseq
 #' @import DECIPHER
 #' @import ShortRead
-#' @import Biostrings
 #' @import futile.logger
 #' @import digest
 #' @import tools

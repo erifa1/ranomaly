@@ -20,7 +20,6 @@
 #' @import phyloseq
 #' @import DECIPHER
 #' @import ShortRead
-#' @import Biostrings
 #' @export
 
 

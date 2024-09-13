@@ -15,7 +15,6 @@
 #' @import phyloseq
 #' @importFrom DECIPHER AlignSeqs
 #' @import ShortRead
-#' @importFrom Biostrings DNAStringSet
 #' @import futile.logger
 #' @import digest
 #' @importFrom phangorn phyDat

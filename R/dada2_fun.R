@@ -32,12 +32,10 @@
 #' @import dada2
 #' @import psadd
 #' @import ShortRead
-#' @import Biostrings
 #' @import ggplot2
 #' @import futile.logger
 #' @import digest
 #' @import phyloseq
-#' @importFrom tibble rownames_to_column
 #' @importFrom dplyr left_join
 #' @importFrom stringr str_remove str_replace
 #' @export
@@ -370,7 +368,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, max
     colnames(final_track) <- c("sample.id", "rawcounts", "primer filtered", "filtered", "denoisedF", "denoisedR", "merged", "nonchim")
     head(final_track)
 
-    write.table(final_track, paste(outpath,"/read_tracking.csv",sep=''), sep="\t", row.names=FALSE, col.names=NA, quote=FALSE)
+    write.table(final_track, paste(outpath,"/read_tracking.csv",sep=''), sep="\t", row.names=FALSE, quote=FALSE)
 
 
     seqtab.export <- seqtab.nochim
