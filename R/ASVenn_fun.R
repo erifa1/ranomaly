@@ -214,7 +214,6 @@ ASVenn_fun <- function(data = data, output = "./ASVenn/", rank = "ASV",
 #'
 #' @importFrom glue glue
 #' @importFrom venn venn
-#' @importFrom qdapTools mtabulate
 #' @export
 
 
@@ -232,7 +231,7 @@ VENNFUN <- function(TF = TF, TITRE = TITRE, output = "./", refseq1 = NULL, allta
     }
 
     # Generating table of shared features
-    v.table <- tibble::as_tibble(t(qdapTools::mtabulate(TF)), rownames = "taxa")
+    v.table <- tibble::as_tibble(t(mtabulate(TF)), rownames = "taxa")
     colnames(alltax) <- c("taxa", "taxonomy")
     alltaxDF <- as.data.frame(alltax)
     refseq1DF <- tibble::as_tibble(refseq1, rownames = "taxa")
