@@ -96,7 +96,7 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
         mgseqT <- data.frame()
       }
     }
-    flog.debug(pander::pander(mgseqT, split.tables=2000))
+    flog.debug(head(mgseqT, 2000))
     # print(head(mgseqT))
     flog.info('Metacoder.')
     if(file.exists(paste(metacoder))){

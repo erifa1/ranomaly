@@ -9,7 +9,6 @@
 #' @return Return a phyloseq object with updated metadata.
 #'
 #' @export
-#' @import readxl
 #' @importFrom pkgndep check_pkg
 
 

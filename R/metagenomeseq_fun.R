@@ -120,7 +120,7 @@ if(rank != 'ASV'){
     colnames(TABF)[1]=paste(combinaisons[,col],collapse="_vs_")
 
     TABF <- TABF[order(TABF$logFC, decreasing = FALSE), ]
-    flog.debug(pander(TABF))
+    flog.debug(head(TABF))
     write.table(na.omit(TABF), paste(output,'/signtab_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.csv',sep=''), row.names=FALSE, quote=FALSE, sep="\t")
 
     #Plots
