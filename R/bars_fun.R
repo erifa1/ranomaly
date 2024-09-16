@@ -52,7 +52,6 @@ rarefaction <- function(data = data, col = NULL, step = 100, ggplotly = TRUE){
 #' @return Returns barplots in an interactive plotly community plot
 #'
 #' @importFrom plotly plot_ly subplot layout ggplotly
-#' @importFrom dplyr group_map group_by across `%>%` mutate arrange
 #'
 #'
 #' @export

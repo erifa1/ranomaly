@@ -16,8 +16,6 @@
 #' @importFrom DESeq2 DESeq
 #' @importFrom DESeq2 results
 #' @importFrom DESeq2 resultsNames
-#' @importFrom gridExtra grid.arrange
-#' @importFrom gridExtra tableGrob
 #' @importFrom plotly ggplotly
 #' @import ggplot2
 

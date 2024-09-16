@@ -208,7 +208,6 @@ launch_metacoder <- function(psobj, min, col, rank, title = "", plot1 = TRUE, si
 #' @import phyloseq
 #' @import ggplot2
 #' @importFrom metacoder zero_low_counts calc_taxon_abund calc_n_samples compare_groups parse_phyloseq heat_tree diverging_palette taxon_names
-#' @importFrom gridExtra marrangeGrob
 #'
 #' @export
 
@@ -240,7 +239,7 @@ metacoder_fun <- function(data = data, output = "./metacoder", column1 = "", ran
     outF[['matrix']]$raw <- gg[1]
     outF[['matrix']]$signif <- gg[2]
     outF$table <- gg[3]
-    plots = marrangeGrob(grobs=gg[1:2],nrow=1,ncol=2)
+    plots = gridExtra::marrangeGrob(grobs=gg[1:2],nrow=1,ncol=2)
     ggsave(paste(output,'/metacoder_',column1,'_',rank,'.png',sep=''),plot=plots, width=30, height=16, dpi = 320)
   }
   else{
@@ -283,7 +282,7 @@ metacoder_fun <- function(data = data, output = "./metacoder", column1 = "", ran
       outF[[paste(combinaisons[,comp],collapse="_vs_")]]$raw <- pp[1]
       outF[[paste(combinaisons[,comp],collapse="_vs_")]]$signif <- pp[2]
       outF$table = table
-      #outF[[paste(combinaisons[,comp],collapse="_vs_")]] = list(plot = marrangeGrob(grobs=pp[1:2],nrow=1,ncol=2) )
+      #outF[[paste(combinaisons[,comp],collapse="_vs_")]] = list(plot = gridExtra::marrangeGrob(grobs=pp[1:2],nrow=1,ncol=2) )
 
     }
 
@@ -291,7 +290,7 @@ metacoder_fun <- function(data = data, output = "./metacoder", column1 = "", ran
     write.table(table,file = paste(output,'/metacoder_signif_',rank,'.csv',sep=''),sep="\t",row.names=FALSE)
 
     if(plottrees == TRUE){
-      plots = marrangeGrob(grobs=p_list,nrow=1,ncol=2)
+      plots = gridExtra::marrangeGrob(grobs=p_list,nrow=1,ncol=2)
       ggsave(paste(output,'/metacoder_',column1,'_',rank,'.pdf',sep=''), plots, width = 40, height = 20)
     }
   }

@@ -34,9 +34,7 @@
 #' @import ShortRead
 #' @import ggplot2
 #' @import futile.logger
-#' @import digest
 #' @import phyloseq
-#' @importFrom dplyr left_join
 #' @importFrom stringr str_remove str_replace
 #' @export
 

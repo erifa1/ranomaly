@@ -16,7 +16,6 @@
 #' @importFrom DECIPHER AlignSeqs
 #' @import ShortRead
 #' @import futile.logger
-#' @import digest
 #' @importFrom phangorn phyDat
 #' @importFrom phangorn dist.ml
 #' @importFrom phangorn NJ
@@ -43,7 +42,7 @@ generate_tree_fun <- function(dada_res = NULL, psobj = NULL, output = "./tree", 
   if(!is.null(dada_res)){
     flog.info('Generating tree...')
     sequences <- getSequences(dada_res$seqtab.nochim)
-    names(sequences) <- sapply(sequences,digest,algo='md5')
+    names(sequences) <- sapply(sequences,digest::digest,algo='md5')
     sequences <- DNAStringSet(sequences)
   }else if(!is.null(psobj)){
     sequences <- refseq(data)

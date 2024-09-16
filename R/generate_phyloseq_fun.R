@@ -16,7 +16,6 @@
 #' @import DECIPHER
 #' @import ShortRead
 #' @import futile.logger
-#' @import digest
 #' @import tools
 #' @import vroom
 #'
@@ -67,7 +66,7 @@ generate_phyloseq_fun <- function(dada_res = dada_res, tax.table = tax.table, tr
   flog.info("Sequences..")
   sequences <- getSequences(dada_res$seqtab.nochim)
   flog.debug('Generate MD5 ids...')
-  names(sequences) <- sapply(sequences,digest,algo='md5')
+  names(sequences) <- sapply(sequences,digest::digest,algo='md5')
 
   if(!is.null(tax.table)){
 
