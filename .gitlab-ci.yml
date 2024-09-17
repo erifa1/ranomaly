@@ -40,10 +40,10 @@ install_linux:
   - echo "GITHUB_PAT=${GITHUB_PAT}" >> .Renviron
   - cat .Renviron
   - apt-get update -qq && apt-get install -y --no-install-recommends
-  - apt-get install -y git libcurl4-openssl-dev libssl-dev libxml2-dev libgmp3-dev libmpfr-dev cmake zlib1g-dev libglpk40 libglpk-dev liblzma-dev libbz2-dev
+  - apt-get install -y git libcurl4-openssl-dev libssl-dev libxml2-dev libgmp3-dev libmpfr-dev cmake zlib1g-dev libglpk40 libglpk-dev liblzma-dev libbz2-dev libfontconfig1-dev libfribidi-dev libharfbuzz-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
   - R -e 'install.packages(c("remotes", "devtools", "BiocManager"))'
   script:
-    - R -e 'options(repos = BiocManager::repositories()); remotes::install_gitlab(repo = "umrf/ranomaly", host = "forgemia.inra.fr", upgrade = FALSE)'
+    - R -e 'options(repos = BiocManager::repositories()); remotes::install_local(upgrade = "never", dependencies = TRUE)'
     - R -e 'devtools::check()'
   artifacts:
     paths:
