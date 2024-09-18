@@ -173,7 +173,7 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
       ggtable <- gridExtra::tableGrob(Ftable)
 
       pdf(file=paste(output,'/deseq2_',column1,"_", paste(combinaisons[,col],collapse="_vs_"), '.pdf',sep=''),width=15,height=16)
-      gridExtra::grid.arrange(p,ggtable,top=grid::textGrob(paste('Combination ',combinaisons[1,col], ' VS ' , combinaisons[2,col],sep=''), size=20))
+      gridExtra::grid.arrange(p,ggtable,top=grid::textGrob(paste('Combination ',combinaisons[1,col], ' VS ' , combinaisons[2,col],sep='')))
       invisible(dev.off())
 
 
@@ -191,6 +191,6 @@ deseq2_fun <- function(data = data, output = "./deseq/", column1 = "", verbose =
 
     }
   }
-  return(outF)
   flog.info('Done...')
+  return(outF)
 }

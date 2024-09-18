@@ -38,7 +38,7 @@ assign_taxo_fun <- function(dada_res = dada_res,  output = "./idtaxa/", id_db = 
 
 
   ## IDATAXA assignment
-  dna <- DNAStringSet(getSequences(dada_res$seqtab.nochim))
+  dna <- Biostrings::DNAStringSet(getSequences(dada_res$seqtab.nochim))
   names(dna) <- sapply(colnames(dada_res$seqtab.nochim), digest::digest, algo="md5")
 
   if(!all( names(dna) == rownames(dada_res$otu.table) )){stop("Seq names and ASV table row names are different")}

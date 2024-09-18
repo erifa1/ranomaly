@@ -47,7 +47,7 @@ csv2phyloseq_fun <- function(otutable = NULL, taxtable = NULL, seq = NULL, metad
   if(class(seq) == "DNAStringSet"){
     sequences1 = seq
   } else {
-    sequences1 <- readDNAStringSet(seq)
+    sequences1 <- Biostrings::readDNAStringSet(seq)
   }
 
 print(head(otable))
@@ -61,7 +61,7 @@ print(head(sequences1))
     sequences <- sequences1
     # names(sequences) <- sapply(sequences,digest,algo='md5')
     flog.info('Aligning sequences...')
-    alignment <- AlignSeqs(DNAStringSet(sequences),anchor=NA,processors=NULL)
+    alignment <- AlignSeqs(Biostrings::DNAStringSet(sequences),anchor=NA,processors=NULL)
     flog.info('Creating distance matrices...')
     phang.align <- phyDat(as(alignment, "matrix"), type="DNA")
     dm <- dist.ml(phang.align)

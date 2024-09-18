@@ -97,7 +97,7 @@ if( all(Ord1 != sample_variables(data))){
 
   if(autoorder){
   flog.info('  Ordering samples...')
-      fun = glue( "labs = mixedorder(as.character(meltdat${Ord1}))" )
+      fun = glue::glue( "labs = mixedorder(as.character(meltdat${Ord1}))" )
       eval(parse(text=fun))
 
       orderedIDS <- unique(meltdat$sample.id[mixedorder(as.character(meltdat[,Ord1]))])
@@ -134,11 +134,11 @@ if( all(Ord1 != sample_variables(data))){
                           g=sdata[orderedIDS, Ord1]@.Data[[1]],
                           y=1)
 
-  fun = glue( "df1$g <- factor(df1$g, levels = as.character(unique(orderedOrd1)))")
+  fun = glue::glue( "df1$g <- factor(df1$g, levels = as.character(unique(orderedOrd1)))")
   eval(parse(text=fun))
 
   if(!levelsOrder){
-    fun = glue( "meltdat${Ord1} <- factor(meltdat${Ord1}, levels = as.character(unique(orderedOrd1)))") # keep sample ids order from metadata.
+    fun = glue::glue( "meltdat${Ord1} <- factor(meltdat${Ord1}, levels = as.character(unique(orderedOrd1)))") # keep sample ids order from metadata.
     eval(parse(text=fun))
   }
 
@@ -166,7 +166,7 @@ if( all(Ord1 != sample_variables(data))){
     meltdat$variable <- factor(meltdat$variable, levels= c("Other", tt[tt!="Other"]))
 
     if(!levelsOrder){
-      fun = glue( "meltdat${Ord1} <- factor(meltdat${Ord1}, levels = as.character(unique(orderedOrd1)))")
+      fun = glue::glue( "meltdat${Ord1} <- factor(meltdat${Ord1}, levels = as.character(unique(orderedOrd1)))")
       eval(parse(text=fun))
 
     }
@@ -203,8 +203,8 @@ if( all(Ord1 != sample_variables(data))){
     meltdat$sample.id = factor(meltdat$sample.id, levels = unique(meltdat$sample.id)) # keep sample ids order from metadata.
     }
     # Add stop message when NA value in Ord1 variable.
-    p1 = meltdat  %>% dplyr::arrange(across({Ord1})) %>% dplyr::group_by(across({Ord1})) %>%
-        dplyr::mutate(across(where(is.character), as.factor)) %>%
+    p1 = meltdat  %>% dplyr::arrange(dplyr::across({Ord1})) %>% dplyr::group_by(dplyr::across({Ord1})) %>%
+        dplyr::mutate(dplyr::across(where(is.character), as.factor)) %>%
         dplyr::group_map(~ plot_ly(data=., x = ~sample.id, y = ~value, type = 'bar',
                                    name = ~variable,
                                    color = ~variable, legendgroup = ~variable,
@@ -212,13 +212,13 @@ if( all(Ord1 != sample_variables(data))){
                          .keep = TRUE)  %>%
       plotly::subplot(nrows = 1, shareX = TRUE, shareY=TRUE, titleX = FALSE) %>%
       plotly::layout(title="",
-             xaxis = list(title = glue("{Ord1} =\n{levels(meltdat[, Ord1])[1]}")),
+             xaxis = list(title = glue::glue("{Ord1} =\n{levels(meltdat[, Ord1])[1]}")),
              yaxis = list(title = ylab),
              barmode = 'stack')
 
     for (i in 2:length(unique(meltdat[, Ord1]))) {
       p1$x$layoutAttrs[[1]][[paste0("xaxis", i)]] = NULL
-      p1$x$layoutAttrs[[1]][[paste0("xaxis", i)]]$title <- glue("{Ord1} =\n{levels(meltdat[, Ord1])[i]}")
+      p1$x$layoutAttrs[[1]][[paste0("xaxis", i)]]$title <- glue::glue("{Ord1} =\n{levels(meltdat[, Ord1])[i]}")
     }
     if(!is.null(outfile)){
       dir.create(dirname(outfile), recursive = TRUE, showWarnings = FALSE)

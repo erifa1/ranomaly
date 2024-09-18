@@ -32,7 +32,7 @@ alphaPlotly <- function(data=data, alpha=alpha, col1='', col2='', measures=c("Sh
   alpha[,col1] <- sample_data(data)[gsub('\\.','-',rownames(alpha)),col1]
   alpha <- melt(alpha, id=c(col1), measure.vars = measures)
   for (el in measures){
-    fun <- glue('p <- plot_ly(alpha, x=~{col1}, y=~{el}, color=~col1, type="box")')
+    fun <- glue::glue('p <- plot_ly(alpha, x=~{col1}, y=~{el}, color=~col1, type="box")')
     print(fun)
   }
 }
@@ -171,7 +171,7 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
         eval(parse(text = fun))
         # print(round(wilcox_res1$p.value,3))
         wilcox_col1 <- round(wilcox_res1$p.value,3)
-        fun <- glue("resAlpha[[\"{m}\"]] <- list(anova = aov1, wilcox_col1 = wilcox_col1)")
+        fun <- glue::glue("resAlpha[[\"{m}\"]] <- list(anova = aov1, wilcox_col1 = wilcox_col1)")
         write.table(wilcox_col1, paste(output,"/wilcoxtable.csv", sep=""), sep="\t", col.names=NA)
         # write.table(aov1, paste(output,"/anovatable.csv", sep=""), sep="\t", col.names=NA)  # need output for aov
         # print(fun)
@@ -188,7 +188,7 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
           eval(parse(text = fun))
           wilcox_col2_collapsed = round(wilcox_res$p.value,3)
 
-          fun <- glue("resAlpha[[\"{m}\"]] <- c(resAlpha[[\"{m}\"]], list(wilcox_col2_fdr = wilcox_col2_fdr, wilcox_col2_collapsed = wilcox_col2_collapsed))")
+          fun <- glue::glue("resAlpha[[\"{m}\"]] <- c(resAlpha[[\"{m}\"]], list(wilcox_col2_fdr = wilcox_col2_fdr, wilcox_col2_collapsed = wilcox_col2_collapsed))")
           eval(parse(text=fun))
         }
         if(column3 != ''){
@@ -204,7 +204,7 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
           eval(parse(text=fun))
 
           mixedeffect = lme1
-          fun <- glue("resAlpha[[\"{m}\"]] <- c(resAlpha[[\"{m}\"]], list(anovarepeat = anovarepeat, mixedeffect = mixedeffect))")
+          fun <- glue::glue("resAlpha[[\"{m}\"]] <- c(resAlpha[[\"{m}\"]], list(anovarepeat = anovarepeat, mixedeffect = mixedeffect))")
           eval(parse(text=fun))
         }
       }

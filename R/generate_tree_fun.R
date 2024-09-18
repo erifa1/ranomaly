@@ -43,7 +43,7 @@ generate_tree_fun <- function(dada_res = NULL, psobj = NULL, output = "./tree", 
     flog.info('Generating tree...')
     sequences <- getSequences(dada_res$seqtab.nochim)
     names(sequences) <- sapply(sequences,digest::digest,algo='md5')
-    sequences <- DNAStringSet(sequences)
+    sequences <- Biostrings::DNAStringSet(sequences)
   }else if(!is.null(psobj)){
     sequences <- refseq(data)
   }

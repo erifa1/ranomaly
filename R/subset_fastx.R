@@ -16,6 +16,7 @@
 #' @return Output fastx files in the output directory
 #'
 #' @import doParallel
+#' @import foreach
 #' @export
 
 subset_fastx <- function(path = NULL, format = "fastq", outformat = "fastq", output = "./subset_fastq/", nbseq = 10000, ncores = 3, compress=FALSE, verbose=FALSE, random = FALSE, seed = NULL){
@@ -34,10 +35,10 @@ subset_fastx <- function(path = NULL, format = "fastq", outformat = "fastq", out
     if (compress) {
       outname <- glue::glue("{outname}.gz")
     }
-    X <- readDNAStringSet(L1[i], format=format, with.qualities=TRUE)
+    X <- Biostrings::readDNAStringSet(L1[i], format=format, with.qualities=TRUE)
     if(verbose){print(L2[i]);print(length(X))}
     if(is.null(nbseq)){
-      writeXStringSet(X, outname, format = outformat, compress=compress)
+      Biostrings::writeXStringSet(X, outname, format = outformat, compress=compress)
       return("Done")
     }
 
@@ -50,7 +51,7 @@ subset_fastx <- function(path = NULL, format = "fastq", outformat = "fastq", out
         Xout = X[1:nbseq]
       }
     }else{Xout = X}
-    writeXStringSet(Xout, outname, format = outformat, compress=compress)
+    Biostrings::writeXStringSet(Xout, outname, format = outformat, compress=compress)
   }
   return("Done")
 

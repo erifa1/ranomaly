@@ -37,7 +37,7 @@ phy2cyto_fun <- function(data = data, output = "./cytoscape/", column1 = NULL, r
     sif_tab=NULL
     for(env in fact ){
       flog.debug(print(env))
-      eval(parse(text=glue("tt <- subset_samples(data1, {column1} %in% '{env}')") ))   ###
+      eval(parse(text=glue::glue("tt <- subset_samples(data1, {column1} %in% '{env}')") ))   ###
       flog.debug(print(nsamples(tt)))
 
       #ASV present dans au moins 3 echantillons, autre filtre sur abondance?
@@ -49,11 +49,11 @@ phy2cyto_fun <- function(data = data, output = "./cytoscape/", column1 = NULL, r
       otu_table(tt2) = otu_table(otab2, taxa_are_rows=TRUE)
       tt2 <- prune_taxa(taxa_sums(tt2) > 0, tt2)
 
-      tabf = cbind(taxa_names(tt2), rep(glue("type_{env}"), ntaxa(tt2)), rep(env, ntaxa(tt2)))
+      tabf = cbind(taxa_names(tt2), rep(glue::glue("type_{env}"), ntaxa(tt2)), rep(env, ntaxa(tt2)))
       sif_tab = rbind(sif_tab, tabf)
     }
     flog.info('Output ...')
-    write.table(as.data.frame(sif_tab), glue("{output}/sif_tab1.tsv"), sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
+    write.table(as.data.frame(sif_tab), glue::glue("{output}/sif_tab1.tsv"), sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
 
     # Node table
     src = unique(sif_tab[,3])
@@ -68,7 +68,7 @@ phy2cyto_fun <- function(data = data, output = "./cytoscape/", column1 = NULL, r
     node_table[node_table$attribute == "cible","tax"] = tax_table(data1)[as.character(node_table[node_table$attribute == "cible",1]),displayedRank]
 
 
-    write.table(as.data.frame(node_table), glue("{output}/node_tab1.tsv"), sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
+    write.table(as.data.frame(node_table), glue::glue("{output}/node_tab1.tsv"), sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
 
   }else{
     flog.info('Replicates, performing links ...')
@@ -90,11 +90,11 @@ phy2cyto_fun <- function(data = data, output = "./cytoscape/", column1 = NULL, r
 
         srcs <- as.character(unique(sdat2[,column1]))
         if(rep1==1){
-          flog.debug(glue("{asv} exclusif 1 seul replicat 1 env"))
-          LINKS = c(asv, glue("type_{srcs}"), srcs)
+          flog.debug(glue::glue("{asv} exclusif 1 seul replicat 1 env"))
+          LINKS = c(asv, glue::glue("type_{srcs}"), srcs)
         }else{
           # print(c(asv, "debug"))
-          LINKS = cbind(rep(asv, length(srcs)), glue("type_{srcs}"), srcs)
+          LINKS = cbind(rep(asv, length(srcs)), glue::glue("type_{srcs}"), srcs)
         }
       } else{
         #sinon partage et creation d'un lien pour chaque environnement source.
@@ -104,8 +104,8 @@ phy2cyto_fun <- function(data = data, output = "./cytoscape/", column1 = NULL, r
           srcs = as.character(unique(sdat3[,column1]))
           # Lien seulement si l'asv present dans meme sample a 2 environnements ou plus
           if(length(srcs)>1){
-            link = cbind(rep(asv, length(srcs)), glue("type_{srcs}"), srcs)
-            # print(glue("{rep} {srcs} envs"))
+            link = cbind(rep(asv, length(srcs)), glue::glue("type_{srcs}"), srcs)
+            # print(glue::glue("{rep} {srcs} envs"))
             # print(link)
             LINKS = rbind(LINKS, link)
           }
@@ -134,7 +134,7 @@ phy2cyto_fun <- function(data = data, output = "./cytoscape/", column1 = NULL, r
     table(sif_tabF[,"srcs"])
 
 
-    write.table(as.data.frame(sif_tabF), glue("{output}/sif_tab2.tsv"), sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
+    write.table(as.data.frame(sif_tabF), glue::glue("{output}/sif_tab2.tsv"), sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
 
     # Node table output
     src = unique(sif_tabF[,3])
@@ -152,7 +152,7 @@ phy2cyto_fun <- function(data = data, output = "./cytoscape/", column1 = NULL, r
     node_table$tax = "source"
     node_table[node_table$attribute == "cible","tax"] = tax_table(data1)[as.character(node_table[node_table$attribute == "cible",1]),"Phylum"]
 
-    write.table(as.data.frame(node_table), glue("{output}/node_tab2.tsv"), sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
+    write.table(as.data.frame(node_table), glue::glue("{output}/node_tab2.tsv"), sep="\t", row.names=FALSE, col.names=TRUE, quote=FALSE)
 
   }
 

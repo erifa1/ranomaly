@@ -27,6 +27,7 @@ Imports:
     decontam,
     DESeq2,
     doParallel,
+    foreach,
     futile.logger,
     GenomicAlignments,
     ggplot2,

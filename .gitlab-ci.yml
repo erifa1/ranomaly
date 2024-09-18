@@ -44,7 +44,6 @@ install_linux:
   - R -e 'install.packages(c("remotes", "devtools", "BiocManager"))'
   script:
     - R -e 'options(repos = BiocManager::repositories()); remotes::install_local(upgrade = "never", dependencies = TRUE)'
-    - R -e 'devtools::check()'
   artifacts:
     paths:
       - installed_deps

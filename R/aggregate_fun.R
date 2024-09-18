@@ -216,7 +216,6 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
                             levels=c(as.character(combinaisons[1,col]),as.character(combinaisons[2,col])) )
 
     TABfinal <- rbind(TABfinal,TABf)
-
     # Barplot
     ## differentialy abundant features on 2 methods
     ## Top abs(LogFolchange)
@@ -224,9 +223,8 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
     TABbar = TABf[TABf$DESeq ==1 | TABf$metagenomeSeq ==1 |  TABf$sumMethods >=2, ]
     TABbar = TABbar[TABbar$MeanRelAbcond1>=0.001 | TABbar$MeanRelAbcond2>=0.001, ]
     TABbar = tail(TABbar[order(abs(TABbar$DESeqLFC)),],50)
-
     if(nrow(TABbar)){
-      TABbar$tax = ttax[as.character(TABbar$ListAllOtu),rank]
+      TABbar$tax = ttax[na.omit(as.character(TABbar$ListAllOtu)),rank]
 
       # png(paste(output,'/topDiffbarplot_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.png',sep=''), width=20, height=20, units="cm", res=200)
       pbarplot <- p <-ggplot(data=TABbar, aes(x=reorder(tax, -abs(DESeqLFC)), y=DESeqLFC, fill=Condition ) ) +

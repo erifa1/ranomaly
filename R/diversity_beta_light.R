@@ -125,15 +125,15 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
     if( any(grepl(dist0, c("unifrac", "wunifrac", "dpcoa", "jsd") )) ){
       dist1 <-phyloseq::distance(data_rank, dist0)
     }else{
-      dist1 <<- vegdist(t(otable), method = dist0)
+      dist1 <<- vegan::vegdist(t(otable), method = dist0)
     }
     if(!is.null(cov)){
       form1 <- as.formula(paste('dist1 ~ Depth +', paste(cov1, collapse="+"), "+", col))
-      resBC <- adonis2(form1, data = mdata, permutations = 1000)
+      resBC <- vegan::adonis2(form1, data = mdata, permutations = 1000)
         
     }else{
       form1 <- as.formula(paste('dist1 ~ Depth +', col))
-      resBC <- adonis2(form1, data = mdata, permutations = 1000)
+      resBC <- vegan::adonis2(form1, data = mdata, permutations = 1000)
     }
 
     #PairwiseAdonis

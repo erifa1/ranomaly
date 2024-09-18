@@ -6,7 +6,7 @@
 #' @param output Output directory
 #' @param column1 Column name of factor to plot with (among sample_variables(data)).
 #' @param top If not NULL, only this number of top features are plotted. Non "top" taxa abundances are aggregated in a new taxa named "Other".
-#' @param norm Normalization method ("TSS" or "VST"), needs a phyloseq object with raw abundance.
+#' @param norm Normalization method ("TSS" "CLR", "VST", "none"), needs a phyloseq object with raw abundance.
 #' @param rank Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)
 #' @param clust If TRUE, taxa are reordered with standard clustering.
 #' @param legend Legend title ("Abundance")

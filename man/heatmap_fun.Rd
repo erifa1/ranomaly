@@ -26,7 +26,7 @@ heatmap_fun(
 
 \item{rank}{Taxonomy rank to merge features that have same taxonomy at a certain taxonomic rank (among rank_names(data), or 'ASV' for no glom)}
 
-\item{norm}{Normalization method ("TSS" or "VST"), needs a phyloseq object with raw abundance.}
+\item{norm}{Normalization method ("TSS" "CLR", "VST", "none"), needs a phyloseq object with raw abundance.}
 
 \item{legend}{Legend title ("Abundance")}
 
