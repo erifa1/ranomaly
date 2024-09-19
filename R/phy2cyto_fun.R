@@ -22,10 +22,23 @@ phy2cyto_fun <- function(data = data, output = "./cytoscape/", column1 = NULL, r
     dir.create(output, recursive=TRUE)
   }
 
+  if(is.null(column1)){
+    flog.info('No column specified, using the first column of sample_data')
+    stop("No column specified")
+  }else if(column1 %in% colnames(sample_data(data))){
+    flog.info(glue::glue("Column {column1} found in sample_data"))
+  }else{
+    stop(glue::glue("Column {column1} not found in sample_data"))
+  }
 
   data1 <- data
   otab = as.data.frame(otu_table(data1))
   sdat <- sdata <- as.data.frame(as.matrix(sample_data(data1)))
+
+  if(min(table(sdata[,column1])) < 3){
+    stop(glue::glue("Not enough samples in each group of '{column1}' column. 3 required per group."))
+  }
+
   fact <- levels(as.factor(sdata[,column1]))
   # repl <- "temps"
 

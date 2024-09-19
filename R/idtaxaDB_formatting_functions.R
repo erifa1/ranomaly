@@ -154,14 +154,27 @@ prune_db_fun <- function(taxtable = taxtable, seqs = "", prunedb=10, outputDIR =
 
   if(class(seqs) == "DNAStringSet"|class(seqs) == "RNAStringSet"){
     dna = seqs
+  } else if(class(seqs) == "character"){
+    dna <- Biostrings::readDNAStringSet(seqs)
   } else {
-    dna <- readDNAStringSet(seqs)
+    stop("seqs must be a DNAStringSet or a path to fasta file.")
   }
 
+  if(class(taxtable) == "data.frame"){
+    taxtable = taxtable
+  } else if(class(taxtable) == "character"){
+    taxtable <- rio::import(taxtable)
+    row.names(taxtable) = taxtable[,1]
+  } else {
+    stop("taxtable must be a data.frame or a path to a csv file.")
+  }
+
+# head(taxtable)
+
+# browser()
   if( any(rownames(taxtable) != names(dna)) ){
     stop("sequence IDS and taxonomy IDS do not exactly match... Check IDS and order.")
   }
-
   taxonomy <- paste( "Root", apply(taxtable, 1, paste, collapse = "; "), sep="; ")
 
   cat("\n\tPruningDB\n")
@@ -186,7 +199,7 @@ prune_db_fun <- function(taxtable = taxtable, seqs = "", prunedb=10, outputDIR =
   prune_tax = taxonomy[!remove]
   outpruneTax = taxtable[!remove,]
 
-  writeXStringSet(prune_dna, paste(outputDIR, "prune_dna.fasta",sep="/"), format="fasta")
+  Biostrings::writeXStringSet(prune_dna, paste(outputDIR, "prune_dna.fasta",sep="/"), format="fasta")
   write.table(outpruneTax, paste(outputDIR, "prune_taxtable.csv",sep="/"), quote = FALSE, col.names=FALSE)
 
   cat("\n",paste("Remaining groups:",length(prune_tax)),"\n")
@@ -292,7 +305,7 @@ idtaxa_traindb <- function(taxtable = taxtable, taxid = taxid, seqs = "", output
    if(class(seqs) == "DNAStringSet" | class(seqs) == "RNAStringSet"){
      dna = seqs
    } else {
-     dna <- readDNAStringSet(seqs)
+     dna <- Biostrings::readDNAStringSet(seqs)
    }
 
   if( any(rownames(taxtable) != names(dna)) ){
