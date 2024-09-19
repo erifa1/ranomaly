@@ -12,15 +12,6 @@ variables:
   GITHUB_PAT: $CI_GITHUB_TOKEN
   CI_GITLAB_TOKEN: $CI_GITLAB_TOKEN
 
-
-default:
-  before_script:
-  - mkdir -p installed_deps
-  - echo 'R_LIBS="installed_deps"' > .Renviron
-  - echo 'R_LIBS_USER="installed_deps"' >> .Renviron
-  - echo 'R_LIBS_SITE="installed_deps"' >> .Renviron
-
-
 pages:
   stage: wiki
   script:
@@ -37,13 +28,19 @@ install_linux:
   stage: install
   image: rocker/r-ver:${R_VERSION}
   before_script:
+  - mkdir -p installed_deps
+  - echo 'R_LIBS="installed_deps"' > .Renviron
+  - echo 'R_LIBS_USER="installed_deps"' >> .Renviron
+  - echo 'R_LIBS_SITE="installed_deps"' >> .Renviron
   - echo "GITHUB_PAT=${GITHUB_PAT}" >> .Renviron
   - cat .Renviron
+  - ls
+  - ls *
   - apt-get update -qq && apt-get install -y --no-install-recommends
   - apt-get install -y git libcurl4-openssl-dev libssl-dev libxml2-dev libgmp3-dev libmpfr-dev cmake zlib1g-dev libglpk40 libglpk-dev liblzma-dev libbz2-dev libfontconfig1-dev libfribidi-dev libharfbuzz-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
   - R -e 'install.packages(c("remotes", "devtools", "BiocManager"))'
   script:
-    - R -e 'options(repos = BiocManager::repositories()); remotes::install_local(upgrade = "never", dependencies = TRUE)'
+    - R -e 'options(repos = BiocManager::repositories()); remotes::install_local(upgrade = "never", dependencies = TRUE, lib = "installed_deps")'
   artifacts:
     paths:
       - installed_deps
