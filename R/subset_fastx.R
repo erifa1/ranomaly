@@ -20,7 +20,9 @@
 #' @export
 
 subset_fastx <- function(path = NULL, format = "fastq", outformat = "fastq", output = "./subset_fastq/", nbseq = 10000, ncores = 3, compress=FALSE, verbose=FALSE, random = FALSE, seed = NULL){
-  if(is.null(path)){stop("Require path to fastq files directory...")}
+  
+  if(is.null(path)){stop("Require path to fastq files directory...")
+  }else if(!dir.exists(path)){stop("Path does not exist...")}
   if(format != "fasta" & format != "fastq"){stop("fastq and fasta format are allowed...")}
 
   registerDoParallel(ncores)
