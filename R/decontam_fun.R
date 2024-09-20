@@ -47,7 +47,7 @@ decontam_fun <- function(data = data, domain = "Bacteria", output = "./decontam_
 
   if(!dir.exists(output)){
     flog.info('Creating output directory...')
-    dir.create(output)
+    dir.create(output, recursive = TRUE)
     flog.info('Done.')
   }
 

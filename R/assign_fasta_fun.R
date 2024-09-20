@@ -206,7 +206,7 @@ idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", co
   flog.info('Done.')
 
   flog.info("Check taxonomy consistency...")
-  tax.tablecheck = check_tax_fun(tax.table, output = NULL, rank = length(ranks_names) - 1, ranks_names = ranks_names, verbose = 3)
+  tax.tablecheck = check_tax_fun(tax.table, output = NULL, rank = length(ranks_names) - 1, ranks_names = ranks_names, verbose = verbose)
   flog.info("Done.")
 
   #Output table 2

@@ -32,6 +32,7 @@ subset_fastx <- function(path = NULL, format = "fastq", outformat = "fastq", out
     full.names = FALSE), compression = TRUE)
 
   X=NULL
+  #nocov start
   foreach (i=1:length(L1)) %dopar% {
     outname <- glue::glue("{output}/{L2[i]}.{outformat}")
     if (compress) {
@@ -55,6 +56,7 @@ subset_fastx <- function(path = NULL, format = "fastq", outformat = "fastq", out
     }else{Xout = X}
     Biostrings::writeXStringSet(Xout, outname, format = outformat, compress=compress)
   }
+  #nocov end
   return("Done")
 
 }

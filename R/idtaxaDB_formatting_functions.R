@@ -74,7 +74,7 @@ check_tax_fun <- function(taxtable = taxtable, output = NULL, rank = 7,
   RANKS  <- stringr::str_to_lower(ranks_names) %>% paste("_", ., sep = "")
 
   # Check for multiple ancestors at each rank, choose first occurence for each problematic taxon
-  sink(paste('./check_tax_fun.log', sep=""), split = TRUE)
+  if(verbose==3){sink(paste('./check_tax_fun.log', sep=""), split = TRUE)}
   for(rk in rank:2){
     if(verbose==3){flog.info(paste(colnames(taxtable)[rk],".",sep=""))}
 
@@ -124,7 +124,8 @@ check_tax_fun <- function(taxtable = taxtable, output = NULL, rank = 7,
       nloop = nloop + 1
     }
   }
-  sink()
+  if(verbose==3){sink()}
+  
   if(!is.null(output)){
     print("OUTPUT")
     write.table(taxtable, output, sep = "\t", col.names=NA)
