@@ -46,4 +46,4 @@ install_linux:
       - installed_deps
     expire_in: 7 days
   only:
-  - reduce_dependencies
+  - master

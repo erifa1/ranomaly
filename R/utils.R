@@ -23,3 +23,9 @@ globalVariables(c("<<-", ".", "Abundance", "Condition", "DESeqLFC", "Sample", "T
 #' @docType data
 #' @keywords data
 NULL
+
+
+.onLoad <- function(libname, pkgname) {
+  packageStartupMessage(paste("Package", pkgname, "version", utils::packageVersion(pkgname), "loaded."))
+}
+
