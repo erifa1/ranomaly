@@ -27,5 +27,6 @@ NULL
 
 .onLoad <- function(libname, pkgname) {
   packageStartupMessage(paste("Package", pkgname, "version", utils::packageVersion(pkgname), "loaded."))
+  packageStartupMessage(paste0("To cite this package in publications, please use ", "citation('",pkgname, "').") )
 }
 

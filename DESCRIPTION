@@ -18,7 +18,8 @@ Description: rANOMALY use Amplicon Sequence Variant (ASV from Dada2
     thin community contrast between conditions.
 License: GPL (>= 3) + file LICENSE
 Depends:
-    R (>= 4.3.0)
+    R (>= 4.3.0),
+    phyloseq
 Imports:
     cluster,
     ComplexHeatmap,
@@ -37,7 +38,6 @@ Imports:
     mixOmics,
     nlme,
     phangorn,
-    phyloseq,
     pkgndep,
     plotly (>= 4.10.4),
     psadd,
