@@ -670,6 +670,7 @@ get.sample.name <- function(fname){
 #' Apply filter to eliminate rare ASVs, allowing to reduce the size of the dataset and to remove potential contaminants.
 #' @param dada_res a dada_fun output
 #' @param freq a frequency threshold to filter rare ASVs
+#' @param top a number of top ASVs to keep
 #' @return Filtered dada_fun output
 #' 
 #' @examples
@@ -678,13 +679,17 @@ get.sample.name <- function(fname){
 #' }
 #' @export
 
-dada_filter <- function(dada_res = dada_res, freq = 0.00005){
+dada_filter <- function(dada_res = dada_res, freq = 0.00005, top = NULL){
 
   seqtab.nochim <- dada_res$seqtab.nochim %>% t() %>% as.data.frame() %>%
       dplyr::mutate( sumASV =  apply(., 1, sum) ) %>%
       dplyr::mutate( freqASV = sumASV / sum(sumASV) ) %>%
       dplyr::filter( freqASV > 0.00005 ) %>%
       dplyr::select( -sumASV, -freqASV ) %>% t()
+
+  if(!is.null(top)){
+      seqtab.nochim <- seqtab.nochim[,1:top]
+  }
 
   seqtab.export <- seqtab.nochim
   colnames(seqtab.export) <- sapply(colnames(seqtab.export), digest::digest, algo="md5")
