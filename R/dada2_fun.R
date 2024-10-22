@@ -82,7 +82,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, max
     fnFs <- sort(list.files(path, pattern = extension, full.names = TRUE))
     fnRs <- sort(list.files(path, pattern = extension2, full.names = TRUE))
 
-    rawCounts <- count_seq(path, pattern = ".*R1.*fastq.*")
+    rawCounts <- count_seq(path, pattern = ".*R1.fastq.*")
 
     flog.debug("File list...")
     flog.debug(length(fnFs))
@@ -113,7 +113,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, max
       allOrients <- function(primer) {
         # Create all orientations of the input sequence
         # require(Biostrings)
-        dna <- DNAString(primer)  # The Biostrings works w/ DNAString objects rather than character vectors
+        dna <- Biostrings::DNAString(primer)  # The Biostrings works w/ DNAString objects rather than character vectors
         orients <- c(Forward = dna, Complement = IRanges::reverse(reverseComplement(dna)), Reverse = IRanges::reverse(dna),  # bug with complement() function
         RevComp = reverseComplement(dna))
         return(sapply(orients, toString))  # Convert back to character vector
@@ -143,7 +143,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, max
       # Search primers in reads.
       primerHits <- function(primer, fn) {
         # Counts number of reads in which the primer is found
-        nhits <- vcountPattern(primer, sread(readFastq(fn)), fixed = FALSE)
+        nhits <- Biostrings::vcountPattern(primer, sread(readFastq(fn)), fixed = FALSE)
         return(sum(nhits > 0))
       }
 
@@ -458,7 +458,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, max
       # Search primers in reads.
       primerHits <- function(primer, fn) {
         # Counts number of reads in which the primer is found
-        nhits <- vcountPattern(primer, sread(readFastq(fn)), fixed = FALSE)
+        nhits <- Biostrings::vcountPattern(primer, sread(readFastq(fn)), fixed = FALSE)
         return(sum(nhits > 0))
       }
 
