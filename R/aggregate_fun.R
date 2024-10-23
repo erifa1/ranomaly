@@ -235,12 +235,12 @@ aggregate_fun <- function(data = data, metacoder = NULL, deseq = NULL, mgseq = N
         axis.text=element_text(size=12),
         axis.title=element_text(size=16,face="bold"),
         strip.text.x = element_text(size = 18,face="bold"),
-        title=element_text(size=16,face="bold"))
+        title=element_text(size=12,face="bold"))
       # print(p)
       # dev.off()
 
       ggsave(paste(output,'/topDiffbarplot_',column1,'_',paste(combinaisons[,col],collapse="_vs_"),'.eps',sep='')
-        , plot=pbarplot, height = 20, width = 20, units="cm", dpi = 500, device="eps")
+        , plot=pbarplot, height = 20, width = 20, units="cm", dpi = 300, device="eps")
 
 
 

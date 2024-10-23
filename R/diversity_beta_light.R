@@ -71,7 +71,7 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
   if(!is.null(cov)){
 
   sdata = sample_data(data_rank)
-  fun = glue::glue("sdata${cov1[length(cov1)]}_{col} = factor(paste(sdata${cov1[length(cov1)]}, sdata${col}, sep='_'))")
+  fun = glue::glue("sdata${col}_{cov1[length(cov1)]} = factor(paste(sdata${col}, sdata${cov1[length(cov1)]}, sep='_'))")
   eval(parse(text=fun))
   sample_data(data_rank) = sdata
 
@@ -81,7 +81,7 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
   theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}")) + scale_shape_manual(values = 0:10)
   if(ellipse){p1 <- p1 + stat_ellipse()}
 
-  p2 <- plot_samples(data_rank, resBeta$ordination, color = glue::glue("{cov1[length(cov1)]}_{col}"), shape = NULL, axes = axes ) +
+  p2 <- plot_samples(data_rank, resBeta$ordination, color = glue::glue("{col}_{cov1[length(cov1)]}"), shape = NULL, axes = axes ) +
   theme_bw() + ggtitle(glue::glue("{ord0} + {dist0}")) + scale_shape_manual(values = 0:10)
   if(ellipse){p2 <- p2 + stat_ellipse()}
 
@@ -106,6 +106,7 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
   p1 <- p1 + stat_ellipse(aes(group = fact))
   p1 <- p1 + geom_point() + theme_bw()
   resBeta$plotly1 <- ggplotly(p1, tooltip=c("x", "y", "sample.id")) %>% config(toImageButtonOptions = list(format = "svg"))
+  saveWidget(resBeta$plotly1, glue::glue("{output}/beta_diversity.html"), selfcontained = TRUE)
 
 }
   # plot(p1)
@@ -138,7 +139,7 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
 
     #PairwiseAdonis
     if(!is.null(cov)){
-      fun = glue::glue("resBC2 <- pairwise.adonis(dist1, mdata${cov1[length(cov1)]}_{col}, p.adjust.m='fdr')" )
+      fun = glue::glue("resBC2 <- pairwise.adonis(dist1, mdata${col}_{cov1[length(cov1)]}, p.adjust.m='fdr')" )
       eval(parse(text = fun))
     } else {
       resBC2 <- pairwise.adonis(dist1, mdata[,c(col1)], p.adjust.m='fdr')
@@ -148,7 +149,6 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
     write.table(resBC2, file=paste0(output,'/',col,'pairwisepermANOVA.txt'), sep="\t")
 
     ggsave(glue::glue("{output}/beta_diversity.eps"), plot=resBeta$plot, height = 20, width = 30, units="cm", dpi = 500, device="eps")
-    saveWidget(resBeta$plotly1, glue::glue("{output}/beta_diversity.html"), selfcontained = TRUE)
 
     resBeta$permanova <- resBC
     resBeta$permanova_formula <- format(form1)
