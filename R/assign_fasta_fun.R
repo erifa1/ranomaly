@@ -210,6 +210,8 @@ idtaxa_assign_fasta_fun <- function(fasta, id_db, output = "./assign_fasta/", co
   flog.info("Done.")
 
   #Output table 2
+  tax.tablecheck[,1] <- stringr::str_replace(tax.tablecheck[,1], "d__", "k__") # replace d__ prefix by k__ for kingdom
+
   Tab2 = apply( as.data.frame(tax.tablecheck, stringsAsFactors=FALSE) , 1 , paste , collapse = ";" )
   Tab2 <- cbind(Tab2, seq=as.character(dna))
   write.table(Tab2, paste(output,"/final_tax_table.csv",sep=""), quote = FALSE, sep = "\t",
