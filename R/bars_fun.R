@@ -13,6 +13,9 @@
 
 
 rarefaction <- function(data = data, col = NULL, step = 100, ggplotly = TRUE){
+  if(!is.null(col) && !col %in% sample_variables(data)){
+    stop((glue::glue("Please provide a correct metadata column name to split the graph. (Available columns: {glue::glue_collapse(sample_variables(data), '; ')}")))
+  }
   plot_rare <- ggrare(data, step = step, color = col, plot = FALSE)
   plot_rare <- plot_rare + facet_wrap(col, ncol = 4) + theme_bw() +
     theme(axis.text.x = element_text(angle = 45, hjust=1),

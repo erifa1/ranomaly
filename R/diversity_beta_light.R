@@ -145,8 +145,8 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
       resBC2 <- pairwise.adonis(dist1, mdata[,c(col1)], p.adjust.m='fdr')
     }
 
-    write.table(resBC, file=paste0(output,'/',col,'_permANOVA.txt'), sep="\t")
-    write.table(resBC2, file=paste0(output,'/',col,'pairwisepermANOVA.txt'), sep="\t")
+    write.table(resBC, file=paste0(output,'/',col,'_permANOVA.txt'), sep="\t", quote = FALSE)
+    write.table(resBC2, file=paste0(output,'/',col,'_pairwisepermANOVA.txt'), sep="\t", quote = FALSE, row.names = FALSE)
 
     ggsave(glue::glue("{output}/beta_diversity.eps"), plot=resBeta$plot, height = 20, width = 30, units="cm", dpi = 500, device="eps")
 
