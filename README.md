@@ -1,7 +1,9 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# rANOMALY
+# rANOMALY <a href="https://forgemia.inra.fr/umrf/ranomaly/"><img src="man/figures/ranomaly_logo150px.png" alt="ispickr" align="right" width="150" style="margin-top: 10px; margin-left: 20px;"/></a>
+
+
 
 <!-- badges: start -->
 
