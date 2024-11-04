@@ -1,6 +1,6 @@
 Package: ranomaly
 Title: An R package grouping ANOMALY worflow functions
-Version: 1.1.0
+Version: 1.2.0
 Author: Sebastien Theil [aut, cre], Etienne Rifa [aut]
 Maintainer: Sebastien Theil <sebastien.theil@inrae.fr>, Etienne Rifa
     <etienne.rifa@inrae.fr>

@@ -49,3 +49,83 @@ assign_taxo_fun <- function(dada_res = dada_res,  output = "./idtaxa/", id_db = 
 
 
 }
+
+
+#' add_blast_fun
+#'
+#' Add taxonomy information from taxonkit lineage table to phyloseq object.
+#'
+#' @param data Phyloseq object
+#' @param lineage_table Lineage table from taxonkit software.
+#' @param domain Domain to use (Bacteria or Fungi)
+#' @param output Output directory
+#' @param prefix Prefix for taxonomy to use.
+#'
+#' @return Phyloseq object with taxonomy table updated.
+#'
+#' @export
+
+
+add_blast_fun <- function(data = data, lineage_table = NULL, domain = "Bacteria", output = "./add_blast/", prefix = c("k__","p__","c__","o__","f__","g__","s__")){
+
+  ttable1 = as.matrix(tax_table(data))
+  txkit2 <- txkit <- rio::import(lineage_table)
+
+  if(domain == "Bacteria"){
+    idx_ok = c(which(grepl("Bacteria", txkit[,4])), which(grepl("Archaea", txkit[,4])))
+  }else if(domain == "Fungi"){
+    idx_ok = c(which(grepl("Fungi", txkit[,4])))
+    txkit[idx_ok,5] = gsub("Eukaryota;", "Fungi;",txkit[idx_ok,5])
+  }else(
+    stop("Domain not recognized")
+  )
+  txkit2 = txkit[idx_ok, ]
+
+  txkit3 = txkit2[!duplicated(txkit2[,1]),]
+  row.names(txkit3) = txkit3[,1]
+
+
+  ttable_txkit = t(as.data.frame(strsplit(txkit3[,5], ";"), stringsAsFactors = FALSE))
+  row.names(ttable_txkit) = txkit3[,1]
+  ttable_txkit[which(ttable_txkit == "")] = NA
+
+  ttable_txkit2 = na.omit(ttable_txkit)
+
+  for(i in row.names(ttable_txkit2)){
+    if(length(grep("_[Ss]pecies", ttable1[i,7])) != 0 | length(grep("_unassigned", ttable1[i,7])) != 0){
+      print(i)
+      # print(ttable_txkit2[i,])
+
+      PREFIX = prefix
+      Ftax = paste(PREFIX, ttable_txkit2[i,], sep="")
+      print(rbind(ttable1[i,],Ftax))
+
+      ttable1[i,] = sub(" ", "_", Ftax)
+    }
+
+  }
+
+  filltable = fill_tax_fun(ttable1, prefix = TRUE)
+  check1 = check_tax_fun(filltable, output = NULL)
+
+
+  tax_table(data0) = as.matrix(check1)
+
+  data <- data0
+
+  if(!is.null(output)){
+    dir.create(output, showWarnings = FALSE, recursive = TRUE)
+    data_unassigned <- prune_taxa(as.vector(tax_table(data)[,1] == "unassigned"), data)
+    Biostrings::writeXStringSet(refseq(data_unassigned), filepath = glue::glue("{output}/unassigned_asv.fasta"), format = "fasta", width = 10000 )
+
+    if(all(taxa_names(data) == row.names(check1))){
+      check1$seq = as.character(refseq(data))
+      write.csv(check1, file = glue::glue("{output}/check_final_tax.csv"))
+    }else(
+      stop("ASV names are different")
+    )
+  }
+
+
+  return(data)
+}

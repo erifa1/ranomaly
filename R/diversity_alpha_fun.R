@@ -149,7 +149,7 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
         flog.info("############\nANOVA + pairwise wilcox test\n")
         flog.debug(paste0('Formula: ',f))
         anova_res1 <- aov( as.formula(paste(f)), anova_data)
-        sink(paste(output,'/anova_out.txt', sep=''), split = FALSE)
+        sink(paste(output,'/anova_out_',m ,'.txt', sep=''), split = FALSE)
         ( aov1 <- summary(anova_res1) )
         print(aov1)
         sink()
@@ -172,7 +172,7 @@ diversity_alpha_fun <- function(data = data, output = "./plot_div_alpha/", colum
         # print(round(wilcox_res1$p.value,3))
         wilcox_col1 <- round(wilcox_res1$p.value,3)
         fun <- glue::glue("resAlpha[[\"{m}\"]] <- list(anova = aov1, wilcox_col1 = wilcox_col1)")
-        write.table(wilcox_col1, paste(output,"/wilcoxtable.csv", sep=""), sep="\t", col.names=NA)
+	write.table(wilcox_col1, paste(output,"/wilcoxtable", m, ".csv", sep=""), sep="\t", col.names=NA)
         # write.table(aov1, paste(output,"/anovatable.csv", sep=""), sep="\t", col.names=NA)  # need output for aov
         # print(fun)
         eval(parse(text=fun))
