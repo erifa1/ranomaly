@@ -4,12 +4,14 @@
 \alias{dada_filter}
 \title{Frequency filter on dada_fun output}
 \usage{
-dada_filter(dada_res = dada_res, freq = 5e-05)
+dada_filter(dada_res = dada_res, freq = 5e-05, top = NULL)
 }
 \arguments{
 \item{dada_res}{a dada_fun output}
 
 \item{freq}{a frequency threshold to filter rare ASVs}
+
+\item{top}{a number of top ASVs to keep}
 }
 \value{
 Filtered dada_fun output

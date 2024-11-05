@@ -2,6 +2,7 @@
 
 export(ASVenn_fun)
 export(VENNFUN)
+export(add_blast_fun)
 export(aggregate_fun)
 export(aggregate_top_taxa)
 export(assign_taxo_fun)

@@ -28,4 +28,8 @@ test_that("downstream", {
     expect_true(class(beta_strain_time) == "list")
 
 #   unlink(test_path("tmp"), recursive = TRUE, force = TRUE)
+    unlink(testthat::test_path("tree"), recursive = TRUE, force = TRUE)
+    unlink(testthat::test_path("phyloseq"), recursive = TRUE, force = TRUE)
+    unlink(testthat::test_path("_snaps"), recursive = TRUE, force = TRUE)
+    unlink(testthat::test_path("treealignment.Rdata"), recursive = TRUE, force = TRUE)
 })
