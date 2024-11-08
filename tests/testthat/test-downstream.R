@@ -70,4 +70,5 @@ test_that("downstream", {
     unlink(testthat::test_path("phyloseq"), recursive = TRUE, force = TRUE)
     unlink(testthat::test_path("_snaps"), recursive = TRUE, force = TRUE)
     unlink(testthat::test_path("treealignment.Rdata"), recursive = TRUE, force = TRUE)
+    unlink(testthat::test_path("tmp/"), recursive = TRUE, force = TRUE)
 })
