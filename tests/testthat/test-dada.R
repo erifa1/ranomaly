@@ -38,5 +38,5 @@ test_that("dada & co", {
     data = generate_phyloseq_fun(dada_res = dada_res, tax.table = tax.tablecheck, tree = tree, metadata = glue::glue("{test_path('testdata', 'csv2phyloseq')}/sample_metadata.csv"))
     expect_true(class(data) == "phyloseq")
 
-#   unlink(test_path("tmp"), recursive = TRUE, force = TRUE)
+    unlink("inst/dataset/fastq/filtered/", recursive = TRUE, force = TRUE)
 })
