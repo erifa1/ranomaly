@@ -1,30 +1,22 @@
 stages:
-  - wiki
   - install
+  - wiki
 
 cache:
-  key: "$CI_COMMIT_REF_SLUG"
+  key: global-cache
   paths:
   - installed_deps/
+  when: always
 
 variables:
-  R_VERSION: "4.3.3"
+  R_VERSION: "4.4.1"
   GITHUB_PAT: $CI_GITHUB_TOKEN
   CI_GITLAB_TOKEN: $CI_GITLAB_TOKEN
 
-pages:
-  stage: wiki
-  script:
-  - mkdir .public
-  - cp -r markdown/* .public
-  - mv .public public
-  artifacts:
-    paths:
-    - public
-  only:
-  - master
 
 install_linux:
+  tags:
+    - mia5
   stage: install
   image: rocker/r-ver:${R_VERSION}
   before_script:
@@ -34,16 +26,43 @@ install_linux:
   - echo 'R_LIBS_SITE="installed_deps"' >> .Renviron
   - echo "GITHUB_PAT=${GITHUB_PAT}" >> .Renviron
   - cat .Renviron
-  - ls
-  - ls *
+  - ls installed_deps
+  - R -e 'print(.libPaths())'
+  - R -e '.libPaths(c(.libPaths(), "installed_deps/"))'
   - apt-get update -qq && apt-get install -y --no-install-recommends
   - apt-get install -y git libcurl4-openssl-dev libssl-dev libxml2-dev libgmp3-dev libmpfr-dev cmake zlib1g-dev libglpk40 libglpk-dev liblzma-dev libbz2-dev libfontconfig1-dev libfribidi-dev libharfbuzz-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
   - R -e 'install.packages(c("remotes", "devtools", "BiocManager"))'
+  - R -e 'BiocManager::install(version = "3.20", upgrade = FALSE, update = FALSE)'
   script:
-    - R -e 'options(repos = BiocManager::repositories()); remotes::install_local(upgrade = "never", dependencies = TRUE, lib = "installed_deps")'
+    - R -e 'options(repos = BiocManager::repositories()); remotes::install_local(upgrade = "never", dependencies = TRUE, lib = "installed_deps")' 
   artifacts:
     paths:
       - installed_deps
+      - .Renviron
     expire_in: 7 days
+  only:
+  - master
+
+
+pages:
+  stage: wiki
+  dependencies: 
+  - install_linux
+  image: rocker/r-ver:${R_VERSION}
+  before_script:
+  - apt-get update -qq && apt-get install -y --no-install-recommends
+  - apt-get install -y pandoc git libcurl4-openssl-dev libssl-dev libxml2-dev libgmp3-dev libmpfr-dev cmake zlib1g-dev libglpk40 libglpk-dev liblzma-dev libbz2-dev libfontconfig1-dev libfribidi-dev libharfbuzz-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
+  script:
+  - cat .Renviron
+  - ls installed_deps
+  - R -e 'print(.libPaths())'
+  - R -e 'install.packages("pkgdown")'
+  - R -e 'pkgdown::build_site()'
+  - mkdir .public
+  - cp -r docs/* .public
+  - mv .public public
+  artifacts:
+    paths:
+    - public
   only:
   - master

@@ -10,3 +10,8 @@
 ^dev/.*
 ^public$
 ^public/.*
+^installed_deps$
+^installed_deps/.*
+^builds$
+^builds/.*
+

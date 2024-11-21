@@ -3,3 +3,5 @@
 README.Rmd
 renv
 dev
+inst/doc
+docs/

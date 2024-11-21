@@ -15,11 +15,14 @@ rANOMALY is an R Package integrating AmplicoN wOrkflow for Microbial community A
 F1000 reference paper](https://f1000research.com/articles/10-7) and [the
 poster](https://hal.archives-ouvertes.fr/hal-02340484/) presenting this workflow.
 
+ ![](man/figures/ranomaly_wf.png "ranomaly")
+
+
 A shiny app [ExploreMetabar](https://explore-metabar.sk8.inrae.fr/) is available to explore phyloseq object generated with rANOMALY or other tools, and allow users to perform statistical analysis in an user friendly interface (no command line).
 
 ## Installation
 
-You can install rANOMALY from this repository with following commands (tested on R 4.4.1):
+You can install rANOMALY from this repository with following commands (tested on R 4.4.2):
 
 ### Linux (highly recommended)
 
@@ -34,10 +37,10 @@ Require [Rtools](https://cran.r-project.org/bin/windows/Rtools/),
 [git](https://git-scm.com/download/win) and run same commands as Linux
 installation.
 
-## Tutorial
+## Documentation and Tutorials
 
 Visit [the rANOMALY
-wikipage](https://forgemia.inra.fr/umrf/ranomaly/-/wikis/home)
+page](https://umrf.pages.mia.inra.fr/ranomaly/index.html)
 
 ## Ressources
 
@@ -58,7 +61,7 @@ Murali, Adithya, Aniruddha Bhargava, et Erik S. Wright. « IDTAXA: a novel appr
 
 ## Licence
 
- ![etalab](inst/misc/etalab5.png "etalab") [ETALAB](https://www.etalab.gouv.fr/wp-content/uploads/2018/11/open-licence.pdf)
+ ![etalab](man/figures/etalab5.png "etalab") [ETALAB](https://www.etalab.gouv.fr/wp-content/uploads/2018/11/open-licence.pdf)
 GPL 3.0
 
 ## Copyright

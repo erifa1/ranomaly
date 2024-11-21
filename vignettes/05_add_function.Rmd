@@ -1,0 +1,124 @@
+---
+title: "Add a function to rANOMALY"
+weight: 5
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{05_add_function}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+Here is a simple procedure to add any function users think usefull to improve the rANOMALY package. This requires some knowledge with `git` and `R package development`, but this procedure is here to help users who never did this yet.
+
+# Clone repository
+
+```bash
+git clone git@forgemia.inra.fr:umrf/ranomaly.git
+cd ranomaly
+```
+
+You can use [atom](https://atom.io/), this allows users to manage local git repository and wraps fetch/pull/push/commit git functionnalies in an user-friendly interface. On Windows users can download archive of the repository and open .Rproject in RStudio. Rstudio have its own git repository manager.
+
+Before doing any change, it is recommended to create a new branch to the local repository:
+
+```bash
+git checkout -b newfunction_proposal
+```
+
+In can be done as well in Rstudio.
+
+
+# Create a new function
+
+As a simple example, we want a fonction that allows users to check counts of differents taxa at each rank.
+
+The function will need the final phyloseq object as only argument.
+
+We create a new files in the R directory (pathtotherepository/ranomaly/R):
+
+```bash
+touch ./R/taxa_num.R
+```
+
+The taxa_num.R will contain a header describing the function, its arguments and usage. These informations will be retranscribed in the function manual (`help(taxa_num)`) :
+
+```R
+#' taxa_num function
+#'
+#' Informs numbers of features at each taxonomic rank
+#'
+#' @param data a phyloseq object
+#'
+#' @return Return a list with diffrents informations...
+#'
+#' @import phyloseq
+#' @export
+
+taxa_num <- function(data = NULL){
+
+  if(is.null(data)|class(data)!="phyloseq"){
+    stop("Phyloseq object required...")
+  }
+
+  ttable = tax_table(data)
+
+  list1 = list()
+  for(i in 1:7){
+    list1[[i]] = as.character(unique(ttable[,i]))
+  }
+  list1[[8]] = as.character(taxa_names(data))
+  names(list1) = c(rank_names(data), "ASV")
+
+  list2 = list()
+  list2$counts = sapply(list1, length)
+  list2$details = list1
+
+  return(list2)
+
+}
+
+```
+
+
+# New session R to test the new function.
+
+## Update manuals and dependencies
+
+`devtools::document` function automatically update manual of the function and namespace file of the package.  
+
+```r
+devtools::document("~/pathtotherepository/ranomaly/", roclets = c('rd', 'collate', 'namespace'))
+```
+
+## Test function
+
+`devtools::load_all` function allows to load the development version of the package containing the user changes. This implies the user has installed the package once with its dependencies.
+
+```r
+library(phyloseq)
+data(GlobalPatterns)
+
+devtools::load_all("~/pathtotherepository/ranomaly/")
+
+taxanum1 = taxa_num(GlobalPatterns)
+
+#results
+taxanum1$counts
+taxanum1$details$Phylum
+
+help(taxa_num)
+```
+
+# Contribute
+
+If users are convinced their own new function can improve significantly the rANOMALY master version, they are invited to fork the rANOMALY repository, do their development and open merge request [here](https://forgemia.inra.fr/umrf/ranomaly/-/merge_requests) (procedure are well described [here](https://yangsu.github.io/pull-request-tutorial/))
+
+All users can have their own account on forgemia ([CRU account creation](https://cru.renater.fr/sac/)).

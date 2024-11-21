@@ -1,0 +1,85 @@
+---
+title: "Installation procedure"
+weight: 1
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{01_install}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+
+## R packages
+
+Tested on R version 4.4.2.
+
+You can install the development version of rANOMALY from this repository
+with:
+
+## Linux (highly recommended)
+
+``` r
+install.packages("devtools")
+devtools::install_git("https://forgemia.inra.fr/umrf/ranomaly")
+```
+
+## Linux external libraries & tools
+
+```bash
+sudo apt-get install -y git libcurl4-openssl-dev libssl-dev libxml2-dev libgmp3-dev libmpfr-dev cmake zlib1g-dev libglpk40 libglpk-dev liblzma-dev libbz2-dev libfontconfig1-dev libfribidi-dev libharfbuzz-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev pandoc
+```
+
+* **pygit2**: https://www.pygit2.org/install.html#quick-install
+
+* **cutadapt**: rANOMALY allow the use of CUTADAPT to search and trim primers from raw sequences. You can find the simple installation step [here](https://cutadapt.readthedocs.io/en/stable/installation.html).
+
+* **pandoc**: https://github.com/jgm/pandoc/releases/tag/2.10.1
+
+
+## Windows dependencies
+
+Require [Rtools](https://cran.r-project.org/bin/windows/Rtools/),
+[git](https://git-scm.com/download/win) and run same commands as Linux
+installation.
+
+## Tutorial
+
+Visit [the rANOMALY
+use case](https://umrf.pages.mia.inra.fr/ranomaly/articles/ranomaly.html)
+
+
+## R packages dependencies:
+
+*  dada2 https://benjjneb.github.io/dada2/dada-installation.html
+*  phyloseq https://bioconductor.org/packages/release/bioc/html/phyloseq.html
+*  DECIPHER https://bioconductor.org/packages/release/bioc/html/DECIPHER.html
+*  ShortRead http://bioconductor.org/packages/release/bioc/html/ShortRead.html
+*  Biostrings http://bioconductor.org/packages/release/bioc/html/Biostrings.html
+*  DESeq2 https://bioconductor.org/packages/release/bioc/html/DESeq2.html
+*  microbiome https://bioconductor.org/packages/release/bioc/html/microbiome.html
+*  metagenomeSeq https://bioconductor.org/packages/release/bioc/html/metagenomeSeq.html
+*  mixOmics https://bioconductor.org/packages/release/bioc/html/mixOmics.html
+
+*  psadd https://github.com/cpauvert/psadd
+*  pairwiseAdonis https://github.com/pmartinezarbizu/pairwiseAdonis
+*  metacoder https://github.com/grunwaldlab/metacoder
+
+*  nlme https://cran.r-project.org/web/packages/nlme/index.html
+*  phangorn https://cran.r-project.org/web/packages/phangorn/index.html
+*  plotly https://cran.r-project.org/web/packages/plotly/index.html
+*  plyr https://cran.r-project.org/web/packages/plyr/index.html
+*  digest https://cran.r-project.org/web/packages/digest/index.html
+*  ggpubr https://cran.r-project.org/web/packages/ggpubr/index.html
+*  PMCMRplus https://cran.r-project.org/web/packages/PMCMRplus/index.html
+*  VennDiagram https://cran.r-project.org/web/packages/VennDiagram/index.html
+*  optparse https://cran.r-project.org/web/packages/optparse/index.html
+*  futile.logger https://cran.r-project.org/web/packages/futile.logger/index.html
+*  devtools https://cran.r-project.org/web/packages/devtools/index.html

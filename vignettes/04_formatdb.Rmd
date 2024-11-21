@@ -1,0 +1,56 @@
+---
+title: "IDTAXA formatting database procedure"
+weight: 4
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{04_formatdb}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```r
+library(ranomaly)
+```
+
+# IDTAXA formatting database procedure
+
+Toy datasets: **gtdb_1k.tax** and **gtdb_1k.fna** are available [here](https://nextcloud.inrae.fr/s/jL3KeYjPGa44tky).
+
+* **Formatting taxonomy table**
+
+```r
+taxtable <- read.table("gtdb_1k.tax", sep="\t", stringsAsFactors=FALSE, h = TRUE)
+taxtable[taxtable == ""] = NA
+row.names(taxtable) = taxtable[,1]	#rownames must be unique
+ttable_ok = taxtable[,-1]
+```
+* **Filling empty fields**
+
+```r
+filltable = fill_tax_fun(ttable_ok)
+```
+
+* **Checking taxonomy incongruency like multiple ancestors**
+
+```r
+check1 = check_tax_fun(filltable, output = NULL)
+```
+
+* **Taxid file generation (rdp format)**
+```r
+taxid <- taxid_fun(taxtable = check1, output = NULL)
+```
+
+* **Training idtaxa database**
+```r
+idtaxa_traindb(taxtable = check1, taxid = taxid, seqs = "gtdb_1k.fna", outputDIR = "./", outputDBname = "newDB.rdata", returnval = FALSE)
+
+```
+

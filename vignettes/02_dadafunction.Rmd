@@ -1,0 +1,82 @@
+---
+title: "DADA2 function usage according to raw data type"
+weight: 2
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{02_dadafunction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+## DADA2 usage according to raw data type
+
+
+### IonTorrent single end
+
+* Trim primers with CUTADAPT
+
+```r
+dada_res = dada2_fun(cutadapt = TRUE, f_primer = "GTGYCAGCMGCCGCGGTAA", r_primer = "CCGYCAATTYMTTTRAGTTT",
+	orient_torrent = "GTG", 
+	path = "./reads/", outpath = "./analyses/01_results_dada2/", 
+	torrent_single = TRUE, paired = FALSE)
+```
+
+* Trim primers based on length
+
+```r
+dada_res = dada2_fun(cutadapt = FALSE, trim_l = 20, trim_r = 21,
+	orient_torrent = "GTG", 
+	path = "./reads/", outpath = "./analyses/01_results_dada2/", 
+	torrent_single = TRUE, paired = FALSE)
+```
+
+
+
+### Illumina paired end
+
+
+* Trim primers with CUTADAPT
+
+```r
+dada_res = dada2_fun(cutadapt = TRUE, f_primer = "CCTACGGGNGGCWGCAG", r_primer = "GACTACHVGGGTATCTAATCC",
+	path = "./reads/", outpath = "./analyses/01_results_dada2/", 
+	torrent_single = FALSE, paired = TRUE,
+	extension = "_R1.fastq.gz")
+```
+
+* Trim primers based on length
+
+```r
+dada_res = dada2_fun(cutadapt = FALSE, trim_l = 18, trim_r = 22,
+	path = "./data/dataset_5k_illumina_paired", outpath = "./analyses/illumina_paired/01_results_dada2/", 
+	compress = TRUE, torrent_single = FALSE, paired = TRUE,
+	extension = "_R1.fastq.gz")
+```
+
+### Illumina single end
+
+* Trim primers with CUTADAPT
+
+```r
+dada_res = dada2_fun(cutadapt = TRUE, f_primer = "CCTACGGGNGGCWGCAG", r_primer = "GACTACHVGGGTATCTAATCC",
+	path = "./reads/", outpath = "./analyses/01_results_dada2/", 
+	torrent_single = FALSE, paired = FALSE)
+```
+
+* Trim primers based on length
+
+```r
+dada_res = dada2_fun(cutadapt = FALSE, trim_l = 18, trim_r = 22,
+	path = "./reads/", outpath = "./analyses/01_results_dada2/", compress = TRUE, 
+	torrent_single = FALSE, paired = FALSE)
+```
+

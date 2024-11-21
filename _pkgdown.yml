@@ -1,0 +1,84 @@
+# pkgdown.yml
+template:
+  bootstrap: 5
+  package: pkgdown
+
+home:
+  title: rANOMALY
+
+reference:
+  - title: "Preprocessing functions"
+    contents:
+      - dada2_fun
+      - generate_phyloseq_fun
+      - idTaxa_assign
+      - idtaxa_assign_fasta_fun
+      - fill_tax_fun
+      - check_tax_fun
+      - generate_tree_fun
+      - decontam_fun
+  - title: "Diversity analysis functions"
+    contents:
+      - rarefaction
+      - bars_fun
+      - diversity_alpha_fun
+      - diversity_beta_light
+  - title: "Differential analysis functions"
+    contents:
+      - deseq2_fun
+      - metagenomeseq_fun
+      - metacoder_fun
+      - aggregate_fun
+      - plsda_fun
+      - heatmap_fun
+  - title: "Others analysis"
+    contents:
+      - ASVenn_fun
+      - core_soft_fun
+  - title: "Utils functions"
+    contents:
+      - phy2tsv_fun
+      - subset_fastx
+      - dada_filter
+      - update_metadata_fun
+      - split_table_fun
+      - csv2phyloseq_fun
+      - export_to_stamp_fun
+      - phy2cyto_fun
+      - idtaxa_traindb
+  - title: "Others functions"
+    contents:
+      - abundances
+      - add_blast_fun
+      - aggregate_taxa
+      - aggregate_top_taxa
+      - alphaPlot
+      - assign_taxo_fun
+      - count_fastq_sequences
+      - count_seq
+      - get.sample.name
+      - ggrare
+      - heatmapDeseq2_fun
+      - heatmapDeseq2_funSub
+      - launch_metacoder
+      - list_venn_fun
+      - mixedsort
+      - mtabulate
+      - pairwise.adonis
+      - prune_db_fun
+      - ranks_ref
+      - remove_non_ascii
+      - taxid_fun
+      - top
+      - top_taxa
+      - VENNFUN
+
+navbar:
+  structure:
+    left:  [intro, reference, articles, tutorials, news]
+    right: [search, gitlab]
+  components:
+    gitlab:
+      icon: fa-gitlab
+      href: https://forgemia.inra.fr/umrf/ranomaly
+      aria-label: GitLab repository

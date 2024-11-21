@@ -1,9 +1,9 @@
 Package: ranomaly
 Title: An R package grouping ANOMALY worflow functions
 Version: 1.2.0
-Author: Sebastien Theil [aut, cre], Etienne Rifa [aut]
-Maintainer: Sebastien Theil <sebastien.theil@inrae.fr>, Etienne Rifa
-    <etienne.rifa@inrae.fr>
+Authors@R:
+    c(person("Sebastien", "Theil", , "sebastien.theil@inrae.fr", role = c("cre", "aut")),
+    person("Etienne", "Rifa", , "etienne.rifa@insa-toulouse.fr", role = c("cre", "aut")))
 Description: rANOMALY use Amplicon Sequence Variant (ASV from Dada2
     package) as taxonomic unit, allowing an easy and relevant sequence
     tracking between different environments and/or projects.  Decontam
@@ -26,21 +26,17 @@ Imports:
     dada2,
     DECIPHER,
     decontam,
-    DESeq2,
     doParallel,
     foreach,
     futile.logger,
     GenomicAlignments,
     ggplot2,
     htmlwidgets,
-    metacoder,
-    metagenomeSeq,
     mixOmics,
     nlme,
     phangorn,
     pkgndep,
     plotly (>= 4.10.4),
-    psadd,
     Rhtslib,
     Rsamtools,
     ShortRead,
@@ -52,18 +48,24 @@ Imports:
     VennDiagram,
     vroom
 Remotes:
+    github::ropensci/bold,
+    github::ropensci/taxize,
     github::cpauvert/psadd,
     github::grunwaldlab/metacoder,
+    github::HCBravoLab/metagenomeSeq,
     github::mikelove/DESeq2
 Suggests:
     readxl,
     scales,
     microbiome,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
 Author@R: c(person(given = "Sebastien", family = "Theil", role = c("aut",
     "cre"), email = "sebastien.theil@inrae.fr"), person(given = "Etienne",
     family = "Rifa", role = "aut", email = "etienne.rifa@inrae.fr"))
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
+VignetteBuilder: knitr

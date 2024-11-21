@@ -1,0 +1,18 @@
+---
+title: "Reference databases"
+weight: 3
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{03_ref_db}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+We share all the databases we currently use for IDTAXA in this [link](https://nextcloud.inrae.fr/s/Zx3iASe64x8oSoM).
