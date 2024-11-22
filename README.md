@@ -60,7 +60,7 @@ Then, R console:
 ``` r
 install.packages("devtools", "BiocManager")
 options(repos = BiocManager::repositories()); devtools::install_git("https://forgemia.inra.fr/umrf/ranomaly")
-``
+```
 
 
 ## Documentation and Tutorials
