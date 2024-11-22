@@ -26,16 +26,42 @@ You can install rANOMALY from this repository with following commands (tested on
 
 ### Linux (highly recommended)
 
-``` r
-install.packages("devtools")
-devtools::install_git("https://forgemia.inra.fr/umrf/ranomaly")
+In bash terminal:
+
+```bash
+sudo apt-get install -y git libcurl4-openssl-dev libssl-dev libxml2-dev libgmp3-dev libmpfr-dev cmake zlib1g-dev libglpk40 libglpk-dev liblzma-dev libbz2-dev libfontconfig1-dev libfribidi-dev libharfbuzz-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev pandoc
 ```
+
+* **pygit2**: https://www.pygit2.org/install.html#quick-install
+
+* **cutadapt**: rANOMALY allow the use of CUTADAPT to search and trim primers from raw sequences. You can find the simple installation step [here](https://cutadapt.readthedocs.io/en/stable/installation.html).
+
+* **pandoc**: https://github.com/jgm/pandoc/releases/tag/2.10.1
+
+Then, R console: 
+
+``` r
+install.packages("devtools", "BiocManager")
+options(repos = BiocManager::repositories()); devtools::install_git("https://forgemia.inra.fr/umrf/ranomaly")
+```
+
 
 ### Windows
 
-Require [Rtools](https://cran.r-project.org/bin/windows/Rtools/),
-[git](https://git-scm.com/download/win) and run same commands as Linux
-installation.
+Require: 
+
+- [Rtools](https://cran.r-project.org/bin/windows/Rtools/)
+
+- [git](https://git-scm.com/download/win)
+
+
+Then, R console: 
+
+``` r
+install.packages("devtools", "BiocManager")
+options(repos = BiocManager::repositories()); devtools::install_git("https://forgemia.inra.fr/umrf/ranomaly")
+``
+
 
 ## Documentation and Tutorials
 
