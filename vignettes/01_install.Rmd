@@ -26,12 +26,9 @@ with:
 
 ## Linux (highly recommended)
 
-``` r
-install.packages("devtools")
-devtools::install_git("https://forgemia.inra.fr/umrf/ranomaly")
-```
-
 ## Linux external libraries & tools
+
+In bash terminal:
 
 ```bash
 sudo apt-get install -y git libcurl4-openssl-dev libssl-dev libxml2-dev libgmp3-dev libmpfr-dev cmake zlib1g-dev libglpk40 libglpk-dev liblzma-dev libbz2-dev libfontconfig1-dev libfribidi-dev libharfbuzz-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev pandoc
@@ -43,6 +40,12 @@ sudo apt-get install -y git libcurl4-openssl-dev libssl-dev libxml2-dev libgmp3-
 
 * **pandoc**: https://github.com/jgm/pandoc/releases/tag/2.10.1
 
+Then, R console: 
+
+``` r
+install.packages("devtools", "BiocManager")
+options(repos = BiocManager::repositories()); devtools::install_git("https://forgemia.inra.fr/umrf/ranomaly")
+```
 
 ## Windows dependencies
 
