@@ -82,7 +82,7 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, max
     fnFs <- sort(list.files(path, pattern = extension, full.names = TRUE))
     fnRs <- sort(list.files(path, pattern = extension2, full.names = TRUE))
 
-    rawCounts <- count_seq(path, pattern = ".*R1.fastq.*")
+    rawCounts <- count_seq(path, pattern = ".*_R1.*fastq.*")
 
     flog.debug("File list...")
     flog.debug(length(fnFs))
