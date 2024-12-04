@@ -33,7 +33,8 @@ install_linux:
   - apt-get install -y git libcurl4-openssl-dev libssl-dev libxml2-dev libgmp3-dev libmpfr-dev cmake zlib1g-dev libglpk40 libglpk-dev liblzma-dev libbz2-dev libfontconfig1-dev libfribidi-dev libharfbuzz-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
   - R -e 'install.packages(c("remotes", "devtools", "BiocManager"))'
   - R -e 'BiocManager::install(version = "3.20", upgrade = FALSE, update = FALSE)'
-  - R -e 'remotes::install_github(c("HCBravoLab/metagenomeSeq","mikelove/DESeq2","grunwaldlab/metacoder","cpauvert/psadd","ropensci/taxize","ropensci/bold"))'
+  - R -e 'remotes::install_github(c("cpauvert/psadd","ropensci/bold","ropensci/taxize"))'
+  - R -e 'remotes::install_github(c("HCBravoLab/metagenomeSeq","mikelove/DESeq2","grunwaldlab/metacoder"))'
   script:
     - R -e 'options(repos = BiocManager::repositories()); remotes::install_local(upgrade = "never", dependencies = TRUE, lib = "installed_deps")' 
   artifacts:
