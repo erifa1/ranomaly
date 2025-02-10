@@ -41,8 +41,8 @@ sudo apt-get install -y git libcurl4-openssl-dev libssl-dev libxml2-dev libgmp3-
 Then, R console: 
 
 ``` r
-install.packages("renv")
-options(renv.config.gitlab.host = "https://forgemia.inra.fr")
+install.packages("renv", "BiocManager")
+options(renv.config.gitlab.host = "https://forgemia.inra.fr", repos = BiocManager::repositories())
 
 renv::install("gitlab::umrf/ranomaly@master")
 ```
@@ -61,7 +61,7 @@ Then, R console:
 
 ``` r
 install.packages("renv")
-options(renv.config.gitlab.host = "https://forgemia.inra.fr")
+options(renv.config.gitlab.host = "https://forgemia.inra.fr", repos = BiocManager::repositories())
 
 renv::install("gitlab::umrf/ranomaly@master")
 ```
