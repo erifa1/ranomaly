@@ -86,10 +86,10 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
   if(ellipse){p2 <- p2 + stat_ellipse()}
 
   resBeta$plot2 <- p2 + theme(axis.text.x = element_text(angle = 45, hjust=1),
-  ,axis.text=element_text(size=18),
-  axis.title=element_text(size=16,face="bold"),
-  strip.text.x = element_text(size = 18,face="bold"),
-  title=element_text(size=16,face="bold"))
+  ,axis.text=element_text(size=15),
+  axis.title=element_text(size=12,face="bold"),
+  strip.text.x = element_text(size=15,face="bold"),
+  title=element_text(size=12,face="bold"))
   ggsave(glue::glue("{output}/beta_diversity2.eps"), plot=resBeta$plot2, height = 20, width = 30, units="cm", dpi = 500, device="eps")
 
 
@@ -112,10 +112,10 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
   # plot(p1)
   flog.info('Plot ok...')
   resBeta$plot <- p1 + theme(axis.text.x = element_text(angle = 45, hjust=1),
-  ,axis.text=element_text(size=18),
-  axis.title=element_text(size=16,face="bold"),
-  strip.text.x = element_text(size = 18,face="bold"),
-  title=element_text(size=16,face="bold"))
+  ,axis.text=element_text(size=15),
+  axis.title=element_text(size=12,face="bold"),
+  strip.text.x = element_text(size=15,face="bold"),
+  title=element_text(size=12,face="bold"))
 
   if(tests){
     otable <- otu_table(data_rank)
@@ -130,11 +130,11 @@ diversity_beta_light <- function(psobj, rank = "ASV", col = NULL, cov = NULL, di
     }
     if(!is.null(cov)){
       form1 <- as.formula(paste('dist1 ~ Depth +', paste(cov1, collapse="+"), "+", col))
-      resBC <- vegan::adonis2(form1, data = mdata, permutations = 1000)
+      resBC <- vegan::adonis2(form1, data = mdata, permutations = 1000, by = "terms")
         
     }else{
       form1 <- as.formula(paste('dist1 ~ Depth +', col))
-      resBC <- vegan::adonis2(form1, data = mdata, permutations = 1000)
+      resBC <- vegan::adonis2(form1, data = mdata, permutations = 1000, by = "terms")
     }
 
     #PairwiseAdonis
