@@ -37,7 +37,9 @@ phy2tsv_fun <- function(data = data, output = "./tsv_table/", rank = "ASV", rela
 
     ttable <- data_genus@tax_table@.Data
     otable <- as.data.frame(otu_table(data_genus))
-    refseq1 <- as.data.frame(refseq(data_genus)); names(refseq1)="seq"
+    if(!is.null(data@refseq)){
+      refseq1 <- as.data.frame(refseq(data_genus)); names(refseq1)="seq"
+    }
   }else{
     if(rank=="ASV"){
       flog.info(paste('ASV ...'))
@@ -62,5 +64,48 @@ phy2tsv_fun <- function(data = data, output = "./tsv_table/", rank = "ASV", rela
   flog.info(paste('Saving ...'))
   write.table(TT, paste(output,"/otu_table_",rank,".csv",sep=""), sep="\t", quote=FALSE, col.names=NA)
   flog.info(paste('Done ...'))
+
+}
+
+
+
+#' taxa_counts
+#'
+#' Function to count the number of taxa at each rank on a phyloseq object
+#'
+#' @param data a phyloseq object
+#' @param except exclude taxa (eg. unclassified|unknown)
+#'
+#' @return List with counts and details
+#'
+#' @import phyloseq
+#'
+#' @export
+
+# taxa_nums function
+taxa_counts <- function(data = NULL, except = NULL){
+
+  if(is.null(data)|class(data)!="phyloseq"){
+    stop("Phyloseq object required...")
+  }
+
+  ttable = tax_table(data)
+
+  list1 = list()
+  for(i in 1:7){
+    if(is.null(except)){
+        list1[[i]] = as.character(unique(ttable[,i]))
+        }else{
+        list1[[i]] = as.character(unique(ttable[grep(except, ttable[,i], value = FALSE, invert = TRUE),i]))
+        }
+  }
+  list1[[8]] = as.character(taxa_names(data))
+  names(list1) = c(rank_names(data), "ASV")
+
+  list2 = list()
+  list2$counts = sapply(list1, length)
+  list2$details = list1
+
+  return(list2)
 
 }

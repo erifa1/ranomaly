@@ -46,6 +46,7 @@ reference:
       - export_to_stamp_fun
       - phy2cyto_fun
       - idtaxa_traindb
+      - taxa_counts
   - title: "Others functions"
     contents:
       - abundances

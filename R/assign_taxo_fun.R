@@ -84,17 +84,28 @@ add_blast_fun <- function(data = data, lineage_table = NULL, domain = "Bacteria"
   txkit3 = txkit2[!duplicated(txkit2[,1]),]
   row.names(txkit3) = txkit3[,1]
 
-
-  ttable_txkit = t(as.data.frame(strsplit(txkit3[,5], ";"), stringsAsFactors = FALSE))
+  # browser()
+  # Resépare la taxonomie en colonnes.
+  list0 <- strsplit(txkit3[,5], ";")
+  max_len <- max(sapply(list0, length))
+  list1 <- lapply(list0, function(x) {
+  length(x) <- max_len  # complète automatiquement avec NA
+  return(x)
+  })
+  df0 <- ttable_txkit <- t(as.data.frame(list1))
   row.names(ttable_txkit) = txkit3[,1]
+
+  # ttable_txkit = t(as.data.frame(strsplit(txkit3[,5], ";"), stringsAsFactors = FALSE))
+  # row.names(ttable_txkit) = txkit3[,1]
   ttable_txkit[which(ttable_txkit == "")] = NA
 
   ttable_txkit2 = na.omit(ttable_txkit)
 
+  #Remplace les taxonomies si plus complètes avec blast.
   for(i in row.names(ttable_txkit2)){
     if(length(grep("_[Ss]pecies", ttable1[i,7])) != 0 | length(grep("_unassigned", ttable1[i,7])) != 0){
       print(i)
-      # print(ttable_txkit2[i,])
+      print(ttable_txkit2[i,])
 
       PREFIX = prefix
       Ftax = paste(PREFIX, ttable_txkit2[i,], sep="")
