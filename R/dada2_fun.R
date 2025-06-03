@@ -262,6 +262,9 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, max
       names(filtFs) <- sample.names
       names(filtRs) <- sample.names
 
+      flog.debug(length(filtFs))
+      flog.debug(length(filtRs))
+
 
       flog.info('Filtering reads...')
 
