@@ -23,7 +23,6 @@ fill_tax_fun <- function(taxtable = taxtable, prefix = c("k__","p__","c__","o__"
       PREFIX <- prefix
     }
 
-
     TAX = x
 
     if(length(na.omit(TAX))==0){
@@ -38,8 +37,9 @@ fill_tax_fun <- function(taxtable = taxtable, prefix = c("k__","p__","c__","o__"
         }
         x[i] = paste(PREFIX[i],TAX[i-1],'_', RANKS[i], sep="")
         TAX[i] = paste(PREFIX[i],TAX[i-1], sep="")
+      } else if(!grepl(pattern=paste0('^',PREFIX[i]), TAX[i])){
+        x[i] <- paste(PREFIX[i],TAX[i], sep="")
       }
-      # print(x)
     }
     return(x)
   }
