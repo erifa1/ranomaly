@@ -3,8 +3,16 @@
 
 # rANOMALY <a href="https://forgemia.inra.fr/umrf/ranomaly/"><img src="man/figures/ranomaly_logo150px.png" alt="ispickr" align="right" width="150" style="margin-top: 10px; margin-left: 20px;"/></a>
 
+---
 
+- [Installation](#installation)
+    - [Linux](#linux-highly-recommended)
+    - [Windows](#windows)
+- [Documentation and Tutorials](#documentation-and-tutorials)
+- [Ressources / reference DBs](#ressources)
+- [Citation](#citation)
 
+---
 <!-- badges: start -->
 
 <!-- [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental) -->
@@ -61,7 +69,7 @@ Then, R console:
 
 ``` r
 install.packages("renv")
-options(renv.config.gitlab.host = "https://forgemia.inra.fr", repos = BiocManager::repositories())
+options(renv.config.gitlab.host = "https://forge.inrae.fr", repos = BiocManager::repositories())
 
 renv::install("gitlab::umrf/ranomaly@master")
 ```
@@ -95,4 +103,4 @@ Murali, Adithya, Aniruddha Bhargava, et Erik S. Wright. « IDTAXA: a novel appr
 GPL 3.0
 
 ## Copyright
-2024 INRAE
+2025 INRAE
