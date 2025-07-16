@@ -1,6 +1,6 @@
 Package: ranomaly
 Title: An R package grouping ANOMALY worflow functions
-Version: 1.2.1
+Version: 1.2.2
 Authors@R:
     c(person("Sebastien", "Theil", , "sebastien.theil@inrae.fr", role = c("aut")),
     person("Etienne", "Rifa", , "etienne.rifa@insa-toulouse.fr", role = c("cre", "aut")))

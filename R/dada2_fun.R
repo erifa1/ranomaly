@@ -300,14 +300,17 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, max
       ggsave(paste(outpath,'/err_plot_f.png',sep=''), plot=pr2)
       flog.info('Done.')
     }
-    # save.image("debug.rdata")
 
-    mergers <- vector("list", length(sample.names))
-    names(mergers) <- sample.names;
+
+
     stockFs=NULL; stockRs=NULL
     getN <- function(x) sum(getUniques(x))
 
-    for(sam in sample.names) {
+    remaining_samples <- basename(filtRs_out) %>% stringr::str_split(., "_", simplify = TRUE) %>% .[,1]
+    mergers <- vector("list", length(remaining_samples))
+    names(mergers) <- remaining_samples;
+
+    for(sam in remaining_samples) {
       flog.info(paste('Processing sample ',sam))
       flog.info('Dereplicating fastq...')
       derepFs <- derepFastq(filtFs[[sam]], verbose=TRUE)
@@ -324,23 +327,6 @@ dada2_fun <- function(path = "", outpath = "./dada2_out/", cutadapt = FALSE, max
       flog.info('Done.')
       mergers[[sam]] <- merger
     }
-
-    #
-    #
-    # flog.info('Dereplicating fastq...')
-    # derepFs <- derepFastq(filtFs_out, verbose=TRUE)
-    # derepRs <- derepFastq(filtRs_out, verbose=TRUE)
-    #
-    # flog.info('Done.')
-    # flog.info('dada2...')
-    # dadaFs <- dada(derepFs, err=errF, multithread=n_cpu, pool=dadapool, selfConsist=FALSE)
-    # stockFs <- sapply(dadaFs, getN)
-    # dadaRs <- dada(derepRs, err=errR, multithread=n_cpu, pool=dadapool, selfConsist=FALSE)
-    # stockRs <- sapply(dadaRs, getN)
-    # flog.info('Done.')
-    # flog.info('Merging pairs...')
-    # mergers <- mergePairs(dadaFs, derepFs, dadaRs, derepRs, verbose=FALSE)
-    # flog.info('Done.')
 
 
     seqtab <- makeSequenceTable(mergers)
